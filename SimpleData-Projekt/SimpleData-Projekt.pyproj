@@ -28,6 +28,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="run.py" />
+    <Compile Include="SimpleData\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SimpleData\views.py">
       <SubType>Code</SubType>
     </Compile>
@@ -47,6 +50,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\login.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
