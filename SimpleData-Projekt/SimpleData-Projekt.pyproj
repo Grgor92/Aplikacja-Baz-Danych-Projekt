@@ -31,6 +31,9 @@
     <Compile Include="SimpleData\forms.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SimpleData\tabele.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SimpleData\views.py">
       <SubType>Code</SubType>
     </Compile>

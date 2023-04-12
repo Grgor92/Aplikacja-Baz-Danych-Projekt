@@ -4,7 +4,20 @@ from flask import render_template, jsonify, redirect, url_for, flash, session
 from SimpleData import app
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from SimpleData import db
+from .tabele import Users
+from sqlalchemy import inspect
 
+#wewnątrz aplikacji 
+with app.app_context():
+#sprawdzenie czy tabela istnieje
+    inspector = inspect(db.engine)
+    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo')
+    db.session.add(new_product)
+    db.session.commit()
+    if not inspector.has_table('Users'):
+        db.create_all()
+        
 
 @app.route('/api/time', ) # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
