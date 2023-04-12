@@ -5,17 +5,17 @@ from flask import render_template, jsonify, redirect, url_for
 from SimpleData import app
 from flask import flash
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm # import z inego plaiku w tym samym miejscu musi zawirać . przed nazwą
+from .forms import RegistrationForm, LoginForm # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 
 
-@app.route('/api/time', ) # ustawiamy ścierzkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
+@app.route('/api/time', ) # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
     now = datetime.now()  #pobieramy obecny czas z systemu
     formatted_now = now.strftime("%A, %d %B, %Y %H:%M") #ustalamy w jakim formacie będzie wyświetlany czas
     return jsonify({'time': formatted_now})
 
 @app.route('/')
-@app.route('/home') #Aby dana strona była dostępna pod dwoma ścierzkami wystarczy dodać pod sobą dwie linie kodu @app.route
+@app.route('/home') #Aby dana strona była dostępna pod dwoma ścieżkami wystarczy dodać pod sobą dwie linie kodu @app.route
 def home():
     return render_template( #używamy render_teamplate aby wygenerować stronę z danego pliku html, tworząc zmienne możemy je przekazać na stronę i następnie je tam wywołać
         "home.html",
