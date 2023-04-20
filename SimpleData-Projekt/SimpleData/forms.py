@@ -1,14 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField #importujemy odpowiednie elemnety aby móc sprawdziæ poprawnoœc formularza
+from wtforms import StringField, PasswordField, SubmitField, SelectField #importujemy odpowiednie elemnety aby mÃ³c sprawdziÄ‡ poprawnoÅ›Ä‡ formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
-class RegistrationForm(FlaskForm):  #tworzymy klasê o odppowiedniej nazwie
-    Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=6, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawnoœci jakie ma zawieraæ pole
+class RegistrationForm(FlaskForm):  #tworzymy klasÄ™ o odppowiedniej nazwie
+    Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=6, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawnoÅ›ci jakie ma zawieraÄ‡ pole
     email = StringField('Email', validators=[DataRequired(), Email()])
     haslo = PasswordField('Haslo', validators=[DataRequired(),Length(min=6, max=32)])
     haslo2 = PasswordField('Potwierdz Haslo', validators=[DataRequired(),EqualTo('haslo'),Length(min=6, max=32)])
-
+    typ_uzytkownika = SelectField('Typ uÅ¼ytkownika', choices=[('', 'Wybierz typ'), ('administrator', 'Administrator'), ('kierownik', 'Kierownik'), ('pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zarejestruj')
 
 class LoginForm(FlaskForm):
