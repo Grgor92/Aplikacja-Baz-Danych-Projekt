@@ -17,8 +17,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Zaloguj')
 
 class przeszukiwanie(FlaskForm):
-    numer = IntegerField('Numer')
-    data = DateField('Data')
-    rodzaj = StringField('Rodzaj')
+    rodzaj = SelectField('Rodzaj', choices=[('WZ', 'WZ'), ('PZ', 'PZ')])
+    numer = StringField('Numer')
+    data_od = StringField('Data od', validators=[DataRequired()])
+    data_do = StringField('Data do', validators=[DataRequired()])
+    kontrahent = StringField('Kontarhent: ')
     submit = SubmitField('Wyszukaj')
 

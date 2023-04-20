@@ -4,11 +4,44 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <div class="form-group">
-                {{ form.numer.label(class="form-control-label") }}
-                {{ form.numer(class="form-control-label") }}
+            <div class="form-inline">
+                <div class="form-group mr-3 mb-2">
+                    <div class="d-block text-center">
+                        <label for="{{ form.rodzaj.id }}" class="form-control-label">{{ form.rodzaj.label }}</label>
+                    </div>
+                    {{ form.rodzaj(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2">
+                    <div class="d-block text-center">
+                        <label for="{{ form.numer.id }}" class="form-control-label">{{ form.numer.label }}</label>
+                    </div>
+                    {{ form.numer(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2">
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_od.id }}" class="form-control-label">{{ form.data_od.label }}</label>
+                    </div>
+                    {{ form.data_od(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2">
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_do.id }}" class="form-control-label">{{ form.data_do.label }}</label>
+                    </div>
+                    {{ form.data_do(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mb-2">
+                    <div class="d-block text-center">
+                        <label for="kontrahenci" class="form-control-label">Kontrahent</label>
+                    </div>
+                    <select name="kontrahent" id="kontrahent" class="form-control ml-2">
+                        <option value="kontrahent1">Kontrahent 1</option>
+                        <option value="kontrahent2">Kontrahent 2</option>
+                        <option value="kontrahent3">Kontrahent 3</option>
+                    </select>
+                </div>
             </div>
 
+</div>
         </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
