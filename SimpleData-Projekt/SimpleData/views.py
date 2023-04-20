@@ -12,11 +12,12 @@ from sqlalchemy import inspect
 with app.app_context():
 #sprawdzenie czy tabela istnieje
     inspector = inspect(db.engine)
-    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo')
-    db.session.add(new_product)
-    db.session.commit()
+    db.drop_all()
     if not inspector.has_table('Users'):
         db.create_all()
+    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo', uprawnienia='Kierownik')
+    db.session.add(new_product)
+    db.session.commit()
         
 
 @app.route('/api/time', ) # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
@@ -44,10 +45,10 @@ def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
     user = session.get('user', None)
     if form.validate_on_submit():   
-        if form.email.data == 'admin@sd.com' and form.haslo.data == 'haslo':    #dal potrzeby sprawdzenia walidacji danych ustawione jest sztywne email i hasło po któym będzie się można zalogować
-            flash('Udało się zalogować', 'success') #wiadomość która ma się pokazać po porawnym wpisaniu danych
-            user = form.email.data
-            session['user'] = user
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user and user.haslo == form.haslo.data:
+            flash('Udało się zalogować', 'success')
+            session['user'] = user.email
             return redirect(url_for('home'))
         else:
             user = session.get('user', None)

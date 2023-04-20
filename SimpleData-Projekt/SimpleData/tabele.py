@@ -2,7 +2,7 @@
 from SimpleData import app
 #import biblioteki czas
 from datetime import datetime
-#import pliku z baz¹ danych
+#import pliku z baz danych
 from SimpleData import db
 
 class Users(db.Model):
@@ -10,3 +10,4 @@ class Users(db.Model):
     nazwa = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50))
     haslo = db.Column(db.String(32), nullable=False)
+    uprawnienia = db.Column(db.String(32), nullable=False)
