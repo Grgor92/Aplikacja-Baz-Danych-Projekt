@@ -16,7 +16,7 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>SimpleData-Projekt</Name>
     <RootNamespace>SimpleData-Projekt</RootNamespace>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env1|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,6 +55,9 @@
     <Content Include="SimpleData\templates\login.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\podsumowanie.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
@@ -65,10 +68,10 @@
     <Folder Include="SimpleData\static\" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="env\">
-      <Id>env</Id>
+    <Interpreter Include="env1\">
+      <Id>env1</Id>
       <Version>3.9</Version>
-      <Description>env (Python 3.9)</Description>
+      <Description>env1 (Python 3.9 (64-bit))</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
