@@ -12,11 +12,12 @@ from sqlalchemy import inspect
 with app.app_context():
 #sprawdzenie czy tabela istnieje
     inspector = inspect(db.engine)
-    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo')
-    db.session.add(new_product)
-    db.session.commit()
+    db.drop_all()
     if not inspector.has_table('Users'):
         db.create_all()
+    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo', uprawnienia='Kierownik')
+    db.session.add(new_product)
+    db.session.commit()
         
 
 @app.route('/api/time', ) # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
