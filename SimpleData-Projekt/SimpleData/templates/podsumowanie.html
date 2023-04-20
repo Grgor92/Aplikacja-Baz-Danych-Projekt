@@ -1,17 +1,18 @@
 {% extends "layout.html" %}
-
+{%block content%}
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <div class="form-group">
+                {{ form.numer.label(class="form-control-label") }}
                 {{ form.numer(class="form-control-label") }}
-                {{ render_form(form) }}
-
             </div>
 
         </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
+        </form>
 </div>
+{%endblock%}
