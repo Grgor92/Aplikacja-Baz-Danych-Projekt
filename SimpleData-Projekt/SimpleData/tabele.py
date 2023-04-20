@@ -2,7 +2,7 @@
 from SimpleData import app
 #import biblioteki czas
 from datetime import datetime
-#import pliku z baz¹ danych
+#import pliku z bazï¿½ danych
 from SimpleData import db
 
 class Users(db.Model):
