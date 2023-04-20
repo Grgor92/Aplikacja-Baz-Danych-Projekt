@@ -10,3 +10,4 @@ class Users(db.Model):
     nazwa = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50))
     haslo = db.Column(db.String(32), nullable=False)
+    uprawnienia = db.Column(db.String(32), nullable=False)
