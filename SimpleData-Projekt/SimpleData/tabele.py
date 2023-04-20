@@ -1,8 +1,8 @@
-#import plik app(aplikacje)
+ï»¿#import plik app(aplikacje)
 from SimpleData import app
 #import biblioteki czas
 from datetime import datetime
-#import pliku z baz¹ danych
+#import pliku z baz danych
 from SimpleData import db
 
 class Users(db.Model):
