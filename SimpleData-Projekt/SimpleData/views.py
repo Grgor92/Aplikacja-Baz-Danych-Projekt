@@ -3,7 +3,7 @@ from enum import Flag
 from flask import render_template, jsonify, redirect, url_for, flash, session
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Users
 from sqlalchemy import inspect
@@ -71,3 +71,14 @@ def rejestr():
         ur = user,
         form=form
         )
+@app.route('/podsumowanie', methods=['GET', 'POST'])
+def podsumowanie():
+    form = przeszukiwanie()
+    user = session.get('user', None)
+    return render_template(
+        "podsumowanie.html",
+        title = "SimpleData",
+        ur = user,
+        form=form
+    )
+
