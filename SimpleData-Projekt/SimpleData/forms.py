@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
@@ -15,4 +15,12 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     haslo = PasswordField('Haslo', validators=[DataRequired(),])
     submit = SubmitField('Zaloguj')
+
+class przeszukiwanie(FlaskForm):
+    rodzaj = SelectField('Dokument', choices=[('WZ', 'WZ'), ('PZ', 'PZ')])
+    numer = IntegerField('Numer')
+    data_od = DateField('Data od')
+    data_do = DateField('Data do')
+    kontrahent = SelectField('Kontarhent: ', choices=[('muszynianka', 'Muszynianka'), ('galicjanka', 'Galicjanka')])
+    submit = SubmitField('Wyszukaj')
 
