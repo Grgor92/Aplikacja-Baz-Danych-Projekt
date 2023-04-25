@@ -57,6 +57,7 @@
     <Content Include="SimpleData\templates\login.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\magazyn_towar.html" />
     <Content Include="SimpleData\templates\przeszukiwanie.html">
       <SubType>Code</SubType>
     </Content>

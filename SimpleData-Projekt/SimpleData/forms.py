@@ -48,3 +48,8 @@ class uzytkownicy(FlaskForm):
     haslo = StringField('Hasło')
     typ = SelectField('Typ', choices=[('1', '1'), ('2', '2')])
     submit = SubmitField('Wyszukaj')
+
+class magazyn_towar(FlaskForm):
+    nr_sekcji = StringField('Numer sekcji')
+    id_towaru = IntegerField('Id towaru')
+    submit = SubmitField('Wyszukaj')
