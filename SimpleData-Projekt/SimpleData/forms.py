@@ -32,3 +32,12 @@ class dok_historyczne(FlaskForm):
     rodzaj = SelectField('Dokument', choices=[('WZ', 'WZ'), ('PZ', 'PZ')])
     data_wyk = DateField('Data wykonania')
     submit = SubmitField('Wyszukaj')
+
+class kontrahenci(FlaskForm):
+    nip = IntegerField('NIP')
+    nazwa_firmy = StringField('Nazwa firmy')
+    miasto = StringField('Miasto')
+    nr_telefonu = IntegerField('Telefon')
+    ulica = StringField('Ulica')
+    numer = IntegerField('Numer')
+    submit = SubmitField('Wyszukaj')

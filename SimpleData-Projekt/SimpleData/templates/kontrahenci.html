@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{%block content%}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-inline">
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.nip.id }}" class="form-control-label">{{ form.nip.label }}</label>
+                    </div>
+                    {{ form.nip(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.nazwa_firmy.id }}" class="form-control-label">{{ form.nazwa_firmy.label }}</label>
+                    </div>
+                    {{ form.nazwa_firmy(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.miasto.id }}" class="form-control-label">{{ form.miasto.label }}</label>
+                    </div>
+                    {{ form.miasto(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.nr_telefonu.id }}" class="form-control-label">{{ form.nr_telefonu.label }}</label>
+                    </div>
+                    {{ form.nr_telefonu(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.ulica.id }}" class="form-control-label">{{ form.ulica.label }}</label>
+                    </div>
+                    {{ form.ulica(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.numer.id }}" class="form-control-label">{{ form.numer.label }}</label>
+                    </div>
+                    {{ form.numer(class="form-control ml-2") }}
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{%endblock%}

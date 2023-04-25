@@ -50,6 +50,7 @@
     <Content Include="SimpleData\templates\home.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\kontrahenci.html" />
     <Content Include="SimpleData\templates\layout.html">
       <SubType>Code</SubType>
     </Content>
