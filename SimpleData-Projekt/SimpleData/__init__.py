@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=10)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=50)
 @app.before_first_request
 def init_session():
     session.permanent = True

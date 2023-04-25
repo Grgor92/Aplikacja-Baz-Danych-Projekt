@@ -11,11 +11,18 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 login_manager = LoginManager(app)
 login_manager.session_protection = "strong"
 login_manager.sesion = True
+
+login_manager.unauthorized
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Musisz się zalogować, aby uzyskać dostęp do tej strony!', 'danger')
+    return redirect(url_for('home'))
+
 # deklaracja funkcji do pobierania użytkownika po jego id
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
-
 
 #wewnątrz aplikacji 
 with app.app_context():
