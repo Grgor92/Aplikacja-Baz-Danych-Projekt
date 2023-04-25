@@ -41,3 +41,10 @@ class kontrahenci(FlaskForm):
     ulica = StringField('Ulica')
     numer = IntegerField('Numer')
     submit = SubmitField('Wyszukaj')
+
+class uzytkownicy(FlaskForm):
+    imie = StringField('Imie')
+    email = StringField('Email')
+    haslo = StringField('Hasło')
+    typ = SelectField('Typ', choices=[('1', '1'), ('2', '2')])
+    submit = SubmitField('Wyszukaj')

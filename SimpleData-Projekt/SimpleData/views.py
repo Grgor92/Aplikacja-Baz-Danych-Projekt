@@ -3,7 +3,7 @@ from enum import Flag
 from flask import render_template, jsonify, redirect, url_for, flash, session
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Users
 from sqlalchemy import inspect
@@ -98,6 +98,17 @@ def kontrahenci_t():
     user = session.get('user', None)
     return render_template(
         "kontrahenci.html",
+        title = "SimpleData",
+        ur = user,
+        form=form
+    )
+
+@app.route('/uzytkownicy', methods=['GET', 'POST'])
+def uzytkownicy_t():
+    form = uzytkownicy()
+    user = session.get('user', None)
+    return render_template(
+        "uzytkownicy.html",
         title = "SimpleData",
         ur = user,
         form=form

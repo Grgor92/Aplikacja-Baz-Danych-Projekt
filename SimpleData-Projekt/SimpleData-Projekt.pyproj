@@ -63,6 +63,7 @@
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\uzytkownicy.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SimpleData\" />
