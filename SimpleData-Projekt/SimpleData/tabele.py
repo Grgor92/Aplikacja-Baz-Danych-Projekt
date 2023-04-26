@@ -1,11 +1,12 @@
-﻿#import plik app(aplikacje)
+#import plik app(aplikacje)
 from SimpleData import app
 #import biblioteki czas
 from datetime import datetime
 #import pliku z baz danych
 from SimpleData import db
+from flask_login import UserMixin
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nazwa = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50))
