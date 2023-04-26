@@ -16,7 +16,7 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>SimpleData-Projekt</Name>
     <RootNamespace>SimpleData-Projekt</RootNamespace>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env1|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,21 +46,25 @@
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\dokumenty_historyczne.html" />
     <Content Include="SimpleData\templates\home.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\kontrahenci.html" />
     <Content Include="SimpleData\templates\layout.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\login.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="SimpleData\templates\podsumowanie.html">
+    <Content Include="SimpleData\templates\magazyn_towar.html" />
+    <Content Include="SimpleData\templates\przeszukiwanie.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\uzytkownicy.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SimpleData\" />
@@ -72,15 +76,6 @@
       <Id>env1</Id>
       <Version>3.9</Version>
       <Description>env1 (Python 3.9 (64-bit))</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X64</Architecture>
-    </Interpreter>
-    <Interpreter Include="env\">
-      <Id>env</Id>
-      <Version>3.9</Version>
-      <Description>env (Python 3.9)</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
