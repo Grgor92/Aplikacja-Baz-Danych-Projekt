@@ -2,7 +2,7 @@
 from flask import render_template, jsonify, redirect, url_for, flash, session
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Users
 from sqlalchemy import inspect
@@ -85,13 +85,55 @@ def rejestr():
         user = current_user.nazwa if current_user.is_authenticated else None,
         form=form
         )
-@app.route('/podsumowanie', methods=['GET', 'POST'])
-@fresh_login_required
-def podsumowanie():
-    form = przeszukiwanie()
+@app.route('/przeszukiwanie', methods=['GET', 'POST'])
+def przeszukiwanie():
+    form = przeszukiwanie_d()
+    user = session.get('user', None)
     return render_template(
-        "podsumowanie.html",
+        "przeszukiwanie.html",
+        title = "SimpleData",
+        ur = user,
+        form=form
+    )
+@app.route('/dokumenty_historyczne', methods=['GET', 'POST'])
+def dokumenty_hist():
+    form = dok_historyczne()
+    user = session.get('user', None)
+    return render_template(
+        "dokumenty_historyczne.html",
+        title = "SimpleData",
+        ur = user,
+        form=form
+    )
+
+@app.route('/kontrahenci', methods=['GET', 'POST'])
+def kontrahenci_t():
+    form = kontrahenci()
+    user = session.get('user', None)
+    return render_template(
+        "kontrahenci.html",
         title = "SimpleData",
         user = current_user.nazwa,
+        form=form
+    )
+@app.route('/uzytkownicy', methods=['GET', 'POST'])
+def uzytkownicy_t():
+    form = uzytkownicy()
+    user = session.get('user', None)
+    return render_template(
+        "uzytkownicy.html",
+        title = "SimpleData",
+        ur = user,
+        form=form
+    )
+
+@app.route('/magazyn_towar', methods=['GET', 'POST'])
+def magazyn_towar_t():
+    form = magazyn_towar()
+    user = session.get('user', None)
+    return render_template(
+        "magazyn_towar.html",
+        title = "SimpleData",
+        ur = user,
         form=form
     )

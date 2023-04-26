@@ -16,7 +16,7 @@ class LoginForm(FlaskForm):
     haslo = PasswordField('Haslo', validators=[DataRequired(),])
     submit = SubmitField('Zaloguj')
 
-class przeszukiwanie(FlaskForm):
+class przeszukiwanie_d(FlaskForm):
     rodzaj = SelectField('Dokument', choices=[('WZ', 'WZ'), ('PZ', 'PZ')])
     numer = IntegerField('Numer')
     data_od = DateField('Data od')
@@ -24,3 +24,32 @@ class przeszukiwanie(FlaskForm):
     kontrahent = SelectField('Kontarhent: ', choices=[('muszynianka', 'Muszynianka'), ('galicjanka', 'Galicjanka')])
     submit = SubmitField('Wyszukaj')
 
+class dok_historyczne(FlaskForm):
+    numer_dok = IntegerField('Numer dokumentu')
+    data_wys = DateField('Data wystawienia')
+    id_klienta = IntegerField('Id klienta')
+    nip = IntegerField('NIP')
+    rodzaj = SelectField('Dokument', choices=[('WZ', 'WZ'), ('PZ', 'PZ')])
+    data_wyk = DateField('Data wykonania')
+    submit = SubmitField('Wyszukaj')
+
+class kontrahenci(FlaskForm):
+    nip = IntegerField('NIP')
+    nazwa_firmy = StringField('Nazwa firmy')
+    miasto = StringField('Miasto')
+    nr_telefonu = IntegerField('Telefon')
+    ulica = StringField('Ulica')
+    numer = IntegerField('Numer')
+    submit = SubmitField('Wyszukaj')
+
+class uzytkownicy(FlaskForm):
+    imie = StringField('Imie')
+    email = StringField('Email')
+    haslo = StringField('Hasło')
+    typ = SelectField('Typ', choices=[('1', '1'), ('2', '2')])
+    submit = SubmitField('Wyszukaj')
+
+class magazyn_towar(FlaskForm):
+    nr_sekcji = StringField('Numer sekcji')
+    id_towaru = IntegerField('Id towaru')
+    submit = SubmitField('Wyszukaj')
