@@ -12,25 +12,25 @@
 </head>
 
 <body>
-    <div class="container-fluid mb-4 " style="max-width: 760px; " >
+    <div class="container-fluid mb-4 " style="max-width: 760px; ">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-            <div class="alert alert-{{ category }} shadow rounded-lg rounded-8 mx-auto alert-dismissible fade show text-center"style="padding: 20px;" role="alert">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        <div class="alert alert-{{ category }} shadow rounded-lg rounded-8 mx-auto alert-dismissible fade show text-center" style="padding: 20px 50px; position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999;" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         {% endfor %}
         {% endif %}
         {% endwith %}
     </div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light  ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light container-fluid">
         <a class="navbar-brand" href="/">SimpleData</a>
 
-        <div class="collapse navbar-collapse flex-row-reverse container" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+        <div class="collapse navbar-collapse flex-row-reverse container-fluid" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto pd-2">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Rozwiń
@@ -38,11 +38,19 @@
 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% if current_user.is_authenticated %}
-                            <a class="dropdown-item" href="{{url_for('podsumowanie')}}">Podsumowanie <span class="sr-only">(current)</span></a>
-                        {% else %}
-                            <a class="dropdown-item" href="{{ url_for('login') }}">Logowanie</a>
+                                {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
+                                    <a class="dropdown-item" href="{{ url_for('rejestr') }}">Rejestracja</a>
+                                {% endif %}
+                            <a class="dropdown-item" href="{{url_for('przeszukiwanie')}}">Podsumowanie <span class="sr-only">(current)</span></a>
+                            <a class="dropdown-item" href="{{url_for('kontrahenci_t')}}">Kontrahenci <span class="sr-only">(current)</span></a>
+                            <a class="dropdown-item" href="{{url_for('magazyn_towar_t')}}">Magazyn <span class="sr-only">(current)</span></a>
+                            <a class="dropdown-item" href="{{url_for('uzytkownicy_t')}}">Użytkownicy <span class="sr-only">(current)</span></a>
+                            <a class="dropdown-item" href="{{url_for('dokumenty_hist')}}">Dokumenty Historyczne <span class="sr-only">(current)</span></a>
+
+                            {% else %}
+                                <a class="dropdown-item" href="{{ url_for('login') }}">Logowanie</a>
                         {% endif %}
-                        <!--<a class="dropdown-item" href="{{ url_for('rejestr') }}">Rejestracja</a>-->
+
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Pod ogranicznikiem</a>
                     </div>
@@ -53,7 +61,7 @@
                 {% if current_user.is_authenticated %}
 
                     <li class="nav-item active">
-                        <a class="nav-link" href="">{{user}} <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="">{{current_user.nazwa}} <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="{{url_for('logout')}}">Wyloguj <span class="sr-only">(current)</span></a>
@@ -69,7 +77,7 @@
             
             {% block content %}
             {% endblock %}
-            
+
         </div>
         <footer>
             <p>&copy; 2023</p>
@@ -81,13 +89,9 @@
                             $('#time').text(data.time);
                         });
                     }
-
                     nowa();
-
                     setInterval(nowa, 60000);
                 })(jQuery);
-
-
             </script>
         </footer>
     </div>
