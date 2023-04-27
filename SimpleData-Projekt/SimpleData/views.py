@@ -11,7 +11,7 @@ from flask_login import login_user, logout_user, login_required, current_user, f
 
 #wewnątrz aplikacji 
 with app.app_context():
-#sprawdzenie czy tabela istnieje
+#sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
     #db.drop_all()
     if not inspector.has_table('Users'):
