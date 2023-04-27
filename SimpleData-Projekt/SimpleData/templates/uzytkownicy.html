@@ -36,5 +36,10 @@
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
+    <p></p>
+    <p></p>
+    {% for item in values %}
+    <p> Nazwa: {{item.nazwa}} email: {{item.email}} Uprawnienia: {{item.uprawnienia}}</p>
+    {% endfor %}
 </div>
 {%endblock%}
