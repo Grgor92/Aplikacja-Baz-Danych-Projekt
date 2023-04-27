@@ -1,13 +1,27 @@
 ﻿# -*- coding: utf-8 -*-
 #Import biblioteki
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, session
+from flask import Flask, session, redirect, url_for, flash
 from datetime import timedelta
+from flask_login import LoginManager
 import os
 app = Flask(__name__)
 
 # generowanie klucza losowego
 SECRET_KEY = os.urandom(32)
+
+login_manager = LoginManager(app)
+login_manager.session_protection = "strong"
+login_manager.sesion = True
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Musisz się zalogować, aby uzyskać dostęp do tej strony!', 'danger')
+    return redirect(url_for('home'))
+
+@login_manager.needs_refresh_handler
+def needs_refresh():
+    flash('Twoja sesja wygasła, zaloguj się ponownie!', 'danger')
+    return redirect(url_for('logout'))
 
 # ustawienie klucza w konfiguracji aplikacji
 app.config['SECRET_KEY'] = SECRET_KEY

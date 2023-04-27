@@ -46,7 +46,7 @@ class uzytkownicy(FlaskForm):
     imie = StringField('Imie')
     email = StringField('Email')
     haslo = StringField('Hasło')
-    typ = SelectField('Typ', choices=[('1', '1'), ('2', '2')])
+    typ = SelectField('Typ', choices=[('', 'Wybierz typ'), ('adm', 'Administrator'), ('ki', 'Kierownik'), ('pr', 'Pracownik')])
     submit = SubmitField('Wyszukaj')
 
 class magazyn_towar(FlaskForm):
