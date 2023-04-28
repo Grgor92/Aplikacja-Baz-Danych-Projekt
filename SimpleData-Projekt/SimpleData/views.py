@@ -126,3 +126,27 @@ def magazyn_towar_t():
         user = current_user.nazwa,
         form=form
     )
+
+@app.route('/ustawienia', methods=['GET', 'POST'])
+def ustawienia():
+    if request.method == 'POST':
+        username = request.form['Nazwa']
+        password = request.form['Hasło']
+        password2 = request.form['Powtórz hasło']
+        
+        if not username or not password or not password2:
+            # błędy walidacji
+            pass
+        
+        if password != password2:
+            # błędy walidacji
+            pass
+        
+        current_user.username = username
+        current_user.set_password(password)
+        db.session.commit()
+        
+        # przekierowanie użytkownika na stronę główną ustwaień
+        pass
+    else:
+        return render_template('ustawienia_kont.html')

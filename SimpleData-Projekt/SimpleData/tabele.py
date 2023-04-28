@@ -1,4 +1,4 @@
-#import plik app(aplikacje)
+﻿#import plik app(aplikacje)
 from SimpleData import app
 #import biblioteki czas
 from datetime import datetime
