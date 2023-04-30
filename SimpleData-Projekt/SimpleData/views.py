@@ -129,3 +129,15 @@ def magazyn_towar_t():
 
 def powrot():
     return redirect(request.referrer or url_for('home'))
+
+@app.route('/edit', methods=['POST'])
+def edit_user():
+    # kod do aktualizacji rekordu w bazie danych
+    # pobierz dane z formularza
+    id = request.form.get('id')
+    nazwa = request.form.get('nazwa')
+    email = request.form.get('email')
+    uprawnienia = request.form.get('uprawnienia')
+    # zaktualizuj rekord w bazie danych
+    # wyślij komunikat o sukcesie lub błędzie
+    return 'Zaktualizowano użytkownika'
