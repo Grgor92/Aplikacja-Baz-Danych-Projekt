@@ -2,7 +2,7 @@
 from flask import render_template, jsonify, redirect, url_for, flash, session, request
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users2 # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Users
 from sqlalchemy import inspect
@@ -108,11 +108,13 @@ def kontrahenci_t():
 @login_required
 def uzytkownicy_t():
     form = uzytkownicy()
+    form2 = Users2()
     return render_template(
         "uzytkownicy.html",
         title = "SimpleData",
         user = current_user.nazwa,
         form=form,
+        form2=form2,
         values=Users.query.all()
     )
 
@@ -140,4 +142,5 @@ def edit_user():
     uprawnienia = request.form.get('uprawnienia')
     # zaktualizuj rekord w bazie danych
     # wyślij komunikat o sukcesie lub błędzie
-    return 'Zaktualizowano użytkownika'
+    flash('Zaktualizowano użytkownika', 'success')
+    return redirect(url_for('uzytkownicy_t'))

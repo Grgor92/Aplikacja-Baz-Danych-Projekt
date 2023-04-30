@@ -53,3 +53,10 @@ class magazyn_towar(FlaskForm):
     nr_sekcji = StringField('Numer sekcji')
     id_towaru = IntegerField('Id towaru')
     submit = SubmitField('Wyszukaj')
+
+class Users2(FlaskForm):
+    nazwa = StringField('Imie', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    haslo = StringField('Hasło')
+    uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('adm', 'Administrator'), ('ki', 'Kierownik'), ('pr', 'Pracownik')])
+    submit = SubmitField('Wyszukaj')

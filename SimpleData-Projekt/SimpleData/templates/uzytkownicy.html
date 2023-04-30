@@ -55,6 +55,7 @@
                     {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
                     <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.nazwa }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.uprawnienia }}">Edytuj</a>
 
+
                     {% endif %}
                 </td>
             </tr>
@@ -73,24 +74,21 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        {{ form2.hidden_tag() }}
                         <input type="hidden" id="id-input" name="id" value="">
                         <div class="form-group">
-                            <label for="nazwa-input" class="col-form-label">Nazwa:</label>
-                            <input type="text" class="form-control" id="nazwa-input" name="nazwa" required>
+                            {{ form2.nazwa.label(class="col-form-label") }}
+                            {{ form2.nazwa(class="form-control", id="nazwa-input") }}
                         </div>
                         <div class="form-group">
-                            <label for="email-input" class="col-form-label">Email:</label>
-                            <input type="email" class="form-control" id="email-input" name="email" required>
+                            {{ form2.email.label(class="col-form-label") }}
+                            {{ form2.email(class="form-control", id="email-input") }}
                         </div>
                         <div class="form-group">
-                            <label for="uprawnienia-input" class="col-form-label">Uprawnienia:</label>
-                            <select class="form-control" id="uprawnienia-input" name="uprawnienia" required>
-                                <option value="">Wybierz uprawnienia...</option>
-                                <option value="Administrator">Administrator</option>
-                                <option value="Kierownik">Kierownik</option>
-                                <option value="Pracownik">Pracownik</option>
-                            </select>
+                            {{ form2.uprawnienia.label(class="col-form-label") }}
+                            {{ form2.uprawnienia(class="form-control", id="uprawnienia-input") }}
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
@@ -100,43 +98,44 @@
             </div>
         </div>
     </div>
-
     <script>
-        (function ($) {
-            $(document).on('click', '.edit-btn', function () {
-                var id = $(this).data('id');
-                var nazwa = $(this).data('nazwa');
-                var email = $(this).data('email');
-                var uprawnienia = $(this).data('uprawnienia');
-                $('#id-input').val(id);
-                $('#nazwa-input').val(nazwa);
-                $('#email-input').val(email);
-                $('#uprawnienia-input').val(uprawnienia);
-                $('#edit-modal').modal('show');
-            });
+        
+        $(document).on("click", ".edit-btn", function () {
+            var id = $(this).data('id');
+            var nazwa = $(this).data('nazwa');
+            var email = $(this).data('email');
+            var uprawnienia = $(this).data('uprawnienia');
+            $("#id-input").val(id);
+            $("#nazwa-input").val(nazwa);
+            $("#email-input").val(email);
+            $("#uprawnienia-input").val(uprawnienia);
+        });
 
-            $(document).on('submit', '#edit-form', function (e) {
-                e.preventDefault();
-                var form = $(this);
-                var url = form.attr('action');
-                var formData = form.serialize();
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: formData,
-                    success: function (data) {
-                        console.log(data);
-                        $('#edit-modal').modal('hide');
-                        // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
-                    },
-                    error: function (error) {
-                        console.log(error);
-                        // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
-                    }
-                });
-            });
-        })(jQuery);
+        
 
+        //(function ($) {
+        //    $(document).on('submit', '#edit-form', function (e) {
+        //        e.preventDefault();
+        //        var form = $(this);
+        //        var url = form.attr('action');
+        //        var formData = form.serialize();
+        //        $.ajax({
+        //            type: 'POST',
+        //            url: url,
+        //            data: formData,
+        //            success: function (data) {
+        //                console.log(data);
+        //                $('#edit-modal').modal('hide');
+        //                // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
+        //            },
+        //            error: function (error) {
+        //                console.log(error);
+        //                // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
+        //            }
+        //        });
+        //    });
+        //})(jQuery);
     </script>
+
 </div>
 {%endblock%}
