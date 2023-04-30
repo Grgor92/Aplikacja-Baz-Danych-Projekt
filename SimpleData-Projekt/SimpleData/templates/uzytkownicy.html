@@ -1,5 +1,6 @@
-{% extends "layout.html" %}
+﻿{% extends "layout.html" %}
 {%block content%}
+<a href="{{ request.referrer }}" class="btn btn-secondary">Powrót</a>
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}

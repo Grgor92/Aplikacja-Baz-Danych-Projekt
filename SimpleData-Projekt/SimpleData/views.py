@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-from flask import render_template, jsonify, redirect, url_for, flash, session
+from flask import render_template, jsonify, redirect, url_for, flash, session, request
 from SimpleData import app
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
@@ -126,3 +126,6 @@ def magazyn_towar_t():
         user = current_user.nazwa,
         form=form
     )
+
+def powrot():
+    return redirect(request.referrer or url_for('home'))
