@@ -2,7 +2,7 @@
 from flask import render_template, jsonify, redirect, url_for, flash, session, request
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users2 # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Users
 from sqlalchemy import inspect
@@ -108,7 +108,12 @@ def kontrahenci_t():
 @login_required
 def uzytkownicy_t():
     form = uzytkownicy()
-    form2 = Users2()
+    form2 = Users_zmiana()
+    if form2.validate_on_submit():
+        if form2.imie.data == form.nazwa.data:
+            flash('Niezmienione dane', 'danger')
+        else:
+            flash('Zaktualizowano użytkownika', 'success')
     return render_template(
         "uzytkownicy.html",
         title = "SimpleData",
@@ -132,15 +137,15 @@ def magazyn_towar_t():
 def powrot():
     return redirect(request.referrer or url_for('home'))
 
-@app.route('/edit', methods=['POST'])
-def edit_user():
-    # kod do aktualizacji rekordu w bazie danych
-    # pobierz dane z formularza
-    id = request.form.get('id')
-    nazwa = request.form.get('nazwa')
-    email = request.form.get('email')
-    uprawnienia = request.form.get('uprawnienia')
-    # zaktualizuj rekord w bazie danych
-    # wyślij komunikat o sukcesie lub błędzie
-    flash('Zaktualizowano użytkownika', 'success')
-    return redirect(url_for('uzytkownicy_t'))
+#@app.route('/edit', methods=['POST'])
+#def edit_user():
+#    # kod do aktualizacji rekordu w bazie danych
+#    # pobierz dane z formularza
+#    id = request.form.get('id')
+#    nazwa = request.form.get('nazwa')
+#    email = request.form.get('email')
+#    uprawnienia = request.form.get('uprawnienia')
+#    # zaktualizuj rekord w bazie danych
+#    # wyślij komunikat o sukcesie lub błędzie
+    
+#    return redirect(url_for('uzytkownicy_t'))

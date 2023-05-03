@@ -46,7 +46,7 @@ class uzytkownicy(FlaskForm):
     imie = StringField('Imie')
     email = StringField('Email')
     haslo = StringField('Hasło')
-    typ = SelectField('Typ', choices=[('', 'Wybierz typ'), ('adm', 'Administrator'), ('ki', 'Kierownik'), ('pr', 'Pracownik')])
+    typ = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')])
     submit = SubmitField('Wyszukaj')
 
 class magazyn_towar(FlaskForm):
@@ -54,9 +54,9 @@ class magazyn_towar(FlaskForm):
     id_towaru = IntegerField('Id towaru')
     submit = SubmitField('Wyszukaj')
 
-class Users2(FlaskForm):
-    nazwa = StringField('Imie', validators=[DataRequired()])
+class Users_zmiana(FlaskForm):
+    imie = StringField('Imie')
     email = StringField('Email', validators=[DataRequired(), Email()])
-    haslo = StringField('Hasło')
-    uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('adm', 'Administrator'), ('ki', 'Kierownik'), ('pr', 'Pracownik')])
-    submit = SubmitField('Wyszukaj')
+    haslo = PasswordField('Hasło', validators=[DataRequired(),])
+    uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')])
+    submit = SubmitField('Zmień')
