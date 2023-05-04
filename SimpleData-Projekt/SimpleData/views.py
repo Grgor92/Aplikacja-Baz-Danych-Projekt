@@ -1,10 +1,11 @@
 ﻿# -*- coding: utf-8 -*-
+from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session
 from SimpleData import app
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
-from .tabele import Users
+from .tabele import Uzytkownicy
 from sqlalchemy import inspect
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
@@ -13,10 +14,10 @@ from flask_login import login_user, logout_user, login_required, current_user, f
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
-    #db.drop_all()
-    if not inspector.has_table('Users'):
+    db.drop_all()
+    if not inspector.has_table('Uzytkownicy'):
         db.create_all()
-    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo', uprawnienia='Kierownik')
+    new_product = Uzytkownicy(id_uzytkownika=2, imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
     db.session.add(new_product)
     db.session.commit()
         
@@ -48,7 +49,7 @@ def login():
         return redirect(url_for('home'))
     else:
         if form.validate_on_submit():   
-            user = Users.query.filter_by(email=form.email.data).first()
+            user = Uzytkownicy.query.filter_by(email=form.email.data).first()
             if user and user.haslo == form.haslo.data:
                 login_user(user)
                 flash('Udało się zalogować', 'success')
