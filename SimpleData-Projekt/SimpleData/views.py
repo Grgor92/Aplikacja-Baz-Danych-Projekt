@@ -16,11 +16,11 @@ with app.app_context():
     #db.drop_all()
     if not inspector.has_table('Users'):
         db.create_all()
-    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo', uprawnienia='Kierownik')
+    new_product = Users(nazwa='admin2', email='sd@admin.com', haslo='haslo', uprawnienia='Kierownik')
     db.session.add(new_product)
     db.session.commit()
-        
-@app.route('/api/time', ) # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
+
+@app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
     now = datetime.now()  #pobieramy obecny czas z systemu
     formatted_now = now.strftime("%A, %d %B, %Y %H:%M") #ustalamy w jakim formacie będzie wyświetlany czas
@@ -35,6 +35,7 @@ def home():
         title = "SimpleData",    #taka zmienna którą możemy wyświetlić na stronie
         user=user
     )
+
 @app.route("/logout")
 @login_required
 def logout():
@@ -110,18 +111,25 @@ def uzytkownicy_t():
     form = uzytkownicy()
     form2 = Users_zmiana()
     if form2.validate_on_submit():
-        if form2.imie.data == form.nazwa.data:
-            flash('Niezmienione dane', 'danger')
-        else:
+        user = Users.query.get(form2.id.data)
+        if user:
+            user.imie = form2.imie.data
+            user.email = form2.email.data
+            user.uprawnienia = form2.uprawnienia.data
+            db.session.commit()
             flash('Zaktualizowano użytkownika', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Nie można znaleźć użytkownika', 'danger')
+
     return render_template(
-        "uzytkownicy.html",
-        title = "SimpleData",
-        user = current_user.nazwa,
-        form=form,
-        form2=form2,
-        values=Users.query.all()
-    )
+            "uzytkownicy.html",
+            title = "SimpleData",
+            user = current_user.nazwa,
+            form=form,
+            form2=form2,
+            values=Users.query.all()
+        )
 
 @app.route('/magazyn_towar', methods=['GET', 'POST'])
 @login_required
@@ -136,6 +144,17 @@ def magazyn_towar_t():
 
 def powrot():
     return redirect(request.referrer or url_for('home'))
+
+@app.route('/edit_user', methods=['POST'])
+def edit_user():
+    user_id = request.form['id']
+    user = Users.query.filter_by(id=user_id).first()
+    user.nazwa = request.form['imie']
+    user.email = request.form['email']
+    user.uprawnienia = request.form['uprawnienia']
+    db.session.commit()
+    flash('Zaktualizowano użytkownika', 'success')
+    return redirect(url_for('uzytkownicy_t'))
 
 #@app.route('/edit', methods=['POST'])
 #def edit_user():

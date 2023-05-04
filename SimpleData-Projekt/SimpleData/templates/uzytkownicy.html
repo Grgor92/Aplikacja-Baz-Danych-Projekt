@@ -8,25 +8,25 @@
             <div class="form-inline">
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.imie.id }}" class="form-control-label">{{ form.imie.label }}</label>
+                        <label class="form-control-label">{{ form.imie.label }}</label>
                     </div>
                     {{ form.imie(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.email.id }}" class="form-control-label">{{ form.email.label }}</label>
+                        <label class="form-control-label">{{ form.email.label }}</label>
                     </div>
                     {{ form.email(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.haslo.id }}" class="form-control-label">{{ form.haslo.label }}</label>
+                        <label class="form-control-label">{{ form.haslo.label }}</label>
                     </div>
                     {{ form.haslo(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.typ.id }}" class="form-control-label">{{ form.typ.label }}</label>
+                        <label class="form-control-label">{{ form.typ.label class="form-control-label"}}</label>
                     </div>
                     {{ form.typ(class="form-control ml-2") }}
                 </div>
@@ -65,7 +65,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form id="edit-form" method="POST" action="">
-                    {{ form2.hidden_tag() }}
+                    
                     <div class="modal-header">
                         <h5 class="modal-title" id="edit-modal-label">Edycja użytkownika</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
