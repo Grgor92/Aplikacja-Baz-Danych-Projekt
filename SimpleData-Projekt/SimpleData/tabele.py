@@ -51,7 +51,7 @@ class Uzytkownicy(db.Model, UserMixin):
     imie = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     haslo = db.Column(db.String(32), nullable=False)
-    typ = db.Column(db.String(30), nullable=False)
+    typ = db.Column(db.String(30), nullable=False)   
 
     
 
