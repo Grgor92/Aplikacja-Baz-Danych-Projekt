@@ -15,7 +15,7 @@ from sqlalchemy.orm import backref
 # deklaracja funkcji do pobierania użytkownika po jego id unique=True,
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    return Uzytkownicy.query.get(int(user_id))
 
 class Kontrahenci(db.Model):
     NIP = db.Column(db.String(15), primary_key=True, unique=True)
@@ -47,17 +47,13 @@ class Dokumenty(db.Model):
 
 
 class Uzytkownicy(db.Model, UserMixin):
-    id_uzytkownika = db.Column(db.Integer, primary_key=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     imie = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     haslo = db.Column(db.String(32), nullable=False)
-    typ = db.Column(db.String(30), nullable=False
+    typ = db.Column(db.String(30), nullable=False)
 
-    def __init__(self, numer_dokumentu):
-        self.numer_dokumentu = numer_dokumentu
-        
-    def __repr__(self):
-        return "<Numer_dokumentu('%s')>" % self.numer_dokumentu
+    
 
     
 
