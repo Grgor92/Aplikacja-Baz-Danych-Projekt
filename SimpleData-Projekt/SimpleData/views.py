@@ -110,27 +110,42 @@ def kontrahenci_t():
 def uzytkownicy_t():
     form = uzytkownicy()
     form2 = Users_zmiana()
-    if form2.validate_on_submit():
-        user = Users.query.get(form2.id.data)
-        if user:
-            user.imie = form2.imie.data
-            user.email = form2.email.data
-            user.uprawnienia = form2.uprawnienia.data
-            db.session.commit()
-            flash('Zaktualizowano użytkownika', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Nie można znaleźć użytkownika', 'danger')
-
+    values = Users.query.filter_by(uprawnienia='')
+    if form.validate_on_submit():
+        values=Users.query.all()
+    #if form2.validate_on_submit():
+    #    user = Users.query.get(form2.id.data)
+    #    if user:
+    #        user.imie = form2.imie.data
+    #        user.email = form2.email.data
+    #        user.uprawnienia = form2.uprawnienia.data
+    #        db.session.commit()
+    #        flash('Zaktualizowano użytkownika', 'success')
+    #        return redirect(url_for('home'))
+    #    else:
+    #        return redirect(url_for('home'))
+    
     return render_template(
             "uzytkownicy.html",
             title = "SimpleData",
             user = current_user.nazwa,
             form=form,
             form2=form2,
-            values=Users.query.all()
+            values=values
         )
 
+@app.route('/edit_user', methods=['POST'])
+def edit_user():
+    user_id = request.form['id']
+    user = Users.query.filter_by(id=user_id).first()
+    user.nazwa = request.form['imie']
+    user.haslo = request.form['haslo']
+    user.email = request.form['email']
+    user.uprawnienia = request.form['uprawnienia']
+    db.session.commit()
+    flash('Zaktualizowano użytkownika', 'success')
+    return redirect(url_for('uzytkownicy_t'))
+    
 @app.route('/magazyn_towar', methods=['GET', 'POST'])
 @login_required
 def magazyn_towar_t():
@@ -145,16 +160,7 @@ def magazyn_towar_t():
 def powrot():
     return redirect(request.referrer or url_for('home'))
 
-@app.route('/edit_user', methods=['POST'])
-def edit_user():
-    user_id = request.form['id']
-    user = Users.query.filter_by(id=user_id).first()
-    user.nazwa = request.form['imie']
-    user.email = request.form['email']
-    user.uprawnienia = request.form['uprawnienia']
-    db.session.commit()
-    flash('Zaktualizowano użytkownika', 'success')
-    return redirect(url_for('uzytkownicy_t'))
+
 
 #@app.route('/edit', methods=['POST'])
 #def edit_user():
