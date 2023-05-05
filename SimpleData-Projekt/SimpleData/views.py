@@ -110,7 +110,7 @@ def kontrahenci_t():
 def uzytkownicy_t():
     form = uzytkownicy()
     form2 = Users_zmiana()
-    values = Users.query.filter_by(uprawnienia='')
+    values = Users.query.filter_by(uprawnienia='').all()
     if form.validate_on_submit():
         values=Users.query.all()
     #if form2.validate_on_submit():
