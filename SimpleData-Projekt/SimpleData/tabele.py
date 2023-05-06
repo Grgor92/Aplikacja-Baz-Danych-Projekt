@@ -85,15 +85,19 @@ class Dokumenty_Historyczne(db.Model):
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
         return "<numer_dokumentu('%s')>" % self.numer_dokumentu % "<data_wystawienia('%s')>" % self.data_wystawienia % "<NIP_kontrahenta('%s')>" % self.NIP_kontrahenta
-
-
-    
+#relacja wiele  do wielu.
+Towary_magazyn_towar = db.Table('Towary_magazyn_towar',
+    db.Column('Towary_id_towaru', db.Integer, db.ForeignKey('Towary.id.towaru')),
+    db.Column('magazyn_towar_id_towaru', db.Integer, db.ForeignKey('towary.magazyn.id.towaru')),
+    )
 class Towary(db.Model):
     #id_towaru - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli towary_dokument przez Towary.
     id_towaru = db.relationship('towary_dokument', backref='owner'), db.Column(db.Integer, primary_key=True)
     kod_towaru = db.Column(db.Integer, nullable=False)
     rodzaj = db.Column(db.String(32), nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    #relacja wiele do wielu
+    following = db.relationship('db.magazyn_towar', secondary=db.Towary_magazyn_towar, backref='followers')
 
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
