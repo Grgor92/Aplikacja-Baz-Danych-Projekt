@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
+from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from .tabele import Users
 
 class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=6, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawności jakie ma zawierać pole
@@ -46,10 +47,30 @@ class uzytkownicy(FlaskForm):
     imie = StringField('Imie')
     email = StringField('Email')
     haslo = StringField('Hasło')
-    typ = SelectField('Typ', choices=[('', 'Wybierz typ'), ('adm', 'Administrator'), ('ki', 'Kierownik'), ('pr', 'Pracownik')])
+    typ = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')])
     submit = SubmitField('Wyszukaj')
 
+    
+class Users_zmiana(FlaskForm):
+    imie = StringField('Imie', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    haslo = PasswordField('Hasło', validators=[DataRequired()])
+    uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')], validators=[DataRequired()])
+    submit = SubmitField('Zapisz zmiany')
+    
+    def validate_email(self, email):
+        user = Users.query.filter_by(email=email.data).first()
+        if user and user.id != self.id.data:
+            raise ValidationError('Ten adres email jest już w użyciu.')
 class magazyn_towar(FlaskForm):
     nr_sekcji = StringField('Numer sekcji')
     id_towaru = IntegerField('Id towaru')
     submit = SubmitField('Wyszukaj')
+    
+class moje_ustawienia(FlaskForm):
+    username = StringField('Nazwa', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Hasło', validators=[DataRequired()])
+    password2 = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Zapisz')
+

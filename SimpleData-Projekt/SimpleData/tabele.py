@@ -11,8 +11,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import backref
+# deklaracja funkcji do pobierania uzytkownika po jego id unique=True,
 
-# deklaracja funkcji do pobierania użytkownika po jego id unique=True,
 @login_manager.user_loader
 def load_user(user_id):
     return Uzytkownicy.query.get(int(user_id))
@@ -137,10 +137,3 @@ class Magazyn(db.Model):
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
         return "<nr_sekcji('s%')>" % self.nr_sekcji % "<pojemnosc_sekcji('s%')>" % self.pojemnosc_sekcji
-
-
-
-# deklaracja funkcji do pobierania uzytkownika po jego id unique=True,
-@login_manager.user_loader
-def load_user(user_id):
-    return Uzytkownicy.query.get(int(user_id))

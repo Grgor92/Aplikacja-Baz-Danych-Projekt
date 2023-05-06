@@ -1,5 +1,6 @@
-{% extends "layout.html" %}
+﻿{% extends "layout.html" %}
 {%block content%}
+<a href="{{ request.referrer }}" class="btn btn-secondary">Powrót</a>
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
@@ -7,25 +8,25 @@
             <div class="form-inline">
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.imie.id }}" class="form-control-label">{{ form.imie.label }}</label>
+                        <label class="form-control-label">{{ form.imie.label }}</label>
                     </div>
                     {{ form.imie(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.email.id }}" class="form-control-label">{{ form.email.label }}</label>
+                        <label class="form-control-label">{{ form.email.label }}</label>
                     </div>
                     {{ form.email(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.haslo.id }}" class="form-control-label">{{ form.haslo.label }}</label>
+                        <label class="form-control-label">{{ form.haslo.label }}</label>
                     </div>
                     {{ form.haslo(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.typ.id }}" class="form-control-label">{{ form.typ.label }}</label>
+                        <label class="form-control-label">{{ form.typ.label}}</label>
                     </div>
                     {{ form.typ(class="form-control ml-2") }}
                 </div>
@@ -36,10 +37,129 @@
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-    <p></p>
-    <p></p>
-    {% for item in values %}
-    <p> Nazwa: {{item.nazwa}} email: {{item.email}} Uprawnienia: {{item.uprawnienia}}</p>
-    {% endfor %}
+    <table class="table table-striped align-items-center">
+        <thead>
+            <tr>
+                <th scope="col">Imie</th>
+                <th scope="col">Email</th>
+                <th scope="col">Uprawnienia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in values %}
+            <tr>
+                <td>{{ item.nazwa }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.uprawnienia }}</td>
+                <td>
+                    {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
+                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.nazwa }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.uprawnienia }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="edit-form" method="POST" action="{{url_for('edit_user')}}">
+                    
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="edit-modal-label">Edycja użytkownika</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <input type="hidden" id="id-input" name="id" value="">
+                        <div class="form-group">
+                            {{ form2.imie.label(class="col-form-label") }}
+                            {{ form2.imie(class="form-control", id="nazwa-input") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form2.email.label(class="col-form-label") }}
+                            {{ form2.email(class="form-control", id="email-input") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form2.haslo.label(class="col-form-label") }}
+                            <div class="input-group">
+                                {{ form2.haslo(class="form-control", id="haslo-input") }}
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary reveal-btn" type="button">
+                                        <i class="fa fa-eye"></i>Pokaż haslo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form2.uprawnienia.label(class="col-form-label") }}
+                            {{ form2.uprawnienia(class="form-control", id="uprawnienia-input") }}
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        $(document).on("click", ".edit-btn", function () {
+            var id = $(this).data('id');
+            var nazwa = $(this).data('nazwa');
+            var email = $(this).data('email');
+            var haslo = $(this).data('haslo');
+            var uprawnienia = $(this).data('uprawnienia');
+            $("#id-input").val(id);
+            $("#nazwa-input").val(nazwa);
+            $("#haslo-input").val(haslo);
+            $("#email-input").val(email);
+            $("#uprawnienia-input").val(uprawnienia);
+        });
+
+        $(document).on("click", ".reveal-btn", function () {
+            var input = $(this).closest(".input-group").find("input");
+            var icon = $(this).find("i");
+            if (input.attr("type") === "password") {
+                input.attr("type", "text");
+                icon.removeClass("fa-eye");
+                icon.addClass("fa-eye-slash");
+            } else {
+                input.attr("type", "password");
+                icon.removeClass("fa-eye-slash");
+                icon.addClass("fa-eye");
+            }
+        });
+
+        //(function ($) {
+        //    $(document).on('submit', '#edit-form', function (e) {
+        //        e.preventDefault();
+        //        var form = $(this);
+        //        var url = form.attr('action');
+        //        var formData = form.serialize();
+        //        $.ajax({
+        //            type: 'POST',
+        //            url: url,
+        //            data: formData,
+        //            success: function (data) {
+        //                console.log(data);
+        //                $('#edit-modal').modal('hide');
+        //                // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
+        //            },
+        //            error: function (error) {
+        //                console.log(error);
+        //                // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
+        //            }
+        //        });
+        //    });
+        //})(jQuery);
+    </script>
+
 </div>
 {%endblock%}
