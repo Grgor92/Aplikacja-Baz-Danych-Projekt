@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from .tabele import Users
@@ -65,4 +66,11 @@ class magazyn_towar(FlaskForm):
     nr_sekcji = StringField('Numer sekcji')
     id_towaru = IntegerField('Id towaru')
     submit = SubmitField('Wyszukaj')
+    
+class moje_ustawienia(FlaskForm):
+    username = StringField('Nazwa', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Hasło', validators=[DataRequired()])
+    password2 = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Zapisz')
 
