@@ -6,7 +6,7 @@ from datetime import datetime
 from SimpleData import db, login_manager
 from flask_login import UserMixin
 
-# deklaracja funkcji do pobierania u¿ytkownika po jego id unique=True,
+# deklaracja funkcji do pobierania uzytkownika po jego id unique=True,
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))

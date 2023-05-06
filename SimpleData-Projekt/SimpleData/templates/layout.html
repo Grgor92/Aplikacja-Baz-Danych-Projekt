@@ -38,17 +38,17 @@
 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% if current_user.is_authenticated %}
-                                {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
-                                    <a class="dropdown-item" href="{{ url_for('rejestr') }}">Rejestracja</a>
-                                {% endif %}
-                            <a class="dropdown-item" href="{{url_for('przeszukiwanie')}}">Podsumowanie <span class="sr-only">(current)</span></a>
-                            <a class="dropdown-item" href="{{url_for('kontrahenci_t')}}">Kontrahenci <span class="sr-only">(current)</span></a>
-                            <a class="dropdown-item" href="{{url_for('magazyn_towar_t')}}">Magazyn <span class="sr-only">(current)</span></a>
-                            <a class="dropdown-item" href="{{url_for('uzytkownicy_t')}}">Użytkownicy <span class="sr-only">(current)</span></a>
-                            <a class="dropdown-item" href="{{url_for('dokumenty_hist')}}">Dokumenty Historyczne <span class="sr-only">(current)</span></a>
+                        {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
+                        <a class="dropdown-item" href="{{ url_for('rejestr') }}">Rejestracja</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="{{url_for('przeszukiwanie')}}">Podsumowanie <span class="sr-only">(current)</span></a>
+                        <a class="dropdown-item" href="{{url_for('kontrahenci_t')}}">Kontrahenci <span class="sr-only">(current)</span></a>
+                        <a class="dropdown-item" href="{{url_for('magazyn_towar_t')}}">Magazyn <span class="sr-only">(current)</span></a>
+                        <a class="dropdown-item" href="{{url_for('uzytkownicy_t')}}">Użytkownicy <span class="sr-only">(current)</span></a>
+                        <a class="dropdown-item" href="{{url_for('dokumenty_hist')}}">Dokumenty Historyczne <span class="sr-only">(current)</span></a>
 
-                            {% else %}
-                                <a class="dropdown-item" href="{{ url_for('login') }}">Logowanie</a>
+                        {% else %}
+                        <a class="dropdown-item" href="{{ url_for('login') }}">Logowanie</a>
                         {% endif %}
 
                         <div class="dropdown-divider"></div>
@@ -60,21 +60,21 @@
                 </li>
                 {% if current_user.is_authenticated %}
 
-                    <li class="nav-item active">
-                        <a class="nav-link" href="">{{current_user.nazwa}} <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{url_for('logout')}}">Wyloguj <span class="sr-only">(current)</span></a>
-                    </li>
-                
+                <li class="nav-item active">
+                    <a class="nav-link" href="">{{current_user.nazwa}} <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{url_for('logout')}}">Wyloguj <span class="sr-only">(current)</span></a>
+                </li>
+
                 {% endif %}
-                
+
             </ul>
         </div>
     </nav>
     <div class="body-content">
         <div class="container">
-            
+
             {% block content %}
             {% endblock %}
 
