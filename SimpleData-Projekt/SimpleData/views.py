@@ -1,8 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
-from flask import render_template, jsonify, redirect, url_for, flash, session
+from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, moje_ustawienia # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Users
 from sqlalchemy import inspect
@@ -129,12 +129,13 @@ def magazyn_towar_t():
 
 @app.route('/ustawienia', methods=['GET', 'POST'])
 def ustawienia():
+    form = moje_ustawienia()
     if request.method == 'POST':
-        username = request.form['Nazwa']
+        nazwa = request.form['Nazwa']
         password = request.form['Hasło']
         password2 = request.form['Powtórz hasło']
         
-        if not username or not password or not password2:
+        if not nazwa or not password or not password2:
             # błędy walidacji
             pass
         
@@ -142,11 +143,21 @@ def ustawienia():
             # błędy walidacji
             pass
         
-        current_user.username = username
+        current_user.nazwa = username
         current_user.set_password(password)
         db.session.commit()
         
         # przekierowanie użytkownika na stronę główną ustwaień
         pass
     else:
-        return render_template('ustawienia_kont.html')
+        return render_template(
+            'ustawienia_kont.html',
+            form=form
+        )
+
+@app.route('/ustawienia')
+@login_required
+def ustawieniakont():
+    username = current_user.nazwa
+    email = current_user.email
+    return render_template('ustawienia_kont.html', nazwa=username, email=email)

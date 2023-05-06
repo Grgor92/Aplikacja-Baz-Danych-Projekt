@@ -1,49 +1,57 @@
-{% extends "layout.html" %}
+ï»¿{% extends "layout.html" %}
 {%block content%}
-div class="col-md-6" style="margin:auto">
+<div class="col-md-6" style="margin:auto">
 
-<div class="content-section">
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Zaloguj</legend>
-            <div class="form-group">
-                {{ form.email.label(class="form-control-label") }}
-                {% if form.email.errors %}
-                {{ form.email(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
+
+    {% if current_user.is_authenticated %}
+    <div class="content-section">
+        <h1 class="text-center">Witaj {{ username }}!</h1>
+        <p class="lead text-center">TwÃ³j aktualny adres email: {{ email }}</p>
+    </div>
+
+    <div class="content-section>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Moje ustawienia</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {{ form.username(class="form-control {% if form.username.errors %}is-invalid{% endif %}") }}
+                    {% for error in form.username.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {{ form.email(class="form-control {% if form.email.errors %}is-invalid{% endif %}") }}
                     {% for error in form.email.errors %}
-                    <span>{{ error }}</span>
+                    <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
-                {% else %}
-                {{ form.email(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {{ form.password(class="form-control {% if form.password.errors %}is-invalid{% endif %}") }}
+                    {% for error in form.password.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.password2.label(class="form-control-label") }}
+                    {{ form.password2(class="form-control {% if form.password2.errors %}is-invalid{% endif %}") }}
+                    {% for error in form.password2.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </fieldset>
             <div class="form-group">
-                {{ form.haslo.label(class="form-control-label") }}
-                {% if form.haslo.errors %}
-                {{ form.haslo(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.haslo.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.haslo(class="form-control form-control-lg") }}
-                {% endif %}
+                {{ form.submit(class="btn btn-outline-info") }}
             </div>
+        </form>
+    </div>
 
-        </fieldset>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
-        </div>
 
-    </form>
-</div>
-<div class="border-top pt-3">
-    <small class="text-muted">
-        Zmieñ dane <a class="ml-2" href="{{ url_for('rejestr') }}">Zmieñ dane</a>
-    </small>
+
+    {% endif %}
+
 
     {%endblock%}

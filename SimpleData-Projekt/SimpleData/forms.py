@@ -55,13 +55,9 @@ class magazyn_towar(FlaskForm):
     id_towaru = IntegerField('Id towaru')
     submit = SubmitField('Wyszukaj')
 
-#class ustawienia(db.Model, UserMixin):
-#    id = db.Column(db.Integer, primary_key=True)
-#    username = db.Column(db.String(64), index=True, unique=True)
-#    password_hash = db.Column(db.String(128))
-    
-#    def ustaw_haslo(self, password):
-#        self.password_hash = generate_password_hash(password)
-        
-#    def sprawdz_haslo(self, password):
-#        return check_password_hash(self.password_hash, password)
+class moje_ustawienia(FlaskForm):
+    username = StringField('Nazwa', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Hasło', validators=[DataRequired()])
+    password2 = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Zapisz')
