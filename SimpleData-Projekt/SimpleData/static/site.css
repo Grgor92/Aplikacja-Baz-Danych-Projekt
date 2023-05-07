@@ -32,6 +32,7 @@
 .body-content {
     margin: 55px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
 }
 
 footer {
@@ -45,8 +46,12 @@ ul.navbar-nav {
 body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-color: #d2d4d3;
 }
-
+.container {
+    background-color: #f7faf8;
+    padding:60px;
+}
 
 .body-content {
     padding-left: 25px;
@@ -83,4 +88,7 @@ input[type="checkbox"].input-validation-error {
 
 .validation-summary-valid {
     display: none;
+}
+.form-inline .form-group label {
+    text-align: center;
 }

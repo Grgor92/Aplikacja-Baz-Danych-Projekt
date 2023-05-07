@@ -46,18 +46,26 @@
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\dokumenty_historyczne.html" />
     <Content Include="SimpleData\templates\home.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\kontrahenci.html" />
     <Content Include="SimpleData\templates\layout.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\login.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\magazyn_towar.html" />
+    <Content Include="SimpleData\templates\przeszukiwanie.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\ustawienia_kont.html" />
+    <Content Include="SimpleData\templates\uzytkownicy.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SimpleData\" />
@@ -74,6 +82,9 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.9" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
