@@ -158,40 +158,40 @@ def magazyn_towar_t():
     )
 
 
-@app.route('/ustawienia', methods=['GET', 'POST'])
-def ustawienia():
-    form = moje_ustawienia()
-    if request.method == 'POST':
-        nazwa = request.form['Nazwa']
-        password = request.form['Hasło']
-        password2 = request.form['Powtórz hasło']
+#@app.route('/ustawienia', methods=['GET', 'POST'])
+#def ustawienia():
+#    form = moje_ustawienia()
+#    if request.method == 'POST':
+#        nazwa = request.form['Nazwa']
+#        password = request.form['Hasło']
+#        password2 = request.form['Powtórz hasło']
         
-        if not nazwa or not password or not password2:
-            # błędy walidacji
-            pass
+#        if not nazwa or not password or not password2:
+#            # błędy walidacji
+#            pass
         
-        if password != password2:
-            # błędy walidacji
-            pass
+#        if password != password2:
+#            # błędy walidacji
+#            pass
         
-        current_user.nazwa = username
-        current_user.set_password(password)
-        db.session.commit()
+#        current_user.nazwa = username
+#        current_user.set_password(password)
+#        db.session.commit()
         
-        # przekierowanie użytkownika na stronę główną ustwaień
-        pass
-    else:
-        return render_template(
-            'ustawienia_kont.html',
-            form=form
-        )
+#        # przekierowanie użytkownika na stronę główną ustwaień
+#        pass
+#    else:
+#        return render_template(
+#            'ustawienia_kont.html',
+#            form=form
+#        )
 
 @app.route('/ustawienia')
 @login_required
 def ustawieniakont():
-    username = current_user.nazwa
-    email = current_user.email
-    return render_template('ustawienia_kont.html', nazwa=username, email=email)
+    
+    form = moje_ustawienia()
+    return render_template('ustawienia_kont.html', form = form)
 
 def powrot():
     return redirect(request.referrer or url_for('home'))

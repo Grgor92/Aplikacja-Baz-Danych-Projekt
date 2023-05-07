@@ -5,11 +5,11 @@
 
     {% if current_user.is_authenticated %}
     <div class="content-section">
-        <h1 class="text-center">Witaj {{ username }}!</h1>
-        <p class="lead text-center">Twój aktualny adres email: {{ email }}</p>
+        <h1 class="text-center">Witaj {{ current_user.nazwa }}!</h1>
+        <p class="lead text-center">Twój aktualny adres email: {{ current_user.email }}</p>
     </div>
 
-    <div class="content-section>
+    <div class="content-section">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
@@ -49,7 +49,7 @@
         </form>
     </div>
 
-
+</div>
 
     {% endif %}
 
