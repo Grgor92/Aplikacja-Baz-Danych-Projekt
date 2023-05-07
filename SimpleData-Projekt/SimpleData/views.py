@@ -9,7 +9,6 @@ from .tabele import Uzytkownicy
 from sqlalchemy import inspect
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
-
 #wewnątrz aplikacji 
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
@@ -111,11 +110,11 @@ def kontrahenci_t():
 def uzytkownicy_t():
     form = uzytkownicy()
     form2 = Users_zmiana()
-    values = Users.query.filter_by(uprawnienia='').all()
+    values = Uzytkownicy.query.filter_by(typ='').all()
     if form.validate_on_submit():
-        values=Users.query.all()
+        values=Uzytkownicy.query.all()
     #if form2.validate_on_submit():
-    #    user = Users.query.get(form2.id.data)
+    #    user = Uzytkownicy.query.get(form2.id.data)
     #    if user:
     #        user.imie = form2.imie.data
     #        user.email = form2.email.data
@@ -139,7 +138,7 @@ def uzytkownicy_t():
 @app.route('/edit_user', methods=['POST'])
 def edit_user():
     user_id = request.form['id']
-    user = Users.query.filter_by(id=user_id).first()
+    user = Uzytkownicy.query.filter_by(id=user_id).first()
     user.nazwa = request.form['imie']
     user.haslo = request.form['haslo']
     user.email = request.form['email']

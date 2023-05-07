@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from .tabele import Users
+from .tabele import Uzytkownicy
 
 class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=6, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawności jakie ma zawierać pole
@@ -59,7 +59,7 @@ class Users_zmiana(FlaskForm):
     submit = SubmitField('Zapisz zmiany')
     
     def validate_email(self, email):
-        user = Users.query.filter_by(email=email.data).first()
+        user = Uzytkownicy.query.filter_by(email=email.data).first()
         if user and user.id != self.id.data:
             raise ValidationError('Ten adres email jest już w użyciu.')
 class magazyn_towar(FlaskForm):
