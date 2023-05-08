@@ -53,12 +53,12 @@
             <tr>
                 {% endif %}
 
-                <td>{{ item.nazwa }}</td>
+                <td>{{ item.imie }}</td>
                 <td>{{ item.email }}</td>
-                <td>{{ item.uprawnienia }}</td>
+                <td>{{ item.typ }}</td>
                 <td>
-                    {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
-                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.nazwa }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.uprawnienia }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
+                    {% if current_user.is_authenticated and current_user.typ == 'Kierownik' %}
+                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
                     {% endif %}
                 </td>
             </tr>
