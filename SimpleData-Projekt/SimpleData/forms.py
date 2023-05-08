@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField, Unique #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from .tabele import Users
 
@@ -52,7 +52,7 @@ class uzytkownicy(FlaskForm):
     
 class Users_zmiana(FlaskForm):
     imie = StringField('Imie', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email(), Unique(Uzyt, User.email)])
     haslo = PasswordField('Hasło', validators=[DataRequired()])
     uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zapisz zmiany')

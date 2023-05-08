@@ -105,6 +105,7 @@ def kontrahenci_t():
         user = current_user.nazwa,
         form=form
     )
+
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
 def uzytkownicy_t():
@@ -134,7 +135,7 @@ def uzytkownicy_t():
             values=values
         )
 
-@app.route('/edit_user', methods=['POST'])
+@app.route('/edit_user', methods=['GET', 'POST'])
 def edit_user():
     user_id = request.form['id']
     user = Users.query.filter_by(id=user_id).first()
@@ -143,9 +144,13 @@ def edit_user():
     user.email = request.form['email']
     user.uprawnienia = request.form['uprawnienia']
     db.session.commit()
-    flash('Zaktualizowano użytkownika', 'success')
-    return redirect(url_for('uzytkownicy_t'))
     
+    if current_user.id == int(user_id):
+        flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+        return redirect(url_for('logout'))
+    else:
+        return redirect(url_for('uzytkownicy_t'))
+
 @app.route('/magazyn_towar', methods=['GET', 'POST'])
 @login_required
 def magazyn_towar_t():
