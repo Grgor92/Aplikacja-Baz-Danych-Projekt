@@ -50,30 +50,6 @@
     </form>
 </div>
 
-<table class="table table-striped align-items-center">
-    <thead>
-        <tr>
-            <th scope="col">NIP</th>
-            <th scope="col">Nazwa firmy</th>
-            <th scope="col">Miasto</th>
-            <th scope="col">Telefon</th>
-            <th scope="col">Ulica</th>
-            <th scope="col">Numer budynku</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in values %}
-        <tr>
-            <td>{{ item.nip }}</td>
-            <td>{{ item.nazwa_firmy }}</td>
-            <td>{{ item.maisto }}</td>
-            <td>{{ item.telefon}}</td>
-            <td>{{ item.ulica }}</td>
-            <td>{{ item.numer}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 
 <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -123,6 +99,42 @@
         </div>
     </div>
 </div>
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NIP</th>
+                <th>Nazwa firmy</th>
+                <th>Miasto</th>
+                <th>Numer telefonu</th>
+                <th>Ulica</th>
+                <th>Numer</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.nip }}</td>
+                <td>{{ item.nazwa_firmy }}</td>
+                <td>{{ item.miasto }}</td>
+                <td>{{ item.nr_telefonu }}</td>
+                <td>{{ item.ulica }}</td>
+                <td>{{ item.numer }}</td>
+                <td>
+                    <button class="btn btn-primary edit-btn" data-id="{{ item.id }}" data-nip="{{ item.nip }}" data-nazwa_firmy="{{ item.nazwa_firmy }}" data-miasto="{{ item.miasto }}" data-nr_telefonu="{{ item.nr_telefonu }}" data-ulica="{{ item.ulica }}" data-numer="{{ item.numer }}">Edytuj</button>
+                    <button class="btn btn-danger delete-btn" data-id="{{ item.id }}">Usuń</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
 <button id="add-record-btn">Dodaj kontrahenta</button>
 
 
@@ -190,9 +202,6 @@
             popup.style.display = "none";
         }
     }
-
-
-
 
 </script>
 
