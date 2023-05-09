@@ -147,7 +147,7 @@ def ustawienia():
         current_user.set_password(password)
         db.session.commit()
         
-        # przekierowanie użytkownika na stronę główną ustwaień
+        # przekierowanie użytkownika na stronę główną ustawaień
         pass
     else:
         return render_template(
@@ -155,9 +155,9 @@ def ustawienia():
             form=form
         )
 
-@app.route('/ustawienia')
+@app.route('/ustawienia', methods=['GET', 'POST'])
 @login_required
-def ustawieniakont():
-    username = current_user.nazwa
-    email = current_user.email
-    return render_template('ustawienia_kont.html', nazwa=username, email=email)
+def ustawienia_konta():
+    nazwa_uzytkownika = Users.nazwa
+    email_uzytkownika = Users.email
+    return render_template('ustawienia_kont.html', nazwa=nazwa_uzytkownika, email=email_uzytkownika)

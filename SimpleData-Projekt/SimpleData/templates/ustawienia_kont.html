@@ -5,8 +5,9 @@
 
     {% if current_user.is_authenticated %}
     <div class="content-section">
-        <h1 class="text-center">Witaj {{ username }}!</h1>
-        <p class="lead text-center">Twój aktualny adres email: {{ email }}</p>
+        <h1 class="mt-4 text center">Ustawienia konta</h1>
+        <p class="lead">Nazwa użytkownika: {{ nazwa_uzytkownika }}</p>
+        <p class="lead">Adres email: {{ email_uzytkownika }}</p>
     </div>
 
     <div class="content-section>
