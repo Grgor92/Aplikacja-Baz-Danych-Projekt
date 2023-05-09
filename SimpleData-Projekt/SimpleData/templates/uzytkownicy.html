@@ -159,6 +159,35 @@
         //        });
         //    });
         //})(jQuery);
+
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            // Przygotowanie zapytania SQL do wstawienia nowego rekordu
+            $sql = "INSERT INTO kontrahenci (nip, nazwa_firmy, miasto, nr_telefonu, ulica, numer)
+            VALUES(?, ?, ?, ?, ?, ?)";
+
+            // Przygotowanie i wykonanie zapytania przy użyciu preparowanych instrukcji
+            $stmt = $conn -> prepare($sql);
+            $stmt -> bind_param("ssssss", $nip, $nazwa_firmy, $miasto, $nr_telefonu, $ulica, $numer);
+
+            // Przypisanie wartości z formularza do zmiennych
+            $nip = $_POST["nip"];
+            $nazwa_firmy = $_POST["nazwa_firmy"];
+            $miasto = $_POST["miasto"];
+            $nr_telefonu = $_POST["nr_telefonu"];
+            $ulica = $_POST["ulica"];
+            $numer = $_POST["numer"];
+
+            // Wykonanie zapytania i sprawdzenie czy się udało
+            if ($stmt -> execute()) {
+    echo "Nowy rekord został dodany do bazy danych";
+            } else {
+    echo "Błąd: ".$sql. "<br>".$conn -> error;
+            }
+
+
+
     </script>
 
 </div>

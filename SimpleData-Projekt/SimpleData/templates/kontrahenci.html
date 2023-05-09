@@ -49,4 +49,153 @@
         </div>
     </form>
 </div>
+
+<table class="table table-striped align-items-center">
+    <thead>
+        <tr>
+            <th scope="col">NIP</th>
+            <th scope="col">Nazwa firmy</th>
+            <th scope="col">Miasto</th>
+            <th scope="col">Telefon</th>
+            <th scope="col">Ulica</th>
+            <th scope="col">Numer budynku</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in values %}
+        <tr>
+            <td>{{ item.nip }}</td>
+            <td>{{ item.nazwa_firmy }}</td>
+            <td>{{ item.maisto }}</td>
+            <td>{{ item.telefon}}</td>
+            <td>{{ item.ulica }}</td>
+            <td>{{ item.numer}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="edit-form" method="POST">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-modal-label">Edycja kontrahenta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" id="id-input" name="id" value="">
+                    <div class="form-group">
+                        {{ form.nip.label(class="col-form-label") }}
+                        {{ form.nip(class="form-control", id="nip-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.nazwa_firmy.label(class="col-form-label") }}
+                        {{ form.nazwa_firmy(class="form-control", id="nazwa_firmy-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.miasto.label(class="col-form-label") }}
+                        {{ form.miasto(class="form-control", id="miasto-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.nr_telefonu.label(class="col-form-label") }}
+                        {{ form.nr_telefonu(class="form-control", id="nr_telefonu-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.ulica.label(class="col-form-label") }}
+                        {{ form.ulica(class="form-control", id="ulica-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.numer.label(class="col-form-label") }}
+                        {{ form.numer(class="form-control", id="numer-input") }}
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<button id="add-record-btn">Dodaj kontrahenta</button>
+
+
+<div id="popup" class="popup">
+    <div class="content">
+        <span class="close">&times;</span>
+        <h2>Dodaj rekord</h2>
+        <form action="NAZWA_SKRYPTU.php" method="post">
+            <label for="nip">NIP:</label>
+            <input type="text" id="nip" name="nip" required>
+
+            <label for="nazwa_firmy">Nazwa firmy:</label>
+            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
+
+            <label for="miasto">Miasto:</label>
+            <input type="text" id="miasto" name="miasto" required>
+
+            <label for="nr_telefonu">Numer telefonu:</label>
+            <input type="text" id="nr_telefonu" name="nr_telefonu" required>
+
+            <label for="ulica">Ulica:</label>
+            <input type="text" id="ulica" name="ulica" required>
+
+            <label for="numer">Numer:</label>
+            <input type="text" id="numer" name="numer" required>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+
+    $(document).on("click", ".edit-btn", function () {
+        var nip = $(this).data('nip');
+        var nazwa_firmy = $(this).data('nazwa_firmy');
+        var miasto = $(this).data('miasto');
+        var nr_telefonu = $(this).data('nr_telefonu');
+        var ulica = $(this).data('ulica');
+        var numer = $(this).data('numer');
+        $("#nip-input").val(nip);
+        $("#nazwa_firmy-input").val(nazwa_firmy);
+        $("#miasto-input").val(miasto);
+        $("#nr_telefonu-input").val(nr_telefonu);
+        $("#ulica-input").val(ulica);
+        $("#numer-input").val(numer);
+    });
+
+    var addRecordBtn = document.getElementById("add-record-btn");
+    var popup = document.getElementById("popup");
+    var closeBtn = document.getElementsByClassName("close")[0];
+
+    addRecordBtn.onclick = function () {
+        popup.style.display = "block";
+    }
+
+    closeBtn.onclick = function () {
+        popup.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == popup) {
+            popup.style.display = "none";
+        }
+    }
+
+
+
+
+</script>
+
+</div>
+
 {%endblock%}
