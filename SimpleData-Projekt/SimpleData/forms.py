@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField, Unique #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from .tabele import Uzytkownicy
 
@@ -53,15 +53,16 @@ class uzytkownicy(FlaskForm):
     
 class Users_zmiana(FlaskForm):
     imie = StringField('Imie', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email(), Unique(Uzyt, User.email)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     haslo = PasswordField('Hasło', validators=[DataRequired()])
     uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zapisz zmiany')
     
-    def validate_email(self, email):
-        user = Uzytkownicy.query.filter_by(email=email.data).first()
-        if user and user.id != self.id.data:
-            raise ValidationError('Ten adres email jest już w użyciu.')
+    #def validate_email(self, email):
+    #    user = Uzytkownicy.query.filter_by(email=email.data).first()
+    #    if user and user.id != self.id.data:
+    #        raise ValidationError('Ten adres email jest już w użyciu.')
+
 class magazyn_towar(FlaskForm):
     nr_sekcji = StringField('Numer sekcji')
     id_towaru = IntegerField('Id towaru')

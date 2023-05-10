@@ -6,19 +6,19 @@ from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Uzytkownicy
-from sqlalchemy import inspect
+from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 #wewnątrz aplikacji 
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
-    db.drop_all()
-    if not inspector.has_table('Uzytkownicy'):
-        db.create_all()
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
-    db.session.add(new_product)
-    db.session.commit()
+    #db.drop_all()
+    #if not inspector.has_table('Uzytkownicy'):
+    #    db.create_all()
+    #new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
+    #db.session.add(new_product)
+    #db.session.commit()
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
@@ -95,6 +95,23 @@ def dokumenty_hist():
         form=form
     )
 
+@app.route('/dokumenty', methods=['GET', 'POST'])
+@login_required
+def dokumenty():
+    form = dok_historyczne()
+    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) VALUES ('12345', '2022-05-11', 1, 1234567890, 'PZ', '2022-05-11', '2022-06-11');")
+    db.session.execute(query2)
+    query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
+    values = db.session.execute(query, {'nip': 1234567890})
+    
+    return render_template(
+        "dokumenty.html",
+        title = "SimpleData",
+        user = current_user.imie,
+        form=form,
+        values = values
+    )
+
 @app.route('/kontrahenci', methods=['GET', 'POST'])
 @login_required
 def kontrahenci_t():
@@ -139,16 +156,28 @@ def uzytkownicy_t():
 def edit_user():
     user_id = request.form['id']
     user = Uzytkownicy.query.filter_by(id=user_id).first()
-    user.nazwa = request.form['imie']
-    user.haslo = request.form['haslo']
-    user.email = request.form['email']
-    user.uprawnienia = request.form['uprawnienia']
-    db.session.commit()
-    
-    if current_user.id == int(user_id):
-        flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+
+    if user.imie != request.form['imie']:
+        user.imie = request.form['imie']
+
+    if user.haslo != request.form['haslo']:
+        user.haslo = request.form['haslo']
+
+    if user.email != request.form['email']:
+        user.email = request.form['email']
+
+    if user.typ != request.form['uprawnienia']:
+        user.typ = request.form['uprawnienia']
+
+    if db.session.dirty:
+        db.session.commit()
+        if current_user.id == int(user_id):
+            flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
         return redirect(url_for('logout'))
+    
+    
     else:
+        flash('Nie zmieniono danych, nie zakutaliwano użytkownika')
         return redirect(url_for('uzytkownicy_t'))
 
 @app.route('/magazyn_towar', methods=['GET', 'POST'])

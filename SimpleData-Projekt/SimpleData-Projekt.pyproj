@@ -46,6 +46,7 @@
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\dokumenty.html" />
     <Content Include="SimpleData\templates\dokumenty_historyczne.html" />
     <Content Include="SimpleData\templates\home.html">
       <SubType>Code</SubType>

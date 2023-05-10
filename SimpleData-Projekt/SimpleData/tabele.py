@@ -29,7 +29,7 @@ class Kontrahenci(db.Model):
 
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
-        return "<nazwa_firmy('%s')>" % self.nazwa_firmy % "<NIP('%s')>" % self.NIP
+        return "<nazwa_firmy('%s'), NIP('%s')>" % (self.nazwa_firmy, self.NIP)
  
 class Dokumenty(db.Model):
     id_dokumentu = db.Column(db.String(32), primary_key=True, nullable=False)
@@ -40,13 +40,13 @@ class Dokumenty(db.Model):
     typ_dokumentu = db.Column(db.String(32), nullable=False)
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
-    kont = db.relationship("Kontrahenci", backref='kontrahenci_dokumenty')
-    uzytkownik_relacja = db.relationship('Uzytkownicy', backref='dokumenty')
+    #kont = db.relationship("Kontrahenci", backref='kontrahenci_dokumenty')
+    #uzytkownik_relacja = db.relationship('Uzytkownicy', backref='dokumenty')
     def __init__(self, numer_dokumentu):
         self.numer_dokumentu = numer_dokumentu
         
     def __repr__(self):
-        return "<Numer_dokumentu('%s')>" % self.numer_dokumentu % "<data_wystawienia(%s)>" % self.data_wystawienia
+        return "<Numer_dokumentu('%s'), data_wystawienia(%s)>" % (self.numer_dokumentu, self.data_wystawienia)
 
 
 class Uzytkownicy(db.Model, UserMixin):
@@ -56,10 +56,12 @@ class Uzytkownicy(db.Model, UserMixin):
     email = db.Column(db.String(50), nullable=False, unique=True)
     haslo = db.Column(db.String(32), nullable=False)
     typ = db.Column(db.String(30), nullable=False)  
-    dokumenty_relacja = db.relationship('Dokumenty', backref='uzytkownicy') 
+    dokumenty_relacja = db.relationship('Dokumenty', backref='uzytkownicy')
+
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
-        return "<email('%s')>" % self.email % "<typ/stanowisko('%s')>" % self.type % "<imie('%s')>" % self.imie
+        return "<email('%s'), typ/stanowisko('%s'), imie('%s')>" % (self.email, self.typ, self.imie)
+
    
 class Dokumenty_Historyczne(db.Model):
     id = db.Column(db.Integer, primary_key=True)
