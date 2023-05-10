@@ -11,6 +11,13 @@
                     </div>
                     {{ form.numer_dok(class="form-control ml-2") }}
                 </div>
+                {% for field, errors in form.errors.items() %}
+                <div class="alert alert-danger">
+                    {% for error in errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
                         <label for="{{ form.data_wys.id }}" class="form-control-label">{{ form.data_wys.label }}</label>
@@ -40,6 +47,12 @@
                         <label for="{{ form.data_wyk.id }}" class="form-control-label">{{ form.data_wyk.label }}</label>
                     </div>
                     {{ form.data_wyk(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.nazwa_kon.id }}" class="form-control-label">{{ form.nazwa_kon.label }}</label>
+                    </div>
+                    {{ form.nazwa_kon(class="form-control ml-2") }}
                 </div>
             </div>
         </fieldset>

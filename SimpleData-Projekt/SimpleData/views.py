@@ -5,7 +5,7 @@ from SimpleData import app
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
-from .tabele import Uzytkownicy
+from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
@@ -96,20 +96,55 @@ def dokumenty_hist():
     )
 
 @app.route('/dokumenty', methods=['GET', 'POST'])
-@login_required
+#@login_required
 def dokumenty():
     form = dok_historyczne()
-    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) VALUES ('12345', '2022-05-11', 1, 1234567890, 'PZ', '2022-05-11', '2022-06-11');")
-    db.session.execute(query2)
-    query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
-    values = db.session.execute(query, {'nip': 1234567890})
-    
+    result = Kontrahenci.query.all()
+    if form.validate_on_submit():
+        query = 'SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP '
+        params = {}
+        if form.numer_dok.data:
+            query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
+            params['numer_dokumentu'] = form.numer_dok.data
+        if form.data_wys.data:
+            query += 'AND Dokumenty.data_wystawienia = :data_wystawienia '
+            params['data_wystawienia'] = form.data_wys.data
+        if form.id_klienta.data:
+            query += 'AND Dokumenty.id_uzytkownika = :id_uzytkownika '
+            params['id_uzytkownika'] = form.id_klienta.data
+        if form.nip.data:
+            query += 'AND Dokumenty.NIP_kontrahenta = :nip '
+            params['nip'] = form.nip.data
+            flash('Poszło nip')
+        if form.rodzaj.data:
+            query += 'AND Dokumenty.typ_dokumentu = :typ_dokumentu '
+            params['typ_dokumentu'] = form.rodzaj.data
+        if form.data_wyk.data:
+            query += 'AND Dokumenty.data_wykonania = :data_wykonania '
+            params['data_wykonania'] = form.data_wyk.data
+        query = text(query)
+        result = db.session.execute(query, params)
+
+        #query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) VALUES ('12345', '2022-05-11', 1, 1234567890, 'PZ', '2022-05-11', '2022-06-11');")
+        #db.session.execute(query2)
+        #db.session.commit()
+        #query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
+        #values = db.session.execute(query, {'nip': 1234567890})
+        #flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+    #if form.validate_on_submit():
+    #    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) VALUES ('12345', '2022-05-11', 1, 1234567890, 'PZ', '2022-05-11', '2022-06-11');")
+    #    db.session.execute(query2)
+    #    db.session.commit()
+    #    query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
+    #    values = db.session.execute(query, {'nip': 1234567890})
+    #    flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+
     return render_template(
         "dokumenty.html",
         title = "SimpleData",
-        user = current_user.imie,
+        #user = current_user.imie,
         form=form,
-        values = values
+        values = result
     )
 
 @app.route('/kontrahenci', methods=['GET', 'POST'])

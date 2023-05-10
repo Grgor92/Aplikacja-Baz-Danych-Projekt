@@ -32,7 +32,7 @@ class Kontrahenci(db.Model):
         return "<nazwa_firmy('%s'), NIP('%s')>" % (self.nazwa_firmy, self.NIP)
  
 class Dokumenty(db.Model):
-    id_dokumentu = db.Column(db.String(32), primary_key=True, nullable=False)
+    id_dokumentu = db.Column(db.Integer, primary_key=True)
     numer_dokumentu = db.Column(db.String(20), nullable=False, unique=True)
     data_wystawienia = db.Column(db.Date, nullable=False)
     id_uzytkownika = db.Column(db.Integer, db.ForeignKey('uzytkownicy.id')) 
