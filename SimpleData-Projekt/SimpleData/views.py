@@ -36,14 +36,6 @@ def home():
         user=user
     )
 
-def validate_on_submit(form):
-    if request.method == 'POST':
-        if form.form_type.data == 'dok_historyczne':
-            return form.validate_on_submit()
-        elif form.form_type.data == 'DodajDokumentForm':
-            return form.validate_on_submit(**request.form)
-    return False
-
 @app.route("/logout")
 @login_required
 def logout():
@@ -109,9 +101,9 @@ def dokumenty():
     form = dok_historyczne()
     form2 = DodajDokumentForm()
     result = Kontrahenci.query.all()
-    if validate_on_submit(form):
+    if form.validate_on_submit():
         flash ('Naciśnieto form')
-    if validate_on_submit(form2):
+    if form2.validate_on_submit():
         flash ('Naciśnieto form2')
         # Dodajemy przekierowanie, aby wyświetlić tylko form2, a nie form
         return redirect(url_for('dokumenty'))

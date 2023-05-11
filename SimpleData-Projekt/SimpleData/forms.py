@@ -35,7 +35,6 @@ class dok_historyczne(FlaskForm):
     rodzaj = SelectField('Dokument', choices=[('', ''),('WZ', 'WZ'), ('PZ', 'PZ')], validators = [Optional()])
     data_wyk = DateField('Data wykonania', validators = [Optional()])
     nazwa_kon = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
-    form_type = HiddenField(default='dok_historyczne')
     submit = SubmitField('Wyszukaj')
 
 class kontrahenci(FlaskForm):
@@ -98,7 +97,6 @@ class DodajDokumentForm(FlaskForm):
     data_wyk2 = DateField('Data wykonania', validators=[Optional()])
     data_waz2 = DateField('Data Waznosci towaru ', validators=[DataRequired()])
     kontrahent2 = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
-    form_type = HiddenField(default='DodajDokumentForm')
     submit2 = SubmitField('Dodaj dokument')
 
     def validate(self, **kwargs):
