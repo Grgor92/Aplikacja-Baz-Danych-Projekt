@@ -3,7 +3,7 @@ from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia, DodajDokumentForm  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
@@ -99,7 +99,6 @@ def dokumenty_hist():
 #@login_required
 def dokumenty():
     form = dok_historyczne()
-    form2 = DodajDokumentForm()
     result = Kontrahenci.query.all()
     if form.validate_on_submit():
         flash ('Naciśnieto form')
@@ -156,7 +155,13 @@ def dokumenty():
     #    values = db.session.execute(query, {'nip': 1234567890})
     #    flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
 
-
+    return render_template(
+        "dokumenty.html",
+        title = "SimpleData",
+        #user = current_user.imie,
+        form=form,
+        values = result
+    )
 
 @app.route('/kontrahenci', methods=['GET', 'POST'])
 @login_required
@@ -166,8 +171,7 @@ def kontrahenci_t():
         "kontrahenci.html",
         title = "SimpleData",
         user = current_user.imie,
-        form=form,
-        
+        form=form
     )
 
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
