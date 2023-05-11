@@ -1,10 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
 from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
-from SimpleData import app
+from SimpleData import app, db, bcrypt
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData import db
+#from SimpleData import db
 from .tabele import Uzytkownicy
 from sqlalchemy import inspect
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
@@ -42,6 +42,16 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username,data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('login.html', title='Rejestracja', form=form)
+
+
+
 @app.route('/login',methods=['GET', 'POST'])    #oprócz ścieżki dodajemmy tu metody jakie mogą być obsługiwane na stronie, w tym momencie robimy to aby ta strona mogła onsługiwać formularze
 def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
@@ -67,8 +77,12 @@ def login():
 def rejestr():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.Nazwa.data}!', 'success')
-        return redirect(url_for('home'))
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = Uzytkownicy(username=form.usernam.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f'Konto stworzone! Zaloguj się.', 'success')
+        return redirect(url_for('login'))
     return render_template('rejestr.html', 
         title='Rejestracja',
         user = current_user.imie if current_user.is_authenticated else None,

@@ -1,6 +1,9 @@
 ﻿# -*- coding: utf-8 -*-
 #Import biblioteki
 from flask_sqlalchemy import SQLAlchemy
+#Bibloteka odpowiedzialna za bezpieczne haszowanie haseł
+from flask_bcrypt import Bcrypt
+
 from flask import Flask, session, redirect, url_for, flash
 from datetime import timedelta
 from flask_login import LoginManager
@@ -37,5 +40,7 @@ def init_session():
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+bcrypt = Bcrypt(app)
 
 import SimpleData.views
