@@ -9,6 +9,8 @@ from .tabele import Uzytkownicy
 from sqlalchemy import inspect
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
+from flask_bcrypt import Bcrypt
+
 #wewnątrz aplikacji 
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
@@ -42,15 +44,6 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        flash(f'Account created for {form.username,data}!', 'success')
-        return redirect(url_for('home'))
-    return render_template('login.html', title='Rejestracja', form=form)
-
-
 
 @app.route('/login',methods=['GET', 'POST'])    #oprócz ścieżki dodajemmy tu metody jakie mogą być obsługiwane na stronie, w tym momencie robimy to aby ta strona mogła onsługiwać formularze
 def login():
@@ -77,10 +70,10 @@ def login():
 def rejestr():
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = Uzytkownicy(username=form.usernam.data, email=form.email.data, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
+        hashed_password = bcrypt.generate_password_hash(form.haslo.data).decode('utf-8')
+        modyfikacja = Uzytkownicy(imie=form.Nazwa.data, email=form.email.data, haslo=hashed_password, typ=form.typ_uzytkownika.data) #przypisanie do zmiennej tabele z jej krotkami. Pobieramy dane do zmiany z formularza
+        db.session.add(modyfikacja) #dodanie zmiennej modyfikacja do bazy
+        db.session.commit() #wysłanie do bazy oraz zapisanie zmiany w niej
         flash(f'Konto stworzone! Zaloguj się.', 'success')
         return redirect(url_for('login'))
     return render_template('rejestr.html', 

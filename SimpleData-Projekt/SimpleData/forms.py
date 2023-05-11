@@ -3,8 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from .tabele import Uzytkownicy
-#
-from SimpleData.models import Uzytkownicy
+
 
 class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=6, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawności jakie ma zawierać pole
@@ -16,14 +15,14 @@ class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
 #
     def validate_username(self, username):
 
-        Uzytkownicy = Uzytkownicy.query.filter_by(username=username.data).first()
-        if Uzytkownicy:
+        Uzyt = Uzytkownicy.query.filter_by(username=username.data).first()
+        if Uzyt:
             raise ValidationError('Ta nazwa użytkownika już istnieje. Wybierz inną nazwę.')
     #
     def validate_email(self, email):
 
-        Uzytkownicy = Uzytkownicy.query.filter_by(email=email.data).first()
-        if Uzytkownicy:
+        Uzyt = Uzytkownicy.query.filter_by(email=email.data).first()
+        if Uzyt:
             raise ValidationError('Ten email już istnieje. Wybierz inną nazwę.')
 
 
