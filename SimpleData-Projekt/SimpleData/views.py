@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
-from SimpleData import app, db, bcrypt
+from SimpleData import app, db, bcrypt, LoginManager
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 #from SimpleData import db
@@ -11,15 +11,16 @@ from flask_login import login_user, logout_user, login_required, current_user, f
 
 from flask_bcrypt import Bcrypt
 
+
 #wewnątrz aplikacji 
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
-    db.drop_all()
+    #db.drop_all()
     if not inspector.has_table('Uzytkownicy'):
         db.create_all()
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
-    db.session.add(new_product)
+    #new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
+    #db.session.add(new_product)
     db.session.commit()
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
@@ -50,14 +51,17 @@ def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    else:
-        if form.validate_on_submit():   
+    hashed = bcrypt.generate_password_hash('qazwsx')
+
+    if form.validate_on_submit():   
             user = Uzytkownicy.query.filter_by(email=form.email.data).first()
-            if user and user.haslo == form.haslo.data:
+            if user and bcrypt.check_password_hash(user.haslo, form.haslo):
                 login_user(user)
                 flash('Udało się zalogować', 'success')
-                return redirect(url_for('home'))
+                
             else:
+                if bcrypt.check_password_hash(hashed, 'qazwsx'):
+                    flash(hashed)
                 flash('Logowanie nie udane. Sprawdź poprawność danych a wrazie dalszych problemów skontaktuj się z administratorem', 'danger')  #wiadomość jeśli dane będą nie poprawne
     return render_template(
         "login.html",
@@ -66,7 +70,7 @@ def login():
         form=form #rendereujemy stronę i przekzaujemy formularz
         )
 @app.route('/rejestruj', methods=['GET', 'POST'])
-@fresh_login_required
+#@fresh_login_required
 def rejestr():
     form = RegistrationForm()
     if form.validate_on_submit():

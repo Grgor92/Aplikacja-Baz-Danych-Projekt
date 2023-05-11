@@ -40,7 +40,6 @@ def init_session():
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 bcrypt = Bcrypt(app)
 
 import SimpleData.views
