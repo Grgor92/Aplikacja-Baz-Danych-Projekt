@@ -1,26 +1,26 @@
 ﻿# -*- coding: utf-8 -*-
+from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, moje_ustawienia # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
-from .tabele import Users
+from .tabele import Uzytkownicy
 from sqlalchemy import inspect
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
-
 #wewnątrz aplikacji 
 with app.app_context():
-#sprawdzenie czy tabela istnieje
+#sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
-    #db.drop_all()
-    if not inspector.has_table('Users'):
+    db.drop_all()
+    if not inspector.has_table('Uzytkownicy'):
         db.create_all()
-    new_product = Users(nazwa='admin', email='sd@admin.com', haslo='haslo', uprawnienia='Kierownik')
+    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
     db.session.add(new_product)
     db.session.commit()
-        
-@app.route('/api/time', ) # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
+
+@app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
     now = datetime.now()  #pobieramy obecny czas z systemu
     formatted_now = now.strftime("%A, %d %B, %Y %H:%M") #ustalamy w jakim formacie będzie wyświetlany czas
@@ -29,12 +29,13 @@ def current_time():
 @app.route('/')
 @app.route('/home') #Aby dana strona była dostępna pod dwoma ścieżkami wystarczy dodać pod sobą dwie linie kodu @app.route
 def home():
-    user = current_user.nazwa if current_user.is_authenticated else None
+    user = current_user.imie if current_user.is_authenticated else None
     return render_template( #używamy render_teamplate aby wygenerować stronę z danego pliku html, tworząc zmienne możemy je przekazać na stronę i następnie je tam wywołać
         "home.html",
         title = "SimpleData",    #taka zmienna którą możemy wyświetlić na stronie
         user=user
     )
+
 @app.route("/logout")
 @login_required
 def logout():
@@ -48,7 +49,7 @@ def login():
         return redirect(url_for('home'))
     else:
         if form.validate_on_submit():   
-            user = Users.query.filter_by(email=form.email.data).first()
+            user = Uzytkownicy.query.filter_by(email=form.email.data).first()
             if user and user.haslo == form.haslo.data:
                 login_user(user)
                 flash('Udało się zalogować', 'success')
@@ -58,7 +59,7 @@ def login():
     return render_template(
         "login.html",
         title = "Logowanie",
-        user = current_user.nazwa if current_user.is_authenticated else None,
+        user = current_user.imie if current_user.is_authenticated else None,
         form=form #rendereujemy stronę i przekzaujemy formularz
         )
 @app.route('/rejestruj', methods=['GET', 'POST'])
@@ -70,7 +71,7 @@ def rejestr():
         return redirect(url_for('home'))
     return render_template('rejestr.html', 
         title='Rejestracja',
-        user = current_user.nazwa if current_user.is_authenticated else None,
+        user = current_user.imie if current_user.is_authenticated else None,
         form=form
         )
 @app.route('/przeszukiwanie', methods=['GET', 'POST'])
@@ -80,7 +81,7 @@ def przeszukiwanie():
     return render_template(
         "przeszukiwanie.html",
         title = "SimpleData",
-        user = current_user.nazwa,
+        user = current_user.imie,
         form=form
     )
 @app.route('/dokumenty_historyczne', methods=['GET', 'POST'])
@@ -90,7 +91,7 @@ def dokumenty_hist():
     return render_template(
         "dokumenty_historyczne.html",
         title = "SimpleData",
-        user = current_user.nazwa,
+        user = current_user.imie,
         form=form
     )
 
@@ -101,21 +102,51 @@ def kontrahenci_t():
     return render_template(
         "kontrahenci.html",
         title = "SimpleData",
-        user = current_user.nazwa,
+        user = current_user.imie,
         form=form
     )
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
 def uzytkownicy_t():
     form = uzytkownicy()
+    form2 = Users_zmiana()
+    values = Uzytkownicy.query.filter_by(typ='').all()
+    if form.validate_on_submit():
+        values=Uzytkownicy.query.all()
+    #if form2.validate_on_submit():
+    #    user = Uzytkownicy.query.get(form2.id.data)
+    #    if user:
+    #        user.imie = form2.imie.data
+    #        user.email = form2.email.data
+    #        user.uprawnienia = form2.uprawnienia.data
+    #        db.session.commit()
+    #        flash('Zaktualizowano użytkownika', 'success')
+    #        return redirect(url_for('home'))
+    #    else:
+    #        return redirect(url_for('home'))
+    
     return render_template(
-        "uzytkownicy.html",
-        title = "SimpleData",
-        user = current_user.nazwa,
-        form=form,
-        values=Users.query.all()
-    )
+            "uzytkownicy.html",
+            title = "SimpleData",
+            user = current_user.imie,
+            form=form,
+            form2=form2,
+            values=values
+        )
 
+
+@app.route('/edit_user', methods=['POST'])
+def edit_user():
+    user_id = request.form['id']
+    user = Uzytkownicy.query.filter_by(id=user_id).first()
+    user.nazwa = request.form['imie']
+    user.haslo = request.form['haslo']
+    user.email = request.form['email']
+    user.uprawnienia = request.form['uprawnienia']
+    db.session.commit()
+    flash('Zaktualizowano użytkownika', 'success')
+    return redirect(url_for('uzytkownicy_t'))
+    
 @app.route('/magazyn_towar', methods=['GET', 'POST'])
 @login_required
 def magazyn_towar_t():
@@ -123,12 +154,14 @@ def magazyn_towar_t():
     return render_template(
         "magazyn_towar.html",
         title = "SimpleData",
-        user = current_user.nazwa,
+        user = current_user.imie,
         form=form
     )
 
-@app.route('/ustawienia', methods=['GET', 'POST'])
-def ustawienia():
+@app.route('/ustawienia')
+@login_required
+def ustawieniakont():
+    
     form = moje_ustawienia()
     if request.method == 'POST':
         nazwa = request.form['Nazwa']
@@ -147,7 +180,7 @@ def ustawienia():
         current_user.set_password(password)
         db.session.commit()
         
-        # przekierowanie użytkownika na stronę główną ustawaień
+        # przekierowanie użytkownika na stronę główną ustwaień
         pass
     else:
         return render_template(
@@ -155,9 +188,9 @@ def ustawienia():
             form=form
         )
 
-@app.route('/ustawienia', methods=['GET', 'POST'])
+@app.route('/ustawienia')
 @login_required
-def ustawienia_konta():
-    nazwa_uzytkownika = Users.nazwa
-    email_uzytkownika = Users.email
-    return render_template('ustawienia_kont.html', nazwa=nazwa_uzytkownika, email=email_uzytkownika)
+def ustawieniakont():
+    username = current_user.nazwa
+    email = current_user.email
+    return render_template('ustawienia_kont.html', nazwa=username, email=email)
