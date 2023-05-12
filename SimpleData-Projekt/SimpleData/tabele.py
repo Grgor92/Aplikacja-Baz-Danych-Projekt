@@ -54,7 +54,7 @@ class Uzytkownicy(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     imie = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    haslo = db.Column(db.String(32), nullable=False)
+    haslo = db.Column(db.VARCHAR(60), nullable=False)
     typ = db.Column(db.String(30), nullable=False)  
     dokumenty_relacja = db.relationship('Dokumenty', backref='uzytkownicy') 
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
