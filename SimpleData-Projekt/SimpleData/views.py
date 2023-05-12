@@ -190,7 +190,7 @@ def ustawieniakont():
 
 @app.route('/ustawienia')
 @login_required
-def ustawieniakont():
+def ustawienia_kont():
     username = current_user.nazwa
     email = current_user.email
     return render_template('ustawienia_kont.html', nazwa=username, email=email)
