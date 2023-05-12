@@ -4,7 +4,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from .tabele import Uzytkownicy, Kontrahenci
-
+from datetime import date
 class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=6, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawności jakie ma zawierać pole
     email = StringField('Email', validators=[DataRequired(), Email()])

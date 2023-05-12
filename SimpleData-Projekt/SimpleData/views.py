@@ -4,7 +4,7 @@ from flask import render_template, jsonify, redirect, url_for, flash, session, r
 from SimpleData import app
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData import db
+from SimpleData import db, bcrypt
 from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
@@ -42,19 +42,22 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
-@app.route('/login',methods=['GET', 'POST'])    #oprócz ścieżki dodajemmy tu metody jakie mogą być obsługiwane na stronie, w tym momencie robimy to aby ta strona mogła onsługiwać formularze
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    else:
-        if form.validate_on_submit():   
+    hashed = bcrypt.generate_password_hash('qazwsx')
+
+    if form.validate_on_submit():   
             user = Uzytkownicy.query.filter_by(email=form.email.data).first()
-            if user and user.haslo == form.haslo.data:
+            if user and bcrypt.check_password_hash(user.haslo, form.haslo.data):
                 login_user(user)
                 flash('Udało się zalogować', 'success')
                 return redirect(url_for('home'))
             else:
+                if bcrypt.check_password_hash(hashed, 'qazwsx'):
+                    flash(hashed)
                 flash('Logowanie nie udane. Sprawdź poprawność danych a wrazie dalszych problemów skontaktuj się z administratorem', 'danger')  #wiadomość jeśli dane będą nie poprawne
     return render_template(
         "login.html",
@@ -63,12 +66,16 @@ def login():
         form=form #rendereujemy stronę i przekzaujemy formularz
         )
 @app.route('/rejestruj', methods=['GET', 'POST'])
-@fresh_login_required
+#@fresh_login_required
 def rejestr():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.Nazwa.data}!', 'success')
-        return redirect(url_for('home'))
+        hashed_password = bcrypt.generate_password_hash(form.haslo.data).decode('utf-8')
+        modyfikacja = Uzytkownicy(imie=form.Nazwa.data, email=form.email.data, haslo=hashed_password, typ=form.typ_uzytkownika.data) #przypisanie do zmiennej tabele z jej krotkami. Pobieramy dane do zmiany z formularza
+        db.session.add(modyfikacja) #dodanie zmiennej modyfikacja do bazy
+        db.session.commit() #wysłanie do bazy oraz zapisanie zmiany w niej
+        flash(f'Konto stworzone! Zaloguj się.', 'success')
+        return redirect(url_for('login'))
     return render_template('rejestr.html', 
         title='Rejestracja',
         user = current_user.imie if current_user.is_authenticated else None,
@@ -155,13 +162,13 @@ def dokumenty():
     #    values = db.session.execute(query, {'nip': 1234567890})
     #    flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
 
-    return render_template(
-        "dokumenty.html",
-        title = "SimpleData",
-        #user = current_user.imie,
-        form=form,
-        values = result
-    )
+    #return render_template(
+    #    "dokumenty.html",
+    #    title = "SimpleData",
+    #    #user = current_user.imie,
+    #    form=form,
+    #    values = result
+    #)
 
 @app.route('/kontrahenci', methods=['GET', 'POST'])
 @login_required
@@ -212,7 +219,8 @@ def edit_user():
         user.imie = request.form['imie']
 
     if user.haslo != request.form['haslo']:
-        user.haslo = request.form['haslo']
+        hashed_password = bcrypt.generate_password_hash(request.form['haslo']).decode('utf-8')
+        user.haslo = hashed_password
 
     if user.email != request.form['email']:
         user.email = request.form['email']
