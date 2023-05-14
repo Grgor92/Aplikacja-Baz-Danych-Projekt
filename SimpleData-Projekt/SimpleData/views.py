@@ -55,7 +55,7 @@ def login():
 
     if form.validate_on_submit():   
             user = Uzytkownicy.query.filter_by(email=form.email.data).first()
-            if user and bcrypt.check_password_hash(user.haslo, form.haslo):
+            if user and (user.haslo == form.haslo.data):
                 login_user(user)
                 flash('Udało się zalogować', 'success')
                 
