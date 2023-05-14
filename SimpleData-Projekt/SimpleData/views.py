@@ -58,7 +58,7 @@ def login():
             if user and (user.haslo == form.haslo.data):
                 login_user(user)
                 flash('Udało się zalogować', 'success')
-                
+                return redirect(url_for('home'))
             else:
                 if bcrypt.check_password_hash(hashed, 'qazwsx'):
                     flash(hashed)
