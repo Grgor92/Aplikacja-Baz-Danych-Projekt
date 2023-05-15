@@ -47,7 +47,12 @@
         </thead>
         <tbody>
             {% for item in values %}
+            {% if current_user.id == item.id %}
+            <tr class="table-info">
+                {% elif current_user.id != item.id %}
             <tr>
+                {% endif %}
+
                 <td>{{ item.imie }}</td>
                 <td>{{ item.email }}</td>
                 <td>{{ item.typ }}</td>
@@ -57,6 +62,7 @@
                     {% endif %}
                 </td>
             </tr>
+
             {% endfor %}
         </tbody>
     </table>
@@ -159,6 +165,9 @@
         //        });
         //    });
         //})(jQuery);
+
+
+
     </script>
 
 </div>
