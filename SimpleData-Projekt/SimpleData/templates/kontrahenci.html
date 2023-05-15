@@ -1,6 +1,123 @@
 {% extends "layout.html" %}
 {%block content%}
-<div class="content-section">
+
+
+<button id="wyszukajBtn" onclick="openWyszukajPopup()">Wyszukaj</button>
+
+<button id="add-record-btn" onclick="openDodajPopup()">Dodaj kontrahenta</button>
+
+
+<div id="dodajPopup" class="popup">
+    <div class="content">
+        <span class="close" onclick="closeDodajPopup()">&times;</span>
+        <h2>Dodaj</h2>
+        <form action="{{ url_for('dodaj_rekord') }}" method="POST">
+            <label for="nip">NIP:</label>
+            <input type="text" id="nip" name="nip" required>
+
+            <label for="nazwa_firmy">Nazwa firmy:</label>
+            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
+
+            <label for="miasto">Miasto:</label>
+            <input type="text" id="miasto" name="miasto" required>
+
+            <label for="nr_telefonu">Numer telefonu:</label>
+            <input type="text" id="nr_telefonu" name="nr_telefonu" required>
+
+            <label for="ulica">Ulica:</label>
+            <input type="text" id="ulica" name="ulica" required>
+
+            <label for="numer">Numer:</label>
+            <input type="text" id="numer" name="numer" required>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>NIP</th>
+            <th>Nazwa firmy</th>
+            <th>Miasto</th>
+            <th>Numer telefonu</th>
+            <th>Ulica</th>
+            <th>Numer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for kontrahent in kontrahenci %}
+        <tr>
+            <td>{{ kontrahent.NIP }}</td>
+            <td>{{ kontrahent.nazwa_firmy }}</td>
+            <td>{{ kontrahent.miasto }}</td>
+            <td>{{ kontrahent.telefon }}</td>
+            <td>{{ kontrahent.ulica }}</td>
+            <td>{{ kontrahent.numer }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="wyszukajPopup" class="popup">
+    <div class="content">
+        <span class="close" onclick="closeWyszukajPopup()">&times;</span>
+        <h2>Wyszukaj kontrahenta</h2>
+        <form action="{{ url_for('kontrahenci_t') }}" method="post">
+            <label for="nip">NIP:</label>
+            <input type="text" id="nip" name="nip" required>
+
+            <label for="nazwa_firmy">Nazwa firmy:</label>
+            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
+
+            <button type="submit">Wyszukaj</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    $(document).on("click", ".edit-btn", function () {
+        var nip = $(this).data('nip');
+        var nazwa_firmy = $(this).data('nazwa_firmy');
+        var miasto = $(this).data('miasto');
+        var nr_telefonu = $(this).data('nr_telefonu');
+        var ulica = $(this).data('ulica');
+        var numer = $(this).data('numer');
+        $("#nip-input").val(nip);
+        $("#nazwa_firmy-input").val(nazwa_firmy);
+        $("#miasto-input").val(miasto);
+        $("#nr_telefonu-input").val(nr_telefonu);
+        $("#ulica-input").val(ulica);
+        $("#numer-input").val(numer);
+    });
+
+    function openWyszukajPopup() {
+        document.getElementById('wyszukajPopup').style.display = 'block';
+    }
+
+    function closeWyszukajPopup() {
+        document.getElementById('wyszukajPopup').style.display = 'none';
+    }
+
+    function openDodajPopup() {
+        document.getElementById('dodajPopup').style.display = 'block';
+    }
+
+    function closeDodajPopup() {
+        document.getElementById('dodajPopup').style.display = 'none';
+    }
+
+
+</script>
+
+</div>
+
+{%endblock%}
+
+
+<!--<div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
@@ -48,5 +165,52 @@
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-</div>
-{%endblock%}
+</div>-->
+<!--<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="edit-form" method="POST">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-modal-label">Edycja kontrahenta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" id="id-input" name="id" value="">
+                    <div class="form-group">
+                        {{ form.nip.label(class="col-form-label") }}
+                        {{ form.nip(class="form-control", id="nip-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.nazwa_firmy.label(class="col-form-label") }}
+                        {{ form.nazwa_firmy(class="form-control", id="nazwa_firmy-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.miasto.label(class="col-form-label") }}
+                        {{ form.miasto(class="form-control", id="miasto-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.nr_telefonu.label(class="col-form-label") }}
+                        {{ form.nr_telefonu(class="form-control", id="nr_telefonu-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.ulica.label(class="col-form-label") }}
+                        {{ form.ulica(class="form-control", id="ulica-input") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.numer.label(class="col-form-label") }}
+                        {{ form.numer(class="form-control", id="numer-input") }}
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>-->
