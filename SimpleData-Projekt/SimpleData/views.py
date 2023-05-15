@@ -1,11 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
 from multiprocessing.connection import Connection
-import sqlite3
 from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia, WyszukajKontrahenta  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from .tabele import Uzytkownicy, Kontrahenci
 from sqlalchemy import inspect
@@ -198,42 +197,18 @@ def ustawienia_kont():
     return render_template('ustawienia_kont.html', nazwa=username, email=email)
 
 
-@app.route('/query', methods=['POST'])
-def dodaj_rekord():
-    nip = request.form['nip']
-    nazwa_firmy = request.form['nazwa_firmy']
-    miasto = request.form['miasto']
-    nr_telefonu = request.form['nr_telefonu']
-    ulica = request.form['ulica']
-    numer = request.form['numer']
+#@app.route('/wyszukaj', methods=['POST'])
+#def wyszukaj_rekordy():
+#    form = WyszukajKontrahenta(request.form)
+#    if form.validate():
+#        nip = form.nip.data
+#        nazwa_firmy = form.nazwa_firmy.data
+#        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
+#        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
+#    else:
+#        flash('Wprowadź poprawne wartości do formularza')
+#        return redirect(url_for('kontrahenci_t'))
 
-    kontrahenci = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
-    db.session.add(kontrahenci)
-    db.session.commit()
-
-    return redirect(url_for("kontrahenci_t"))
-
-if __name__ == '__main__':
-    app.run()
-
-
-@app.route('/wyszukaj', methods=['POST'])
-def wyszukaj_rekordy():
-    form = WyszukajKontrahenta(request.form)
-    if form.validate():
-        nip = form.nip.data
-        nazwa_firmy = form.nazwa_firmy.data
-        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
-        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
-    else:
-        flash('Wprowadź poprawne wartości do formularza')
-        return redirect(url_for('kontrahenci_t'))
-
-
-from flask import Flask, render_template
-import sqlite3
-
-app = Flask(__name__)
 
 @app.route('/kontrahenci')
 def kontrahenci():
@@ -245,3 +220,19 @@ def kontrahenci():
 
 if __name__ == '__main__':
     app.run()
+
+
+@app.route('/dodaj_rekord', methods=['POST'])
+def dodaj_rekord():
+    nip = request.form.get('nip')
+    nazwa_firmy = request.form.get('nazwa_firmy')
+    miasto = request.form.get('miasto')
+    nr_telefonu = request.form.get('nr_telefonu')
+    ulica = request.form.get('ulica')
+    numer = request.form.get('numer')
+
+    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
+    db.session.add(kontrahent)
+    db.session.commit()
+
+    return render_template('kontrahenci.html')

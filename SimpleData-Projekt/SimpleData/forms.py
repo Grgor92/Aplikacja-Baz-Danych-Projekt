@@ -74,6 +74,3 @@ class moje_ustawienia(FlaskForm):
     password2 = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Zapisz')
     
-class WyszukajKontrahenta(FlaskForm):
-    nip = StringField('NIP')
-    nazwa_firmy = StringField('Nazwa firmy')
