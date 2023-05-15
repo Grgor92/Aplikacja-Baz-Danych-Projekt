@@ -1,7 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
+from multiprocessing.connection import Connection
 from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
-from SimpleData import app
+from SimpleData import app, db, bcrypt, LoginManager
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db, bcrypt
@@ -9,7 +10,12 @@ from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
+from flask_bcrypt import Bcrypt
+
+
 #wewnątrz aplikacji 
+#with app.app_context():
+#sprawdzenie czy baza danych istnieje
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
@@ -19,6 +25,7 @@ with app.app_context():
     new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
     db.session.add(new_product)
     db.session.commit()
+
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
@@ -42,12 +49,11 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route('/login',methods=['GET', 'POST'])    #oprócz ścieżki dodajemmy tu metody jakie mogą być obsługiwane na stronie, w tym momencie robimy to aby ta strona mogła onsługiwać formularze
 def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    hashed = bcrypt.generate_password_hash('qazwsx')
 
     if form.validate_on_submit():   
             user = Uzytkownicy.query.filter_by(email=form.email.data).first()
@@ -56,8 +62,6 @@ def login():
                 flash('Udało się zalogować', 'success')
                 return redirect(url_for('home'))
             else:
-                if bcrypt.check_password_hash(hashed, 'qazwsx'):
-                    flash(hashed)
                 flash('Logowanie nie udane. Sprawdź poprawność danych a wrazie dalszych problemów skontaktuj się z administratorem', 'danger')  #wiadomość jeśli dane będą nie poprawne
     return render_template(
         "login.html",
@@ -248,57 +252,80 @@ def magazyn_towar_t():
         form=form
     )
 
-
-#@app.route('/ustawienia', methods=['GET', 'POST'])
-#def ustawienia():
-#    form = moje_ustawienia()
-#    if request.method == 'POST':
-#        nazwa = request.form['Nazwa']
-#        password = request.form['Hasło']
-#        password2 = request.form['Powtórz hasło']
-        
-#        if not nazwa or not password or not password2:
-#            # błędy walidacji
-#            pass
-        
-#        if password != password2:
-#            # błędy walidacji
-#            pass
-        
-#        current_user.nazwa = username
-#        current_user.set_password(password)
-#        db.session.commit()
-        
-#        # przekierowanie użytkownika na stronę główną ustwaień
-#        pass
-#    else:
-#        return render_template(
-#            'ustawienia_kont.html',
-#            form=form
-#        )
-
 @app.route('/ustawienia')
 @login_required
 def ustawieniakont():
     
     form = moje_ustawienia()
-    return render_template('ustawienia_kont.html', form = form)
+    if request.method == 'POST':
+        nazwa = request.form['Nazwa']
+        password = request.form['Hasło']
+        password2 = request.form['Powtórz hasło']
+        
+        if not nazwa or not password or not password2:
+            # błędy walidacji
+            pass
+        
+        if password != password2:
+            # błędy walidacji
+            pass
+        
+        current_user.nazwa = username
+        current_user.set_password(password)
+        db.session.commit()
+        
+        # przekierowanie użytkownika na stronę główną ustwaień
+        pass
+    else:
+        return render_template(
+            'ustawienia_kont.html',
+            form=form
+        )
 
-def powrot():
-    return redirect(request.referrer or url_for('home'))
+@app.route('/ustawienia')
+@login_required
+def ustawienia_kont():
+    username = current_user.nazwa
+    email = current_user.email
+    return render_template('ustawienia_kont.html', nazwa=username, email=email)
 
 
+#@app.route('/wyszukaj', methods=['POST'])
+#def wyszukaj_rekordy():
+#    form = WyszukajKontrahenta(request.form)
+#    if form.validate():
+#        nip = form.nip.data
+#        nazwa_firmy = form.nazwa_firmy.data
+#        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
+#        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
+#    else:
+#        flash('Wprowadź poprawne wartości do formularza')
+#        return redirect(url_for('kontrahenci_t'))
 
-#@app.route('/edit', methods=['POST'])
-#def edit_user():
-#    # kod do aktualizacji rekordu w bazie danych
-#    # pobierz dane z formularza
-#    id = request.form.get('id')
-#    nazwa = request.form.get('nazwa')
-#    email = request.form.get('email')
-#    uprawnienia = request.form.get('uprawnienia')
-#    # zaktualizuj rekord w bazie danych
-#    # wyślij komunikat o sukcesie lub błędzie
-    
-#    return redirect(url_for('uzytkownicy_t'))
 
+@app.route('/kontrahenci')
+def kontrahenci():
+    # Pobranie danych z bazy
+    kontrahenci = Kontrahenci.query.all()
+
+    # Renderowanie szablonu HTML z danymi z bazy
+    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+
+if __name__ == '__main__':
+    app.run()
+
+
+@app.route('/dodaj_rekord', methods=['POST'])
+def dodaj_rekord():
+    nip = request.form.get('nip')
+    nazwa_firmy = request.form.get('nazwa_firmy')
+    miasto = request.form.get('miasto')
+    nr_telefonu = request.form.get('nr_telefonu')
+    ulica = request.form.get('ulica')
+    numer = request.form.get('numer')
+
+    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
+    db.session.add(kontrahent)
+    db.session.commit()
+
+    return render_template('kontrahenci.html')
