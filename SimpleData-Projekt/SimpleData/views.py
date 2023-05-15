@@ -13,12 +13,12 @@ from flask_login import login_user, logout_user, login_required, current_user, f
 with app.app_context():
 #sprawdzenie czy baza danych istnieje
     inspector = inspect(db.engine)
-    #db.drop_all()
-    #if not inspector.has_table('Uzytkownicy'):
-    #    db.create_all()
-    #new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
-    #db.session.add(new_product)
-    #db.session.commit()
+    db.drop_all()
+    if not inspector.has_table('Uzytkownicy'):
+        db.create_all()
+    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
+    db.session.add(new_product)
+    db.session.commit()
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
@@ -107,12 +107,37 @@ def dokumenty_hist():
 def dokumenty():
     form = dok_historyczne()
     result = Kontrahenci.query.all()
+    query3 = text("INSERT INTO Kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer) SELECT '1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A' FROM dual WHERE NOT EXISTS (SELECT * FROM Kontrahenci WHERE NIP = '1234567890');")
+    db.session.execute(query3)
+    db.session.commit()
+
+    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) SELECT '12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11' FROM dual WHERE NOT EXISTS (SELECT * FROM Dokumenty WHERE numer_dokumentu = '12345');")
+    db.session.execute(query2, {'user_id': current_user.id})
+    db.session.commit()
+
     if form.validate_on_submit():
-        flash ('Naciśnieto form')
-    if form2.validate_on_submit():
-        flash ('Naciśnieto form2')
-        # Dodajemy przekierowanie, aby wyświetlić tylko form2, a nie form
-        return redirect(url_for('dokumenty'))
+            query = 'SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP '
+            params = {}
+            if form.numer_dok.data:
+                query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
+                params['numer_dokumentu'] = form.numer_dok.data
+            if form.data_wys.data:
+                query += 'AND Dokumenty.data_wystawienia = :data_wystawienia '
+                params['data_wystawienia'] = form.data_wys.data
+            if form.id_klienta.data:
+                query += 'AND Dokumenty.id_uzytkownika = :id_uzytkownika '
+                params['id_uzytkownika'] = form.id_klienta.data
+            if form.nip.data:
+                query += 'AND Dokumenty.NIP_kontrahenta = :nip '
+                params['nip'] = form.nip.data
+            if form.rodzaj.data:
+                query += 'AND Dokumenty.typ_dokumentu = :typ_dokumentu '
+                params['typ_dokumentu'] = form.rodzaj.data
+            if form.data_wyk.data:
+                query += 'AND Dokumenty.data_wykonania = :data_wykonania '
+                params['data_wykonania'] = form.data_wyk.data
+            query = text(query)
+            result = db.session.execute(query, params)
 
     return render_template(
         "dokumenty.html",
@@ -120,37 +145,10 @@ def dokumenty():
         #user = current_user.imie,
         form=form,
         values = result,
-        form2 = form2
     )
-    #if form.validate_on_submit():
-    #    query = 'SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP '
-    #    params = {}
-    #    if form.numer_dok.data:
-    #        query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
-    #        params['numer_dokumentu'] = form.numer_dok.data
-    #    if form.data_wys.data:
-    #        query += 'AND Dokumenty.data_wystawienia = :data_wystawienia '
-    #        params['data_wystawienia'] = form.data_wys.data
-    #    if form.id_klienta.data:
-    #        query += 'AND Dokumenty.id_uzytkownika = :id_uzytkownika '
-    #        params['id_uzytkownika'] = form.id_klienta.data
-    #    if form.nip.data:
-    #        query += 'AND Dokumenty.NIP_kontrahenta = :nip '
-    #        params['nip'] = form.nip.data
-    #        flash('Poszło nip')
-    #    if form.rodzaj.data:
-    #        query += 'AND Dokumenty.typ_dokumentu = :typ_dokumentu '
-    #        params['typ_dokumentu'] = form.rodzaj.data
-    #    if form.data_wyk.data:
-    #        query += 'AND Dokumenty.data_wykonania = :data_wykonania '
-    #        params['data_wykonania'] = form.data_wyk.data
-    #    query = text(query)
-    #    result = db.session.execute(query, params)
     
 
-        #query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) VALUES ('12345', '2022-05-11', 1, 1234567890, 'PZ', '2022-05-11', '2022-06-11');")
-        #db.session.execute(query2)
-        #db.session.commit()
+
         #query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
         #values = db.session.execute(query, {'nip': 1234567890})
         #flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')

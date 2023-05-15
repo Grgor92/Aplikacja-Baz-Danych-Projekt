@@ -41,6 +41,8 @@ class Dokumenty(db.Model):
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
     #kont = db.relationship("Kontrahenci", backref='kontrahenci_dokumenty')
+    towaryy = db.relationship("Towary_Dokument", backref='towar_W_dokument')
+    towaryy = db.relationship("Towary_Dokument", backref='towar_W_dokument')
     #uzytkownik_relacja = db.relationship('Uzytkownicy', backref='dokumenty')
     def __init__(self, numer_dokumentu):
         self.numer_dokumentu = numer_dokumentu
@@ -54,7 +56,7 @@ class Uzytkownicy(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     imie = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    haslo = db.Column(db.String(32), nullable=False)
+    haslo = db.Column(db.VARCHAR(100), nullable=False)
     typ = db.Column(db.String(30), nullable=False)  
     dokumenty_relacja = db.relationship('Dokumenty', backref='uzytkownicy')
 
@@ -116,7 +118,7 @@ class MagazynTowar(db.Model):
 
 class Towary_Dokument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_dokumentu = db.Column(db.String(32), db.ForeignKey('dokumenty.id_dokumentu'))
+    id_dokumentu = db.Column(db.Integer, db.ForeignKey('dokumenty.id_dokumentu'))
     id_towaru = db.Column(db.Integer, db.ForeignKey('towary.id_towaru'))
     ilosc = db.Column(db.Integer, nullable=False)
     data_waznosci = db.Column(db.Date, nullable=False)
