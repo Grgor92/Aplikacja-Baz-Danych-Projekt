@@ -4,9 +4,9 @@ from flask import render_template, jsonify, redirect, url_for, flash, session, r
 from SimpleData import app
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData import db
-from .tabele import Uzytkownicy
-from sqlalchemy import inspect
+from SimpleData import db, bcrypt
+from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
+from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 #wewnątrz aplikacji 
@@ -16,7 +16,7 @@ with app.app_context():
     db.drop_all()
     if not inspector.has_table('Uzytkownicy'):
         db.create_all()
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
+    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
     db.session.add(new_product)
     db.session.commit()
 
@@ -42,19 +42,22 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
-@app.route('/login',methods=['GET', 'POST'])    #oprócz ścieżki dodajemmy tu metody jakie mogą być obsługiwane na stronie, w tym momencie robimy to aby ta strona mogła onsługiwać formularze
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    else:
-        if form.validate_on_submit():   
+    hashed = bcrypt.generate_password_hash('qazwsx')
+
+    if form.validate_on_submit():   
             user = Uzytkownicy.query.filter_by(email=form.email.data).first()
-            if user and user.haslo == form.haslo.data:
+            if user and bcrypt.check_password_hash(user.haslo, form.haslo.data):
                 login_user(user)
                 flash('Udało się zalogować', 'success')
                 return redirect(url_for('home'))
             else:
+                if bcrypt.check_password_hash(hashed, 'qazwsx'):
+                    flash(hashed)
                 flash('Logowanie nie udane. Sprawdź poprawność danych a wrazie dalszych problemów skontaktuj się z administratorem', 'danger')  #wiadomość jeśli dane będą nie poprawne
     return render_template(
         "login.html",
@@ -63,12 +66,16 @@ def login():
         form=form #rendereujemy stronę i przekzaujemy formularz
         )
 @app.route('/rejestruj', methods=['GET', 'POST'])
-@fresh_login_required
+#@fresh_login_required
 def rejestr():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.Nazwa.data}!', 'success')
-        return redirect(url_for('home'))
+        hashed_password = bcrypt.generate_password_hash(form.haslo.data).decode('utf-8')
+        modyfikacja = Uzytkownicy(imie=form.Nazwa.data, email=form.email.data, haslo=hashed_password, typ=form.typ_uzytkownika.data) #przypisanie do zmiennej tabele z jej krotkami. Pobieramy dane do zmiany z formularza
+        db.session.add(modyfikacja) #dodanie zmiennej modyfikacja do bazy
+        db.session.commit() #wysłanie do bazy oraz zapisanie zmiany w niej
+        flash(f'Konto stworzone! Zaloguj się.', 'success')
+        return redirect(url_for('login'))
     return render_template('rejestr.html', 
         title='Rejestracja',
         user = current_user.imie if current_user.is_authenticated else None,
@@ -95,6 +102,72 @@ def dokumenty_hist():
         form=form
     )
 
+@app.route('/dokumenty', methods=['GET', 'POST'])
+#@login_required
+def dokumenty():
+    form = dok_historyczne()
+    result = Kontrahenci.query.all()
+    query3 = text("INSERT INTO Kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer) SELECT '1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A' FROM dual WHERE NOT EXISTS (SELECT * FROM Kontrahenci WHERE NIP = '1234567890');")
+    db.session.execute(query3)
+    db.session.commit()
+
+    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) SELECT '12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11' FROM dual WHERE NOT EXISTS (SELECT * FROM Dokumenty WHERE numer_dokumentu = '12345');")
+    db.session.execute(query2, {'user_id': current_user.id})
+    db.session.commit()
+
+    if form.validate_on_submit():
+            query = 'SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP '
+            params = {}
+            if form.numer_dok.data:
+                query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
+                params['numer_dokumentu'] = form.numer_dok.data
+            if form.data_wys.data:
+                query += 'AND Dokumenty.data_wystawienia = :data_wystawienia '
+                params['data_wystawienia'] = form.data_wys.data
+            if form.id_klienta.data:
+                query += 'AND Dokumenty.id_uzytkownika = :id_uzytkownika '
+                params['id_uzytkownika'] = form.id_klienta.data
+            if form.nip.data:
+                query += 'AND Dokumenty.NIP_kontrahenta = :nip '
+                params['nip'] = form.nip.data
+            if form.rodzaj.data:
+                query += 'AND Dokumenty.typ_dokumentu = :typ_dokumentu '
+                params['typ_dokumentu'] = form.rodzaj.data
+            if form.data_wyk.data:
+                query += 'AND Dokumenty.data_wykonania = :data_wykonania '
+                params['data_wykonania'] = form.data_wyk.data
+            query = text(query)
+            result = db.session.execute(query, params)
+
+    return render_template(
+        "dokumenty.html",
+        title = "SimpleData",
+        #user = current_user.imie,
+        form=form,
+        values = result,
+    )
+    
+
+
+        #query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
+        #values = db.session.execute(query, {'nip': 1234567890})
+        #flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+    #if form.validate_on_submit():
+    #    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) VALUES ('12345', '2022-05-11', 1, 1234567890, 'PZ', '2022-05-11', '2022-06-11');")
+    #    db.session.execute(query2)
+    #    db.session.commit()
+    #    query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
+    #    values = db.session.execute(query, {'nip': 1234567890})
+    #    flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+
+    #return render_template(
+    #    "dokumenty.html",
+    #    title = "SimpleData",
+    #    #user = current_user.imie,
+    #    form=form,
+    #    values = result
+    #)
+
 @app.route('/kontrahenci', methods=['GET', 'POST'])
 @login_required
 def kontrahenci_t():
@@ -105,6 +178,7 @@ def kontrahenci_t():
         user = current_user.imie,
         form=form
     )
+
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
 def uzytkownicy_t():
@@ -134,19 +208,35 @@ def uzytkownicy_t():
             values=values
         )
 
-
-@app.route('/edit_user', methods=['POST'])
+@app.route('/edit_user', methods=['GET', 'POST'])
 def edit_user():
     user_id = request.form['id']
     user = Uzytkownicy.query.filter_by(id=user_id).first()
-    user.nazwa = request.form['imie']
-    user.haslo = request.form['haslo']
-    user.email = request.form['email']
-    user.uprawnienia = request.form['uprawnienia']
-    db.session.commit()
-    flash('Zaktualizowano użytkownika', 'success')
-    return redirect(url_for('uzytkownicy_t'))
+
+    if user.imie != request.form['imie']:
+        user.imie = request.form['imie']
+
+    if user.haslo != request.form['haslo']:
+        hashed_password = bcrypt.generate_password_hash(request.form['haslo']).decode('utf-8')
+        user.haslo = hashed_password
+
+    if user.email != request.form['email']:
+        user.email = request.form['email']
+
+    if user.typ != request.form['uprawnienia']:
+        user.typ = request.form['uprawnienia']
+
+    if db.session.dirty:
+        db.session.commit()
+        if current_user.id == int(user_id):
+            flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
+        return redirect(url_for('logout'))
     
+    
+    else:
+        flash('Nie zmieniono danych, nie zakutaliwano użytkownika')
+        return redirect(url_for('uzytkownicy_t'))
+
 @app.route('/magazyn_towar', methods=['GET', 'POST'])
 @login_required
 def magazyn_towar_t():
