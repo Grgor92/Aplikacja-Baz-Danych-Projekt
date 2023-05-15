@@ -1,24 +1,26 @@
 ﻿# -*- coding: utf-8 -*-
+from multiprocessing.connection import Connection
+import sqlite3
 from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia, WyszukajKontrahenta  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
-from .tabele import Uzytkownicy
+from .tabele import Uzytkownicy, Kontrahenci
 from sqlalchemy import inspect
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 #wewnątrz aplikacji 
-with app.app_context():
+#with app.app_context():
 #sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine)
-    db.drop_all()
-    if not inspector.has_table('Uzytkownicy'):
-        db.create_all()
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
-    db.session.add(new_product)
-    db.session.commit()
+    #inspector = inspect(db.engine)
+    #db.drop_all()
+    #if not inspector.has_table('Uzytkownicy'):
+    #    db.create_all()
+    #new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
+    #db.session.add(new_product)
+    #db.session.commit()
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
@@ -194,3 +196,52 @@ def ustawienia_kont():
     username = current_user.nazwa
     email = current_user.email
     return render_template('ustawienia_kont.html', nazwa=username, email=email)
+
+
+@app.route('/query', methods=['POST'])
+def dodaj_rekord():
+    nip = request.form['nip']
+    nazwa_firmy = request.form['nazwa_firmy']
+    miasto = request.form['miasto']
+    nr_telefonu = request.form['nr_telefonu']
+    ulica = request.form['ulica']
+    numer = request.form['numer']
+
+    kontrahenci = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
+    db.session.add(kontrahenci)
+    db.session.commit()
+
+    return redirect(url_for("kontrahenci_t"))
+
+if __name__ == '__main__':
+    app.run()
+
+
+@app.route('/wyszukaj', methods=['POST'])
+def wyszukaj_rekordy():
+    form = WyszukajKontrahenta(request.form)
+    if form.validate():
+        nip = form.nip.data
+        nazwa_firmy = form.nazwa_firmy.data
+        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
+        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
+    else:
+        flash('Wprowadź poprawne wartości do formularza')
+        return redirect(url_for('kontrahenci_t'))
+
+
+from flask import Flask, render_template
+import sqlite3
+
+app = Flask(__name__)
+
+@app.route('/kontrahenci')
+def kontrahenci():
+    # Pobranie danych z bazy
+    kontrahenci = Kontrahenci.query.all()
+
+    # Renderowanie szablonu HTML z danymi z bazy
+    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+
+if __name__ == '__main__':
+    app.run()

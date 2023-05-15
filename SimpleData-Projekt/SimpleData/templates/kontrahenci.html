@@ -1,6 +1,123 @@
 {% extends "layout.html" %}
 {%block content%}
-<div class="content-section">
+
+
+<button id="wyszukajBtn" onclick="openWyszukajPopup()">Wyszukaj</button>
+
+<button id="add-record-btn" onclick="openDodajPopup()">Dodaj kontrahenta</button>
+
+
+<div id="dodajPopup" class="popup">
+    <div class="content">
+        <span class="close" onclick="closeDodajPopup()">&times;</span>
+        <h2>Dodaj</h2>
+        <form action="{{ url_for('kontrahenci_t') }}" method="post">
+            <label for="nip">NIP:</label>
+            <input type="text" id="nip" name="nip" required>
+
+            <label for="nazwa_firmy">Nazwa firmy:</label>
+            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
+
+            <label for="miasto">Miasto:</label>
+            <input type="text" id="miasto" name="miasto" required>
+
+            <label for="nr_telefonu">Numer telefonu:</label>
+            <input type="text" id="nr_telefonu" name="nr_telefonu" required>
+
+            <label for="ulica">Ulica:</label>
+            <input type="text" id="ulica" name="ulica" required>
+
+            <label for="numer">Numer:</label>
+            <input type="text" id="numer" name="numer" required>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>NIP</th>
+            <th>Nazwa firmy</th>
+            <th>Miasto</th>
+            <th>Numer telefonu</th>
+            <th>Ulica</th>
+            <th>Numer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for kontrahent in kontrahenci %}
+        <tr>
+            <td>{{ kontrahent.NIP }}</td>
+            <td>{{ kontrahent.nazwa_firmy }}</td>
+            <td>{{ kontrahent.miasto }}</td>
+            <td>{{ kontrahent.telefon }}</td>
+            <td>{{ kontrahent.ulica }}</td>
+            <td>{{ kontrahent.numer }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="wyszukajPopup" class="popup">
+    <div class="content">
+        <span class="close" onclick="closeWyszukajPopup()">&times;</span>
+        <h2>Wyszukaj kontrahenta</h2>
+        <form action="{{ url_for('wyszukaj_rekordy') }}" method="post">
+            <label for="nip">NIP:</label>
+            <input type="text" id="nip" name="nip" required>
+
+            <label for="nazwa_firmy">Nazwa firmy:</label>
+            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
+
+            <button type="submit">Wyszukaj</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    $(document).on("click", ".edit-btn", function () {
+        var nip = $(this).data('nip');
+        var nazwa_firmy = $(this).data('nazwa_firmy');
+        var miasto = $(this).data('miasto');
+        var nr_telefonu = $(this).data('nr_telefonu');
+        var ulica = $(this).data('ulica');
+        var numer = $(this).data('numer');
+        $("#nip-input").val(nip);
+        $("#nazwa_firmy-input").val(nazwa_firmy);
+        $("#miasto-input").val(miasto);
+        $("#nr_telefonu-input").val(nr_telefonu);
+        $("#ulica-input").val(ulica);
+        $("#numer-input").val(numer);
+    });
+
+    function openWyszukajPopup() {
+        document.getElementById('wyszukajPopup').style.display = 'block';
+    }
+
+    function closeWyszukajPopup() {
+        document.getElementById('wyszukajPopup').style.display = 'none';
+    }
+
+    function openDodajPopup() {
+        document.getElementById('dodajPopup').style.display = 'block';
+    }
+
+    function closeDodajPopup() {
+        document.getElementById('dodajPopup').style.display = 'none';
+    }
+
+
+</script>
+
+</div>
+
+{%endblock%}
+
+
+<!--<div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
@@ -48,10 +165,8 @@
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-</div>
-
-
-<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
+</div>-->
+<!--<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="edit-form" method="POST">
@@ -98,113 +213,4 @@
             </form>
         </div>
     </div>
-</div>
-
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>NIP</th>
-                <th>Nazwa firmy</th>
-                <th>Miasto</th>
-                <th>Numer telefonu</th>
-                <th>Ulica</th>
-                <th>Numer</th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.nip }}</td>
-                <td>{{ item.nazwa_firmy }}</td>
-                <td>{{ item.miasto }}</td>
-                <td>{{ item.nr_telefonu }}</td>
-                <td>{{ item.ulica }}</td>
-                <td>{{ item.numer }}</td>
-                <td>
-                    <button class="btn btn-primary edit-btn" data-id="{{ item.id }}" data-nip="{{ item.nip }}" data-nazwa_firmy="{{ item.nazwa_firmy }}" data-miasto="{{ item.miasto }}" data-nr_telefonu="{{ item.nr_telefonu }}" data-ulica="{{ item.ulica }}" data-numer="{{ item.numer }}">Edytuj</button>
-                    <button class="btn btn-danger delete-btn" data-id="{{ item.id }}">Usuń</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-
-<button id="add-record-btn">Dodaj kontrahenta</button>
-
-
-<div id="popup" class="popup">
-    <div class="content">
-        <span class="close">&times;</span>
-        <h2>Dodaj rekord</h2>
-        <form action="NAZWA_SKRYPTU.php" method="post">
-            <label for="nip">NIP:</label>
-            <input type="text" id="nip" name="nip" required>
-
-            <label for="nazwa_firmy">Nazwa firmy:</label>
-            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
-
-            <label for="miasto">Miasto:</label>
-            <input type="text" id="miasto" name="miasto" required>
-
-            <label for="nr_telefonu">Numer telefonu:</label>
-            <input type="text" id="nr_telefonu" name="nr_telefonu" required>
-
-            <label for="ulica">Ulica:</label>
-            <input type="text" id="ulica" name="ulica" required>
-
-            <label for="numer">Numer:</label>
-            <input type="text" id="numer" name="numer" required>
-
-            <button type="submit">Dodaj</button>
-        </form>
-    </div>
-</div>
-
-
-
-<script>
-
-    $(document).on("click", ".edit-btn", function () {
-        var nip = $(this).data('nip');
-        var nazwa_firmy = $(this).data('nazwa_firmy');
-        var miasto = $(this).data('miasto');
-        var nr_telefonu = $(this).data('nr_telefonu');
-        var ulica = $(this).data('ulica');
-        var numer = $(this).data('numer');
-        $("#nip-input").val(nip);
-        $("#nazwa_firmy-input").val(nazwa_firmy);
-        $("#miasto-input").val(miasto);
-        $("#nr_telefonu-input").val(nr_telefonu);
-        $("#ulica-input").val(ulica);
-        $("#numer-input").val(numer);
-    });
-
-    var addRecordBtn = document.getElementById("add-record-btn");
-    var popup = document.getElementById("popup");
-    var closeBtn = document.getElementsByClassName("close")[0];
-
-    addRecordBtn.onclick = function () {
-        popup.style.display = "block";
-    }
-
-    closeBtn.onclick = function () {
-        popup.style.display = "none";
-    }
-
-    window.onclick = function (event) {
-        if (event.target == popup) {
-            popup.style.display = "none";
-        }
-    }
-
-</script>
-
-</div>
-
-{%endblock%}
+</div>-->
