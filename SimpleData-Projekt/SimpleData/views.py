@@ -2,7 +2,7 @@
 from multiprocessing.connection import Connection
 from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
-from SimpleData import app
+from SimpleData import app, db, bcrypt, LoginManager
 from datetime import datetime
 from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db, bcrypt
@@ -10,16 +10,22 @@ from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
+from flask_bcrypt import Bcrypt
+
+
 #wewnątrz aplikacji 
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
-    #inspector = inspect(db.engine)
-    #db.drop_all()
-    #if not inspector.has_table('Uzytkownicy'):
-    #    db.create_all()
-    #new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo='haslo', typ='Kierownik')
-    #db.session.add(new_product)
-    #db.session.commit()
+with app.app_context():
+#sprawdzenie czy baza danych istnieje
+    inspector = inspect(db.engine)
+    db.drop_all()
+    if not inspector.has_table('Uzytkownicy'):
+        db.create_all()
+    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
+    db.session.add(new_product)
+    db.session.commit()
+
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
@@ -43,12 +49,11 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route('/login',methods=['GET', 'POST'])    #oprócz ścieżki dodajemmy tu metody jakie mogą być obsługiwane na stronie, w tym momencie robimy to aby ta strona mogła onsługiwać formularze
 def login():
     form = LoginForm()  #do zmiennej form przypisujemy model formularza który będzie działał na tej stronie
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    hashed = bcrypt.generate_password_hash('qazwsx')
 
     if form.validate_on_submit():   
             user = Uzytkownicy.query.filter_by(email=form.email.data).first()
@@ -57,8 +62,6 @@ def login():
                 flash('Udało się zalogować', 'success')
                 return redirect(url_for('home'))
             else:
-                if bcrypt.check_password_hash(hashed, 'qazwsx'):
-                    flash(hashed)
                 flash('Logowanie nie udane. Sprawdź poprawność danych a wrazie dalszych problemów skontaktuj się z administratorem', 'danger')  #wiadomość jeśli dane będą nie poprawne
     return render_template(
         "login.html",
