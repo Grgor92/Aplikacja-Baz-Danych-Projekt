@@ -40,6 +40,7 @@ class Dokumenty(db.Model):
     typ_dokumentu = db.Column(db.String(32), nullable=False)
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    Typ_dostawcy = db.Column(db.String(32), nullable=False)
     #kont = db.relationship("Kontrahenci", backref='kontrahenci_dokumenty')
     towaryy = db.relationship("Towary_Dokument", backref='towar_W_dokument')
     towaryy = db.relationship("Towary_Dokument", backref='towar_W_dokument')

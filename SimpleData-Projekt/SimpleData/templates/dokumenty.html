@@ -59,6 +59,8 @@
 
         <div class="form-group text-center">
             {{ form.submit(class="btn btn-outline-info") }}
+            <a href="{{ url_for('dodaj_dokument', dokument_type='PZ') }}" class="btn btn-primary">Dodaj dokument PZ</a>
+            <a href="{{ url_for('dodaj_dokument', dokument_type='WZ') }}" class="btn btn-primary">Dodaj dokument WZ</a>
         </div>
     </form>
 
@@ -96,4 +98,4 @@
     </table>
 
 </div>
-{%endblock%}
+    {%endblock%}
