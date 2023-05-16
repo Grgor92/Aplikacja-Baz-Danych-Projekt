@@ -115,47 +115,76 @@ input[type="checkbox"].input-validation-error {
 }
 
 .popup.active {
-        display: block;
+    display: block;
 }
-    .popup .content {
-        background-color: #fff;
-        padding: 20px;
-        text-align: center;
+.popup .content {
+    background-color: #fff;
+    padding: 20px;
+    text-align: center;
+ }
+
+.popup h2 {
+    margin-top: 0;
+}
+
+.popup form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     }
 
-    .popup h2 {
-        margin-top: 0;
-    }
-
-    .popup form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .popup label {
-        margin-bottom: 10px;
-    }
-
-    .popup input {
-        width: 200px;
-        padding: 5px;
-        margin-bottom: 10px;
-    }
-
-    .popup button {
-        padding: 10px 20px;
-    }
-#wyszukajBtn {
-    float: right;
+.popup label {
     margin-bottom: 10px;
+}
+
+.popup input {
+    width: 200px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.popup button {
+    padding: 10px 20px;
+}
+.search-form {
+    text-align: center;
+}
+
+.search-form h2 {
+    color: #333;
+    font-size: 20px;
+}
+
+.search-fields {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-wrapper {
+    margin-bottom: 10px;
+}
+
+.input-wrapper label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-wrapper input {
+    width: 200px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#wyszukajBtn {
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-}
-.header-cell {
-    font-weight: bold;
-    background-color: #f2f2f2;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }

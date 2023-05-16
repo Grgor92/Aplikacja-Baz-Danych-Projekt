@@ -1,8 +1,24 @@
 {% extends "layout.html" %}
 {%block content%}
 
+<div class="search-form" style="text-align: center;">
+    <h2>Panel kontrahentów</h2>
+    <form action="{{ url_for('kontrahenci_t') }}" method="post" style="display: inline-block;">
+        <div class="search-fields">
+            <div class="input-wrapper">
+                <label for="nip">NIP</label>
+                <input type="text" id="nip" name="nip" optional>
+            </div>
 
-<button id="wyszukajBtn" onclick="openWyszukajPopup()">Wyszukaj</button>
+            <div class="input-wrapper">
+                <label for="nazwa_firmy">Nazwa firmy</label>
+                <input type="text" id="nazwa_firmy" name="nazwa_firmy" optional>
+            </div>
+        </div>
+        <button id="wyszukajBtn" type="submit" style="display: block; margin-top: 10px;">Wyszukaj</button>
+    </form>
+</div>
+
 
 <button id="add-record-btn" onclick="openDodajPopup()">Dodaj kontrahenta</button>
 
@@ -45,38 +61,58 @@
                 <th class="header-cell">Numer telefonu</th>
                 <th class="header-cell">Ulica</th>
                 <th class="header-cell">Numer</th>
+                <th class="header-cell">Akcje</th>
             </tr>
         </thead>
         <tbody>
-            {% for kontrahenci_t in kontrahenci %}
+            {% for kontrahent in kontrahenci %}
             <tr>
-                <td>{{ kontrahenci_t.NIP }}</td>
-                <td>{{ kontrahenci_t.nazwa_firmy }}</td>
-                <td>{{ kontrahenci_t.miasto }}</td>
-                <td>{{ kontrahenci_t.telefon }}</td>
-                <td>{{ kontrahenci_t.ulica }}</td>
-                <td>{{ kontrahenci_t.numer }}</td>
+                <td>{{ kontrahent.NIP }}</td>
+                <td>{{ kontrahent.nazwa_firmy }}</td>
+                <td>{{ kontrahent.miasto }}</td>
+                <td>{{ kontrahent.telefon }}</td>
+                <td>{{ kontrahent.ulica }}</td>
+                <td>{{ kontrahent.numer }}</td>
+                <td>
+                    <button onclick="openEditPopup()">Edytuj</button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
-<div id="wyszukajPopup" class="popup">
+
+<div id="editPopup" class="popup">
     <div class="content">
-        <span class="close" onclick="closeWyszukajPopup()">&times;</span>
-        <h2>Wyszukaj kontrahenta</h2>
-        <form action="{{ url_for('kontrahenci_t') }}" method="post">
-            <label for="nip">NIP:</label>
-            <input type="text" id="nip" name="nip" opcional>
+        <span class="close" onclick="closeEditPopup()">&times;</span>
+        <h2>Edytuj kontrahenta</h2>
+        <form id="editForm" method="post" onsubmit="event.preventDefault(); saveEditedData();">
+            <label for="editedField1">NIP :</label>
+            <input type="text" id="editedField1" name="editedField1" optional>
 
-            <label for="nazwa_firmy">Nazwa firmy:</label>
-            <input type="text" id="nazwa_firmy" name="nazwa_firmy" opcional>
+            <label for="editedField2">Nazwa firmy 2:</label>
+            <input type="text" id="editedField2" name="editedField3" optional>
 
-            <button type="submit">Wyszukaj</button>
+            <label for="editedField3">Miasto:</label>
+            <input type="text" id="editedField3" name="editedField4" optional>
+
+            <label for="editedField4">Numer telefonu:</label>
+            <input type="text" id="editedField4" name="editedField5" optional>
+
+            <label for="editedField5">Ulica:</label>
+            <input type="text" id="editedField5" name="editedField6" optional>
+
+            <label for="editedField6">Numer:</label>
+            <input type="text" id="editedField6 name="editedField7" optional>
+
+            <button type="submit">Zapisz zmiany</button>
         </form>
     </div>
 </div>
+
+
+
 
 <script>
 
@@ -110,6 +146,17 @@
     function closeDodajPopup() {
         document.getElementById('dodajPopup').style.display = 'none';
     }
+    function openEditPopup() {
+        var dodajPopup = document.getElementById("editPopup");
+        dodajPopup.style.display = "block";
+    }
+
+    function closeEditPopup() {
+        var dodajPopup = document.getElementById("editPopup");
+        dodajPopup.style.display = "none";
+    }
+
+    
 
 
 </script>
