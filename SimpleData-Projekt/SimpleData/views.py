@@ -4,7 +4,7 @@ from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app, db, bcrypt, LoginManager
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci_F, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db, bcrypt
 from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
@@ -175,13 +175,12 @@ def dokumenty():
 @app.route('/kontrahenci', methods=['GET', 'POST'])
 @login_required
 def kontrahenci_t():
-    form = kontrahenci()
-    return render_template(
-        "kontrahenci.html",
-        title = "SimpleData",
-        user = current_user.imie,
-        form=form
-    )
+    form = kontrahenci_F()
+    values=Kontrahenci.query.all()
+    return render_template('kontrahenci.html', kontrahenci=values,
+    title = "SimpleData",
+    user = current_user.imie,
+    form=form)
 
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
@@ -290,17 +289,17 @@ def ustawienia_kont():
     return render_template('ustawienia_kont.html', nazwa=username, email=email)
 
 
-#@app.route('/wyszukaj', methods=['POST'])
-#def wyszukaj_rekordy():
-#    form = WyszukajKontrahenta(request.form)
-#    if form.validate():
-#        nip = form.nip.data
-#        nazwa_firmy = form.nazwa_firmy.data
-#        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
-#        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
-#    else:
-#        flash('Wprowadź poprawne wartości do formularza')
-#        return redirect(url_for('kontrahenci_t'))
+@app.route('/wyszukaj', methods=['POST'])
+def wyszukaj_rekordy():
+    form = WyszukajKontrahenta(request.form)
+    if form.validate():
+        nip = form.nip.data
+        nazwa_firmy = form.nazwa_firmy.data
+        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
+        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
+    else:
+        flash('Wprowadź poprawne wartości do formularza')
+        return redirect(url_for('kontrahenci_t'))
 
 
 
@@ -318,14 +317,4 @@ def dodaj_rekord():
     db.session.add(kontrahent)
     db.session.commit()
 
-    return render_template('kontrahenci.html')
-
-
-@app.route('/kontrahenci')
-def kontrahenci():
-    kontrahenci = Kontrahent.query.all()
-
-    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
-
-if __name__ == '__main__':
-    app.run()
+    return redirect(url_for('kontrahenci_t'))

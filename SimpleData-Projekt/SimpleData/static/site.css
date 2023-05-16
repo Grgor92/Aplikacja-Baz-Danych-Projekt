@@ -155,3 +155,7 @@ input[type="checkbox"].input-validation-error {
     padding: 10px;
     cursor: pointer;
 }
+.header-cell {
+    font-weight: bold;
+    background-color: #f2f2f2;
+}

@@ -35,61 +35,32 @@
     </div>
 </div>
 
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>NIP</th>
-            <th>Nazwa firmy</th>
-            <th>Miasto</th>
-            <th>Numer telefonu</th>
-            <th>Ulica</th>
-            <th>Numer</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for kontrahent in kontrahenci %}
-        <tr>
-            <td>{{ kontrahent.NIP }}</td>
-            <td>{{ kontrahent.nazwa_firmy }}</td>
-            <td>{{ kontrahent.miasto }}</td>
-            <td>{{ kontrahent.telefon }}</td>
-            <td>{{ kontrahent.ulica }}</td>
-            <td>{{ kontrahent.numer }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-
-
-
-
-<!--<table class="table">
-    <thead>
-        <tr>
-            <th>NIP</th>
-            <th>Nazwa firmy</th>
-            <th>Miasto</th>
-            <th>Numer telefonu</th>
-            <th>Ulica</th>
-            <th>Numer</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for kontrahent in kontrahenci %}
-        <tr>
-            <td>{{ kontrahent.NIP }}</td>
-            <td>{{ kontrahent.nazwa_firmy }}</td>
-            <td>{{ kontrahent.miasto }}</td>
-            <td>{{ kontrahent.telefon }}</td>
-            <td>{{ kontrahent.ulica }}</td>
-            <td>{{ kontrahent.numer }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>-->
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="header-cell">NIP</th>
+                <th class="header-cell">Nazwa firmy</th>
+                <th class="header-cell">Miasto</th>
+                <th class="header-cell">Numer telefonu</th>
+                <th class="header-cell">Ulica</th>
+                <th class="header-cell">Numer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kontrahenci_t in kontrahenci %}
+            <tr>
+                <td>{{ kontrahenci_t.NIP }}</td>
+                <td>{{ kontrahenci_t.nazwa_firmy }}</td>
+                <td>{{ kontrahenci_t.miasto }}</td>
+                <td>{{ kontrahenci_t.telefon }}</td>
+                <td>{{ kontrahenci_t.ulica }}</td>
+                <td>{{ kontrahenci_t.numer }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <div id="wyszukajPopup" class="popup">
     <div class="content">
@@ -97,10 +68,10 @@
         <h2>Wyszukaj kontrahenta</h2>
         <form action="{{ url_for('kontrahenci_t') }}" method="post">
             <label for="nip">NIP:</label>
-            <input type="text" id="nip" name="nip" required>
+            <input type="text" id="nip" name="nip" opcional>
 
             <label for="nazwa_firmy">Nazwa firmy:</label>
-            <input type="text" id="nazwa_firmy" name="nazwa_firmy" required>
+            <input type="text" id="nazwa_firmy" name="nazwa_firmy" opcional>
 
             <button type="submit">Wyszukaj</button>
         </form>
@@ -146,102 +117,3 @@
 </div>
 
 {%endblock%}
-
-
-<!--<div class="content-section">
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <div class="form-inline">
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.nip.id }}" class="form-control-label">{{ form.nip.label }}</label>
-                    </div>
-                    {{ form.nip(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.nazwa_firmy.id }}" class="form-control-label">{{ form.nazwa_firmy.label }}</label>
-                    </div>
-                    {{ form.nazwa_firmy(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.miasto.id }}" class="form-control-label">{{ form.miasto.label }}</label>
-                    </div>
-                    {{ form.miasto(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.nr_telefonu.id }}" class="form-control-label">{{ form.nr_telefonu.label }}</label>
-                    </div>
-                    {{ form.nr_telefonu(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.ulica.id }}" class="form-control-label">{{ form.ulica.label }}</label>
-                    </div>
-                    {{ form.ulica(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.numer.id }}" class="form-control-label">{{ form.numer.label }}</label>
-                    </div>
-                    {{ form.numer(class="form-control ml-2") }}
-                </div>
-            </div>
-        </fieldset>
-
-        <div class="form-group text-center">
-            {{ form.submit(class="btn btn-outline-info") }}
-        </div>
-    </form>
-</div>-->
-<!--<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="edit-form" method="POST">
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="edit-modal-label">Edycja kontrahenta</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <input type="hidden" id="id-input" name="id" value="">
-                    <div class="form-group">
-                        {{ form.nip.label(class="col-form-label") }}
-                        {{ form.nip(class="form-control", id="nip-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.nazwa_firmy.label(class="col-form-label") }}
-                        {{ form.nazwa_firmy(class="form-control", id="nazwa_firmy-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.miasto.label(class="col-form-label") }}
-                        {{ form.miasto(class="form-control", id="miasto-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.nr_telefonu.label(class="col-form-label") }}
-                        {{ form.nr_telefonu(class="form-control", id="nr_telefonu-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.ulica.label(class="col-form-label") }}
-                        {{ form.ulica(class="form-control", id="ulica-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.numer.label(class="col-form-label") }}
-                        {{ form.numer(class="form-control", id="numer-input") }}
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>-->

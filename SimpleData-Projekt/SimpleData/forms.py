@@ -50,7 +50,7 @@ class dok_historyczne(FlaskForm):
     nazwa_kon = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
     submit = SubmitField('Wyszukaj')
 
-class kontrahenci(FlaskForm):
+class kontrahenci_F(FlaskForm):
     nip = IntegerField('NIP')
     nazwa_firmy = StringField('Nazwa firmy')
     miasto = StringField('Miasto')
