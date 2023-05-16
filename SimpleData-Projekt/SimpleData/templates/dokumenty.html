@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{%block content%}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-inline">
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.numer_dok.id }}" class="form-control-label">{{ form.numer_dok.label }}</label>
+                    </div>
+                    {{ form.numer_dok(class="form-control ml-2") }}
+                </div>
+                {% for field, errors in form.errors.items() %}
+                <div class="alert alert-danger">
+                    {% for error in errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_wys.id }}" class="form-control-label">{{ form.data_wys.label }}</label>
+                    </div>
+                    {{ form.data_wys(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.id_klienta.id }}" class="form-control-label">{{ form.id_klienta.label }}</label>
+                    </div>
+                    {{ form.id_klienta(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.nip.id }}" class="form-control-label">{{ form.nip.label }}</label>
+                    </div>
+                    {{ form.nip(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.rodzaj.id }}" class="form-control-label">{{ form.rodzaj.label }}</label>
+                    </div>
+                    {{ form.rodzaj(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_wyk.id }}" class="form-control-label">{{ form.data_wyk.label }}</label>
+                    </div>
+                    {{ form.data_wyk(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.nazwa_kon.id }}" class="form-control-label">{{ form.nazwa_kon.label }}</label>
+                    </div>
+                    {{ form.nazwa_kon(class="form-control ml-2") }}
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-group text-center">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+
+    <table class="table table-striped align-items-center">
+        <thead>
+            <tr>
+                <th scope="col">Numer Dokumentu</th>
+                <th scope="col">Data Wystawienia</th>
+                <th scope="col">Użytkownik</th>
+                <th scope="col">NIP Dostawcy</th>
+                <th scope="col">Dostawca</th>
+                <th scope="col">Typ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in values %}
+            <tr class="table-info">
+            <tr>
+
+                <td>{{ item.numer_dokumentu }}</td>
+                <td>{{ item.data_wystawienia }}</td>
+                <td>{{ item.id_uzytkownika }}</td>
+                <td>{{ item.NIP_kontrahenta }}</td>
+                <td>{{ item.nazwa_firmy }}</td>
+                <td>{{ item.typ_dokumentu }}</td>
+                <!--<td>
+                    {% if current_user.is_authenticated and current_user.typ == 'Kierownik' %}
+                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
+                    {% endif %}
+                </td>-->
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{%endblock%}
