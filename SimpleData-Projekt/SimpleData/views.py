@@ -210,16 +210,6 @@ def ustawienia_kont():
 #        return redirect(url_for('kontrahenci_t'))
 
 
-@app.route('/kontrahenci')
-def kontrahenci():
-    # Pobranie danych z bazy
-    kontrahenci = Kontrahenci.query.all()
-
-    # Renderowanie szablonu HTML z danymi z bazy
-    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
-
-if __name__ == '__main__':
-    app.run()
 
 
 @app.route('/dodaj_rekord', methods=['POST'])
@@ -236,3 +226,13 @@ def dodaj_rekord():
     db.session.commit()
 
     return render_template('kontrahenci.html')
+
+
+@app.route('/kontrahenci')
+def kontrahenci():
+    kontrahenci = Kontrahent.query.all()
+
+    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+
+if __name__ == '__main__':
+    app.run()
