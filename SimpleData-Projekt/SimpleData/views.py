@@ -9,8 +9,7 @@ from SimpleData import db, bcrypt
 from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
-
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 
 
 #wewnątrz aplikacji 
@@ -251,42 +250,33 @@ def magazyn_towar_t():
         form=form
     )
 
-@app.route('/ustawienia')
-@login_required
-def ustawieniakont():
-    
-    form = moje_ustawienia()
-    if request.method == 'POST':
-        nazwa = request.form['Nazwa']
-        password = request.form['Hasło']
-        password2 = request.form['Powtórz hasło']
-        
-        if not nazwa or not password or not password2:
-            # błędy walidacji
-            pass
-        
-        if password != password2:
-            # błędy walidacji
-            pass
-        
-        current_user.nazwa = username
-        current_user.set_password(password)
-        db.session.commit()
-        
-        # przekierowanie użytkownika na stronę główną ustwaień
-        pass
-    else:
-        return render_template(
-            'ustawienia_kont.html',
-            form=form
-        )
-
-@app.route('/ustawienia')
+@app.route('/ustawienia', methods=['GET', 'POST'])
 @login_required
 def ustawienia_kont():
-    username = current_user.nazwa
-    email = current_user.email
-    return render_template('ustawienia_kont.html', nazwa=username, email=email)
+    form = moje_ustawienia()
+
+    if form.validate_on_submit():
+        current_user.imie = form.username.data
+        current_user.email = form.email.data
+
+        # Sprawdzenie poprawności hasła przed zapisaniem zmian
+        if form.password.data:
+            if check_password_hash(current_user.haslo, form.password.data):
+                # Hasło się zgadza, można zaktualizować
+                new_password_hash = generate_password_hash(form.new_password.data)
+                current_user.haslo = new_password_hash
+            else:
+                flash('Podano nieprawidłowe hasło.', 'error')
+                return redirect(url_for('ustawienia_kont'))
+
+        db.session.commit()
+        flash('Twoje ustawienia zostały zaktualizowane.', 'success')
+        return redirect(url_for('ustawienia_kont'))
+
+    form.username.data = current_user.imie
+    form.email.data = current_user.email
+
+    return render_template('ustawienia_kont.html', form=form, imie=current_user.imie, email=current_user.email)
 
 
 @app.route('/wyszukaj', methods=['POST'])

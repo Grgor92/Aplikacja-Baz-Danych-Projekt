@@ -13,10 +13,10 @@
     padding: 15px;
 }
 
-    .navbar a {
-        text-decoration: none;
-        color: inherit;
-    }
+.navbar a {
+    text-decoration: none;
+    color: inherit;
+}
 
 .navbar-brand {
     font-size: 1.2em;
@@ -48,6 +48,7 @@ body {
     padding-bottom: 20px;
     background-color: #d2d4d3;
 }
+
 .container {
     background-color: #f7faf8;
     padding:60px;
@@ -89,9 +90,11 @@ input[type="checkbox"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
+
 .form-inline .form-group label {
     text-align: center;
 }
+
 #add-record-btn {
     float: left;
     margin-bottom: 10px;
@@ -101,6 +104,7 @@ input[type="checkbox"].input-validation-error {
     padding: 10px;
     cursor: pointer;
 }
+
 .popup {
     position: fixed;
     left: 0;
@@ -117,6 +121,7 @@ input[type="checkbox"].input-validation-error {
 .popup.active {
     display: block;
 }
+
 .popup .content {
     background-color: #fff;
     padding: 20px;
@@ -146,6 +151,7 @@ input[type="checkbox"].input-validation-error {
 .popup button {
     padding: 10px 20px;
 }
+
 .search-form {
     text-align: center;
 }
@@ -187,4 +193,31 @@ input[type="checkbox"].input-validation-error {
     margin-left: auto;
     margin-right: auto;
     display: block;
+}
+
+.content-section {
+    margin-top: 50px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.invalid-feedback {
+    color: red;
+}
+
+.btn {
+    background-color: green;
+    color: white;
 }

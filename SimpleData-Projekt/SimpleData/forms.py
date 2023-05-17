@@ -87,8 +87,9 @@ class magazyn_towar(FlaskForm):
 class moje_ustawienia(FlaskForm):
     username = StringField('Nazwa', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Hasło', validators=[DataRequired()])
-    password2 = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('password')])
+    password = PasswordField('Stare hasło', validators=[DataRequired()])
+    new_password = PasswordField('Nowe hasło', validators=[DataRequired()])
+    confirm_password = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Zapisz')
 
 #class Dodaj_dok(FlaskForm):
