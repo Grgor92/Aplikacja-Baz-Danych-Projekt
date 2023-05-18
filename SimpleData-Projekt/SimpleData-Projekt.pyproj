@@ -16,7 +16,7 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>SimpleData-Projekt</Name>
     <RootNamespace>SimpleData-Projekt</RootNamespace>
-    <InterpreterId>Global|PythonCore|3.9</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,8 +65,14 @@
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\towar.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\ustawienia_kont.html" />
     <Content Include="SimpleData\templates\uzytkownicy.html" />
+    <Content Include="SimpleData\templates\wypis_towary.html">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SimpleData\" />

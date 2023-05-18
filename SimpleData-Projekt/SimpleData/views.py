@@ -16,15 +16,15 @@ from flask_bcrypt import Bcrypt
 #wewnątrz aplikacji 
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
-with app.app_context():
+with app.app_context():  #wykonania działania wewnątrz aplikacji
 #sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine)
-    db.drop_all()
-    if not inspector.has_table('Uzytkownicy'):
-        db.create_all()
+    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
+    db.drop_all() # usunięcie wszytsykich danych / resert bazy
+    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
+        db.create_all() #tworzenie
     new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
     db.session.add(new_product)
-    db.session.commit()
+    db.session.commit() # koniec połączenia z bazą
 
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
@@ -183,6 +183,7 @@ def kontrahenci_t():
         form=form
     )
 
+
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
 def uzytkownicy_t():
@@ -329,3 +330,27 @@ def dodaj_rekord():
     db.session.commit()
 
     return render_template('kontrahenci.html')
+
+@app.route('/towar', methods=['GET', 'POST'])
+@login_required
+def towary():
+    # dodaj formularz form = kontrahenci()
+    #wyrenderuj strone ze wzoru
+    return render_template( 
+        "towar.html",
+        title = "SimpleData",
+        user = current_user.imie, #current_user - dane użytkownika, imie - krotka do której chcemy dostęp
+        #form=form
+    )
+
+@app.route('/wypis-towary', methods=['GET', 'POST'])
+@login_required
+def wypis_towary():
+    # dodaj formularz form = kontrahenci()
+    #wyrenderuj strone ze wzoru
+    return render_template( 
+        "wypis_towary.html",
+        title = "SimpleData",
+        user = current_user.imie, #current_user - dane użytkownika, imie - krotka do której chcemy dostęp
+        #form=form
+    )
