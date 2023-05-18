@@ -150,6 +150,27 @@ input[type="checkbox"].input-validation-error {
 
 .popup button {
     padding: 10px 20px;
+    margin-top: 10px;
+}
+.popup table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.popup table th,
+.popup table td {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+.popup table th {
+    background-color: #f2f2f2;
+}
+
+.popup button {
+    padding: 10px 20px;
+    margin-top: 10px;
 }
 
 .search-form {

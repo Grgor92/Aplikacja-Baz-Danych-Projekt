@@ -176,6 +176,20 @@ def dokumenty():
 def kontrahenci_t():
     form = kontrahenci_F()
     values=Kontrahenci.query.all()
+    if request.method == 'POST':
+        nip = request.form.get('nip')
+        nazwa_firmy = request.form.get('nazwa_firmy')
+
+        if nip and nazwa_firmy:
+            kontrahenci = Kontrahenci.query.filter_by(NIP=nip, nazwa_firmy=nazwa_firmy).all()
+        elif nip:
+            kontrahenci = Kontrahenci.query.filter_by(NIP=nip).all()
+        elif nazwa_firmy:
+            kontrahenci = Kontrahenci.query.filter_by(nazwa_firmy=nazwa_firmy).all()
+        else:
+            kontrahenci = Kontrahenci.query.all()
+
+        return render_template('kontrahenci.html', kontrahenci=kontrahenci)
     return render_template('kontrahenci.html', kontrahenci=values,
     title = "SimpleData",
     user = current_user.imie,
@@ -279,21 +293,6 @@ def ustawienia_kont():
     return render_template('ustawienia_kont.html', form=form, imie=current_user.imie, email=current_user.email)
 
 
-@app.route('/wyszukaj', methods=['POST'])
-def wyszukaj_rekordy():
-    form = WyszukajKontrahenta(request.form)
-    if form.validate():
-        nip = form.nip.data
-        nazwa_firmy = form.nazwa_firmy.data
-        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
-        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
-    else:
-        flash('Wprowadź poprawne wartości do formularza')
-        return redirect(url_for('kontrahenci_t'))
-
-
-
-
 @app.route('/dodaj_rekord', methods=['POST'])
 def dodaj_rekord():
     nip = request.form.get('nip')
@@ -305,6 +304,7 @@ def dodaj_rekord():
 
     kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
     db.session.add(kontrahent)
+    flash('Nowy kontrahent został utworzony.', 'success')
     db.session.commit()
 
     return redirect(url_for('kontrahenci_t'))

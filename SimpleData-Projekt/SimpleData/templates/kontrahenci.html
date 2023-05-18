@@ -3,7 +3,7 @@
 
 <div class="search-form" style="text-align: center;">
     <h2>Panel kontrahentów</h2>
-    <form action="{{ url_for('kontrahenci_t') }}" method="post" style="display: inline-block;">
+    <form id="searchForm" action="{{ url_for('kontrahenci_t') }}" method="post" style="display: inline-block;">
         <div class="search-fields">
             <div class="input-wrapper">
                 <label for="nip">NIP</label>
@@ -18,7 +18,6 @@
         <button id="wyszukajBtn" type="submit" style="display: block; margin-top: 10px;">Wyszukaj</button>
     </form>
 </div>
-
 
 <button id="add-record-btn" onclick="openDodajPopup()">Dodaj kontrahenta</button>
 
@@ -91,25 +90,27 @@
             <label for="editedField1">NIP :</label>
             <input type="text" id="editedField1" name="editedField1" optional>
 
-            <label for="editedField2">Nazwa firmy 2:</label>
-            <input type="text" id="editedField2" name="editedField3" optional>
+            <label for="editedField2">Nazwa firmy:</label>
+            <input type="text" id="editedField2" name="editedField2" optional>
 
             <label for="editedField3">Miasto:</label>
-            <input type="text" id="editedField3" name="editedField4" optional>
+            <input type="text" id="editedField3" name="editedField3" optional>
 
             <label for="editedField4">Numer telefonu:</label>
-            <input type="text" id="editedField4" name="editedField5" optional>
+            <input type="text" id="editedField4" name="editedField4" optional>
 
             <label for="editedField5">Ulica:</label>
-            <input type="text" id="editedField5" name="editedField6" optional>
+            <input type="text" id="editedField5" name="editedField5" optional>
 
             <label for="editedField6">Numer:</label>
-            <input type="text" id="editedField6 name="editedField7" optional>
+            <input type="text" id="editedField6" name="editedField6" optional>
 
-            <button type="submit">Zapisz zmiany</button>
+            <button onclick="openEditPopup('{{ kontrahenci.NIP }}', '{{ kontrahenci.nazwa_firmy }}', '{{ kontrahenci.miasto }}', '{{ kontrahenci.telefon }}', '{{ kontrahenci.ulica }}', '{{ kontrahenci.numer }}')">Edytuj</button>
         </form>
     </div>
 </div>
+
+
 
 
 
@@ -131,13 +132,6 @@
         $("#numer-input").val(numer);
     });
 
-    function openWyszukajPopup() {
-        document.getElementById('wyszukajPopup').style.display = 'block';
-    }
-
-    function closeWyszukajPopup() {
-        document.getElementById('wyszukajPopup').style.display = 'none';
-    }
 
     function openDodajPopup() {
         document.getElementById('dodajPopup').style.display = 'block';
@@ -156,7 +150,77 @@
         dodajPopup.style.display = "none";
     }
 
-    
+    function openwyszukajBtn() {
+        event.preventDefault(); // Zatrzymuje domyślne zachowanie formularza
+
+        var form = document.getElementById('NIP');
+        var formData = new FormData(form);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                updateTable(responseData);
+            } else {
+                console.error('Wystąpił błąd. Status żądania: ' + xhr.status);
+            }
+        };
+        xhr.send(formData);
+    }
+
+    function updateTable(data) {
+        var tableBody = document.querySelector('.table tbody');
+        tableBody.innerHTML = '';
+
+        data.forEach(function (record) {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td>' + record.NIP + '</td>' +
+                '<td>' + record.nazwa_firmy + '</td>' +
+                '<td>' + record.miasto + '</td>' +
+                '<td>' + record.telefon + '</td>' +
+                '<td>' + record.ulica + '</td>' +
+                '<td>' + record.numer + '</td>' +
+                '<td><button onclick="openEditPopup()">Edytuj</button></td>';
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    function openEditPopup(nip, nazwa_firmy, miasto, telefon, ulica, numer) {
+        // Wypełnienie pól formularza danymi kontrahenta
+        document.getElementById('editedField1').value = nip;
+        document.getElementById('editedField2').value = nazwa_firmy;
+        document.getElementById('editedField3').value = miasto;
+        document.getElementById('editedField4').value = telefon;
+        document.getElementById('editedField5').value = ulica;
+        document.getElementById('editedField6').value = numer;
+
+        // Wyświetlenie popupa
+        document.getElementById('editPopup').classList.add('active');
+    }
+
+    function closeEditPopup() {
+        // Zamknięcie popupa
+        document.getElementById('editPopup').classList.remove('active');
+    }
+
+    function saveEditedData() {
+        // Pobranie wartości z pól formularza
+        var editedField1 = document.getElementById('editedField1').value;
+        var editedField2 = document.getElementById('editedField2').value;
+        var editedField3 = document.getElementById('editedField3').value;
+        var editedField4 = document.getElementById('editedField4').value;
+        var editedField5 = document.getElementById('editedField5').value;
+        var editedField6 = document.getElementById('editedField6').value;
+
+        // Wykonanie odpowiednich operacji zapisu zmienionych danych w bazie danych
+        // ...
+
+        // Zamknięcie popupa
+        closeEditPopup();
+    }
+
 
 
 </script>
