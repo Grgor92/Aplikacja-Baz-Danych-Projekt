@@ -4,7 +4,7 @@ from asyncio.windows_events import NULL
 from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import app, db, bcrypt, LoginManager
 from datetime import datetime
-from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci_F, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia, DodajDokumentForm  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db, bcrypt
 from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
@@ -14,17 +14,16 @@ from flask_bcrypt import Bcrypt
 
 
 #wewnątrz aplikacji 
+#sprawdzenie czy baza danych istnieje
 #with app.app_context():
-#sprawdzenie czy baza danych istnieje
-with app.app_context():
-#sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine)
-    db.drop_all()
-    if not inspector.has_table('Uzytkownicy'):
-        db.create_all()
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
-    db.session.add(new_product)
-    db.session.commit()
+##sprawdzenie czy baza danych istnieje
+#    inspector = inspect(db.engine)
+#    db.drop_all()
+#    if not inspector.has_table('Uzytkownicy'):
+#        db.create_all()
+#    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
+#    db.session.add(new_product)
+#    db.session.commit()
 
 
 @app.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
@@ -110,17 +109,17 @@ def dokumenty_hist():
 #@login_required
 def dokumenty():
     form = dok_historyczne()
-    result = Kontrahenci.query.all()
+    form2 = DodajDokumentForm()
+    query = text("SELECT * FROM Dokumenty WHERE numer_dokumentu = '' ;")
+    result = db.session.execute(query)
     query3 = text("INSERT INTO Kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer) SELECT '1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A' FROM dual WHERE NOT EXISTS (SELECT * FROM Kontrahenci WHERE NIP = '1234567890');")
     db.session.execute(query3)
-    db.session.commit()
-
-    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) SELECT '12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11' FROM dual WHERE NOT EXISTS (SELECT * FROM Dokumenty WHERE numer_dokumentu = '12345');")
+    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status) SELECT '12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11', 'Aktywna' FROM dual WHERE NOT EXISTS (SELECT * FROM Dokumenty WHERE numer_dokumentu = '12345');")
     db.session.execute(query2, {'user_id': current_user.id})
     db.session.commit()
 
     if form.validate_on_submit():
-            query = 'SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP '
+            query = 'SELECT d.*, k.nazwa_firmy FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Aktywna"'
             params = {}
             if form.numer_dok.data:
                 query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
@@ -142,16 +141,69 @@ def dokumenty():
                 params['data_wykonania'] = form.data_wyk.data
             query = text(query)
             result = db.session.execute(query, params)
-
+            db.session.commit()
     return render_template(
         "dokumenty.html",
         title = "SimpleData",
         #user = current_user.imie,
         form=form,
+        form2=form2,
         values = result,
     )
     
+@app.route('/dodaj_dokument_<dokument_type>', methods=['GET', 'POST'])
+def dodaj_dokument(dokument_type):
+    
+    if dokument_type == 'PZ':
+        form = DodajDokumentForm(rodzaj2='PZ')
+    elif dokument_type == 'WZ':
+        form = DodajDokumentForm(rodzaj2='WZ')
+    query = text("SELECT * FROM Dokumenty WHERE status = 'Edycja' ;")
+    result = db.session.execute(query)
+    if request.method == 'POST' and form.validate_on_submit():
+        rodzaj = dokument_type
+        numer = request.form['numer_dok2']
+        wys = request.form['data_wys2']
+        nip = request.form['nip2']
+        kontrahent = request.form['kontrahent2']
+        data_wyk = request.form['data_wyk2']
+        data_waz = request.form['data_waz2']
+        status = 'Edycja'
+        #dokument = Dokumenty(
+        #    numer_dokumentu=numer,
+        #    data_wystawienia=wys,
+        #    id_uzytkownika=current_user.id,  
+        #    NIP_kontrahenta=nip,
+        #    typ_dokumentu=rodzaj,
+        #    data_wykonania=data_wyk,
+        #    data_waznosci_towaru=data_waz
+        #)
+        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :data_wyk, :data_waz, :status)')
+        params = {
+            'numer': numer,
+            'wys': wys,
+            'id_uzytkownika': current_user.id,
+            'nip': nip,
+            'rodzaj': rodzaj,
+            'data_wyk': data_wyk,
+            'data_waz': data_waz,
+            'status': status
+        }
+    
+        db.session.execute(query, params)
+        #db.session.add(dokument)
+        db.session.commit()
 
+        flash(f'Dokument został dodany')
+    form=DodajDokumentForm()   
+    return render_template(
+        "dod_dok.html",
+        title="SimpleData",
+        #user=current_user.imie,
+        form2=form,
+        typ=dokument_type,
+        values=result
+    )
 
         #query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')
         #values = db.session.execute(query, {'nip': 1234567890})
@@ -172,16 +224,7 @@ def dokumenty():
     #    values = result
     #)
 
-@app.route('/kontrahenci', methods=['GET', 'POST'])
-@login_required
-def kontrahenci_t():
-    form = kontrahenci()
-    return render_template(
-        "kontrahenci.html",
-        title = "SimpleData",
-        user = current_user.imie,
-        form=form
-    )
+
 
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
@@ -235,8 +278,6 @@ def edit_user():
         if current_user.id == int(user_id):
             flash(f'Zaktualizowano aktualnie zalogowanego użytkownika. Proszę zalogować się ponownie', 'success')
         return redirect(url_for('logout'))
-    
-    
     else:
         flash('Nie zmieniono danych, nie zakutaliwano użytkownika')
         return redirect(url_for('uzytkownicy_t'))
@@ -265,15 +306,12 @@ def ustawieniakont():
         if not nazwa or not password or not password2:
             # błędy walidacji
             pass
-        
         if password != password2:
             # błędy walidacji
             pass
-        
         current_user.nazwa = username
         current_user.set_password(password)
         db.session.commit()
-        
         # przekierowanie użytkownika na stronę główną ustwaień
         pass
     else:
@@ -290,29 +328,39 @@ def ustawienia_kont():
     return render_template('ustawienia_kont.html', nazwa=username, email=email)
 
 
-#@app.route('/wyszukaj', methods=['POST'])
-#def wyszukaj_rekordy():
-#    form = WyszukajKontrahenta(request.form)
-#    if form.validate():
-#        nip = form.nip.data
-#        nazwa_firmy = form.nazwa_firmy.data
-#        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
-#        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
-#    else:
-#        flash('Wprowadź poprawne wartości do formularza')
-#        return redirect(url_for('kontrahenci_t'))
+@app.route('/wyszukaj', methods=['POST'])
+def wyszukaj_rekordy():
+    form = WyszukajKontrahenta(request.form)
+    if form.validate():
+        nip = form.nip.data
+        nazwa_firmy = form.nazwa_firmy.data
+        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
+        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
+    else:
+        flash('Wprowadź poprawne wartości do formularza')
+        return redirect(url_for('kontrahenci_t'))
 
-
-@app.route('/kontrahenci')
-def kontrahenci():
-    # Pobranie danych z bazy
+@app.route('/kontrahenci', methods=['GET', 'POST'])
+@login_required
+def kontrahenci_t():
+    form = kontrahenci_F()
     kontrahenci = Kontrahenci.query.all()
+    return render_template(
+        "kontrahenci.html",
+        title = "SimpleData",
+        user = current_user.imie,
+        form=form,
+        kontrahenci=kontrahenci
+    )
 
-    # Renderowanie szablonu HTML z danymi z bazy
-    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+#@app.route('/kontrahenci')
+#def kontrahenci():
+#    # Pobranie danych z bazy
+    
 
-if __name__ == '__main__':
-    app.run()
+#    # Renderowanie szablonu HTML z danymi z bazy
+#    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+
 
 
 @app.route('/dodaj_rekord', methods=['POST'])
@@ -328,4 +376,4 @@ def dodaj_rekord():
     db.session.add(kontrahent)
     db.session.commit()
 
-    return render_template('kontrahenci.html')
+    return redirect(url_for('kontrahenci_t'))
