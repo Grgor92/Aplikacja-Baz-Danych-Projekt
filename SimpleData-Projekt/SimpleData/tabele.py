@@ -10,8 +10,7 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey, Integer
-from sqlalchemy.orm import backref
-# deklaracja funkcji do pobierania uzytkownika po jego id unique=True,
+# deklaracja funkcji do pobierania uzytkownika po jego id unique=True
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -24,6 +23,7 @@ class Kontrahenci(db.Model):
     telefon = db.Column(db.String(20), nullable=False)
     ulica = db.Column(db.String(32), nullable=False)
     numer = db.Column(db.String(32), nullable=False)
+    Typ_dostawcy = db.Column(db.String(32), nullable=False)
     #NIP - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli Dokumenty przez Kontrahenta. Krotke NIP.
     dokumenty = db.relationship('Dokumenty', backref='kontrahent')
 
@@ -34,12 +34,13 @@ class Kontrahenci(db.Model):
 class Dokumenty(db.Model):
     id_dokumentu = db.Column(db.Integer, primary_key=True)
     numer_dokumentu = db.Column(db.String(20), nullable=False, unique=True)
-    data_wystawienia = db.Column(db.Date, nullable=False)
+    data_wystawienia = db.Column(db.Date, nullable=False)  # Dodana kolumna data_wystawienia
     id_uzytkownika = db.Column(db.Integer, db.ForeignKey('uzytkownicy.id')) 
     NIP_kontrahenta = db.Column(db.Integer, db.ForeignKey('kontrahenci.NIP'))
     typ_dokumentu = db.Column(db.String(32), nullable=False)
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    status = db.Column(db.String(20), nullable=False)
     #kont = db.relationship("Kontrahenci", backref='kontrahenci_dokumenty')
     towaryy = db.relationship("Towary_Dokument", backref='towar_W_dokument')
     towaryy = db.relationship("Towary_Dokument", backref='towar_W_dokument')
@@ -47,8 +48,8 @@ class Dokumenty(db.Model):
     def __init__(self, numer_dokumentu):
         self.numer_dokumentu = numer_dokumentu
         
-    def __repr__(self):
-        return "<Numer_dokumentu('%s'), data_wystawienia(%s)>" % (self.numer_dokumentu, self.data_wystawienia)
+    #def __repr__(self):
+    #    return "<Numer_dokumentu('%s'), data_wystawienia(%s)>" % (self.numer_dokumentu, self.data_wystawienia)
 
 
 class Uzytkownicy(db.Model, UserMixin):
