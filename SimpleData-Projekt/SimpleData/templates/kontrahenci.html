@@ -3,7 +3,7 @@
 
 <div class="search-form" style="text-align: center;">
     <h2>Panel kontrahentów</h2>
-    <form id="searchForm" action="{{ url_for('kontrahenci_t') }}" method="post" style="display: inline-block;">
+    <form id="searchForm" action="{{ url_for('kon.kontrahenci_t') }}" method="post" style="display: inline-block;">
         <div class="search-fields">
             <div class="input-wrapper">
                 <label for="nip">NIP</label>
@@ -26,7 +26,7 @@
     <div class="content">
         <span class="close" onclick="closeDodajPopup()">&times;</span>
         <h2>Dodaj</h2>
-        <form action="{{ url_for('dodaj_rekord') }}" method="POST">
+        <form action="{{ url_for('kon.dodaj_rekord') }}" method="POST">
             <label for="nip">NIP:</label>
             <input type="text" id="nip" name="nip" required>
 
