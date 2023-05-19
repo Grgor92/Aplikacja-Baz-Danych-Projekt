@@ -2,12 +2,11 @@
 {% block content %}
 <div class="col-md-6" style="margin:auto">
     <div class="content-section">
-        <form method="POST" action=""> 
+        <form method="POST" action="" class="text-center">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Zarejstruj użytkownika</legend>
+                <legend class="border-bottom mb-4">Zarejestruj użytkownika</legend>
                 <div class="form-group">
-
                     {{ form.Nazwa.label(class="form-control-label") }}
                     {% if form.Nazwa.errors %}
                     {{ form.Nazwa(class="form-control form-control-lg is-invalid") }}
@@ -20,7 +19,6 @@
                     {{ form.Nazwa(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-
                 <div class="form-group">
                     {{ form.email.label(class="form-control-label") }}
                     {% if form.email.errors %}
@@ -34,7 +32,6 @@
                     {{ form.email(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-
                 <div class="form-group">
                     {{ form.haslo.label(class="form-control-label") }}
                     {% if form.haslo.errors %}
@@ -48,7 +45,6 @@
                     {{ form.haslo(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
-
                 <div class="form-group">
                     {{ form.haslo2.label(class="form-control-label") }}
                     {% if form.haslo2.errors %}
@@ -81,11 +77,12 @@
             </div>
         </form>
     </div>
-    <div class="border-top pt-3">
+    <div class="border-top pt-3 text-center">
         <small class="text-muted">
-            Zaloguj się <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
+            <a class="ml-2" href="{{ url_for('users.login') }}">Zaloguj się</a>
         </small>
     </div>
 </div>
+
 {% endblock %}
 
