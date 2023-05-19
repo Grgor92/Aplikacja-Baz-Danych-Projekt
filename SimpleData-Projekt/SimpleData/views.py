@@ -9,8 +9,7 @@ from SimpleData import db, bcrypt
 from .tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
-
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 
 
 #wewnątrz aplikacji 
@@ -227,6 +226,29 @@ def dodaj_dokument(dokument_type):
     #)
 
 
+@app.route('/kontrahenci', methods=['GET', 'POST'])
+@login_required
+def kontrahenci_t():
+    form = kontrahenci_F()
+    values=Kontrahenci.query.all()
+    if request.method == 'POST':
+        nip = request.form.get('nip')
+        nazwa_firmy = request.form.get('nazwa_firmy')
+
+        if nip and nazwa_firmy:
+            kontrahenci = Kontrahenci.query.filter_by(NIP=nip, nazwa_firmy=nazwa_firmy).all()
+        elif nip:
+            kontrahenci = Kontrahenci.query.filter_by(NIP=nip).all()
+        elif nazwa_firmy:
+            kontrahenci = Kontrahenci.query.filter_by(nazwa_firmy=nazwa_firmy).all()
+        else:
+            kontrahenci = Kontrahenci.query.all()
+
+        return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+    return render_template('kontrahenci.html', kontrahenci=values,
+    title = "SimpleData",
+    user = current_user.imie,
+    form=form)
 
 
 @app.route('/uzytkownicy', methods=['GET', 'POST'])
@@ -296,73 +318,34 @@ def magazyn_towar_t():
         form=form
     )
 
-@app.route('/ustawienia')
-@login_required
-def ustawieniakont():
-    
-    form = moje_ustawienia()
-    if request.method == 'POST':
-        nazwa = request.form['Nazwa']
-        password = request.form['Hasło']
-        password2 = request.form['Powtórz hasło']
-        
-        if not nazwa or not password or not password2:
-            # błędy walidacji
-            pass
-        if password != password2:
-            # błędy walidacji
-            pass
-        current_user.nazwa = username
-        current_user.set_password(password)
-        db.session.commit()
-        # przekierowanie użytkownika na stronę główną ustwaień
-        pass
-    else:
-        return render_template(
-            'ustawienia_kont.html',
-            form=form
-        )
-
-@app.route('/ustawienia')
+@app.route('/ustawienia', methods=['GET', 'POST'])
 @login_required
 def ustawienia_kont():
-    username = current_user.nazwa
-    email = current_user.email
-    return render_template('ustawienia_kont.html', nazwa=username, email=email)
+    form = moje_ustawienia()
 
+    if form.validate_on_submit():
+        current_user.imie = form.username.data
+        current_user.email = form.email.data
 
-@app.route('/wyszukaj', methods=['POST'])
-def wyszukaj_rekordy():
-    form = WyszukajKontrahenta(request.form)
-    if form.validate():
-        nip = form.nip.data
-        nazwa_firmy = form.nazwa_firmy.data
-        # Wykonaj operacje wyszukiwania na podstawie NIP i nazwy firmy
-        return render_template('kontrahenci.html', kontrahenci=wyniki_wyszukiwania)
-    else:
-        flash('Wprowadź poprawne wartości do formularza')
-        return redirect(url_for('kontrahenci_t'))
+        # Sprawdzenie poprawności hasła przed zapisaniem zmian
+        if form.password.data:
+            if check_password_hash(current_user.haslo, form.password.data):
+                # Hasło się zgadza, można zaktualizować
+                new_password_hash = generate_password_hash(form.new_password.data)
+                current_user.haslo = new_password_hash
+            else:
+                flash('Podano nieprawidłowe hasło.', 'error')
+                return redirect(url_for('ustawienia_kont'))
 
-@app.route('/kontrahenci', methods=['GET', 'POST'])
-@login_required
-def kontrahenci_t():
-    form = kontrahenci_F()
-    kontrahenci = Kontrahenci.query.all()
-    return render_template(
-        "kontrahenci.html",
-        title = "SimpleData",
-        user = current_user.imie,
-        form=form,
-        kontrahenci=kontrahenci
-    )
+        db.session.commit()
+        flash('Twoje ustawienia zostały zaktualizowane.', 'success')
+        return redirect(url_for('ustawienia_kont'))
 
-#@app.route('/kontrahenci')
-#def kontrahenci():
-#    # Pobranie danych z bazy
-    
+    form.username.data = current_user.imie
+    form.email.data = current_user.email
 
-#    # Renderowanie szablonu HTML z danymi z bazy
-#    return render_template('kontrahenci.html', kontrahenci=kontrahenci)
+    return render_template('ustawienia_kont.html', form=form, imie=current_user.imie, email=current_user.email)
+
 
 
 
@@ -377,9 +360,12 @@ def dodaj_rekord():
 
     kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
     db.session.add(kontrahent)
+    flash('Nowy kontrahent został utworzony.', 'success')
     db.session.commit()
 
-    return render_template('kontrahenci.html')
+
+    return redirect(url_for('kontrahenci_t'))
+
 
 @app.route('/towar', methods=['GET', 'POST'])
 @login_required
