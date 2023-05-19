@@ -20,12 +20,12 @@ login_manager.sesion = True
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Musisz się zalogować, aby uzyskać dostęp do tej strony!', 'danger')
-    return redirect(url_for('home'))
+    return redirect(url_for('ogolne.home'))
 
 @login_manager.needs_refresh_handler
 def needs_refresh():
     flash('Twoja sesja wygasła, zaloguj się ponownie!', 'danger')
-    return redirect(url_for('logout'))
+    return redirect(url_for('ogolne.logout'))
 
 # ustawienie klucza w konfiguracji aplikacji
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -42,4 +42,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)
-import SimpleData.views
+
+from SimpleData.Dokumenty.views import dok
+from SimpleData.Kontrahenci.views import kon
+from SimpleData.Ogolne.views import ogolne
+from SimpleData.Towary.views import tow
+from SimpleData.Uzytkownicy.views import users
+
+app.register_blueprint(dok)
+app.register_blueprint(kon)
+app.register_blueprint(ogolne)
+app.register_blueprint(tow)
+app.register_blueprint(users)
