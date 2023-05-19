@@ -129,19 +129,19 @@
             $("#uprawnienia-input").val(uprawnienia);
         });
 
-        $(document).on("click", ".reveal-btn", function () {
-            var input = $(this).closest(".input-group").find("input");
-            var icon = $(this).find("i");
-            if (input.attr("type") === "password") {
-                input.attr("type", "text");
-                icon.removeClass("fa-eye");
-                icon.addClass("fa-eye-slash");
-            } else {
-                input.attr("type", "password");
-                icon.removeClass("fa-eye-slash");
-                icon.addClass("fa-eye");
-            }
-        });
+        //$(document).on("click", ".reveal-btn", function () {
+        //    var input = $(this).closest(".input-group").find("input");
+        //    var icon = $(this).find("i");
+        //    if (input.attr("type") === "password") {
+        //        input.attr("type", "text");
+        //        icon.removeClass("fa-eye");
+        //        icon.addClass("fa-eye-slash");
+        //    } else {
+        //        input.attr("type", "password");
+        //        icon.removeClass("fa-eye-slash");
+        //        icon.addClass("fa-eye");
+        //    }
+        //});
 
         //(function ($) {
         //    $(document).on('submit', '#edit-form', function (e) {
