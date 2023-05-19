@@ -28,13 +28,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="run.py" />
-    <Compile Include="SimpleData\forms.py">
+    <Compile Include="SimpleData\Dokumenty\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Dokumenty\views.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Dokumenty\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Kontrahenci\forms.py" />
+    <Compile Include="SimpleData\Kontrahenci\views.py" />
+    <Compile Include="SimpleData\Kontrahenci\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Ogolne\forms.py" />
+    <Compile Include="SimpleData\Ogolne\views.py" />
+    <Compile Include="SimpleData\Ogolne\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleData\tabele.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleData\views.py">
+    <Compile Include="SimpleData\Towary\forms.py" />
+    <Compile Include="SimpleData\Towary\views.py" />
+    <Compile Include="SimpleData\Towary\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Uzytkownicy\forms.py" />
+    <Compile Include="SimpleData\Uzytkownicy\views.py" />
+    <Compile Include="SimpleData\Uzytkownicy\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleData\__init__.py">
@@ -68,11 +91,22 @@
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\towar.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\ustawienia_kont.html" />
     <Content Include="SimpleData\templates\uzytkownicy.html" />
+    <Content Include="SimpleData\templates\wypis_towary.html">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SimpleData\" />
+    <Folder Include="SimpleData\Dokumenty\" />
+    <Folder Include="SimpleData\Kontrahenci\" />
+    <Folder Include="SimpleData\Ogolne\" />
+    <Folder Include="SimpleData\Towary\" />
+    <Folder Include="SimpleData\Uzytkownicy\" />
     <Folder Include="SimpleData\templates\" />
     <Folder Include="SimpleData\static\" />
   </ItemGroup>
