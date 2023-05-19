@@ -169,57 +169,57 @@
         xhr.send(formData);
     }
 
-    function updateTable(data) {
-        var tableBody = document.querySelector('.table tbody');
-        tableBody.innerHTML = '';
+    //function updateTable(data) {
+    //    var tableBody = document.querySelector('.table tbody');
+    //    tableBody.innerHTML = '';
 
-        data.forEach(function (record) {
-            var row = document.createElement('tr');
-            row.innerHTML = '<td>' + record.NIP + '</td>' +
-                '<td>' + record.nazwa_firmy + '</td>' +
-                '<td>' + record.miasto + '</td>' +
-                '<td>' + record.telefon + '</td>' +
-                '<td>' + record.ulica + '</td>' +
-                '<td>' + record.numer + '</td>' +
-                '<td><button onclick="openEditPopup()">Edytuj</button></td>';
+    //    data.forEach(function (record) {
+    //        var row = document.createElement('tr');
+    //        row.innerHTML = '<td>' + record.NIP + '</td>' +
+    //            '<td>' + record.nazwa_firmy + '</td>' +
+    //            '<td>' + record.miasto + '</td>' +
+    //            '<td>' + record.telefon + '</td>' +
+    //            '<td>' + record.ulica + '</td>' +
+    //            '<td>' + record.numer + '</td>' +
+    //            '<td><button onclick="openEditPopup()">Edytuj</button></td>';
 
-            tableBody.appendChild(row);
-        });
-    }
+    //        tableBody.appendChild(row);
+    //    });
+    //}
 
-    function openEditPopup(nip, nazwa_firmy, miasto, telefon, ulica, numer) {
-        // Wypełnienie pól formularza danymi kontrahenta
-        document.getElementById('editedField1').value = nip;
-        document.getElementById('editedField2').value = nazwa_firmy;
-        document.getElementById('editedField3').value = miasto;
-        document.getElementById('editedField4').value = telefon;
-        document.getElementById('editedField5').value = ulica;
-        document.getElementById('editedField6').value = numer;
+    //function openEditPopup(nip, nazwa_firmy, miasto, telefon, ulica, numer) {
+    //    // Wypełnienie pól formularza danymi kontrahenta
+    //    document.getElementById('editedField1').value = nip;
+    //    document.getElementById('editedField2').value = nazwa_firmy;
+    //    document.getElementById('editedField3').value = miasto;
+    //    document.getElementById('editedField4').value = telefon;
+    //    document.getElementById('editedField5').value = ulica;
+    //    document.getElementById('editedField6').value = numer;
 
-        // Wyświetlenie popupa
-        document.getElementById('editPopup').classList.add('active');
-    }
+    //    // Wyświetlenie popupa
+    //    document.getElementById('editPopup').classList.add('active');
+    //}
 
-    function closeEditPopup() {
-        // Zamknięcie popupa
-        document.getElementById('editPopup').classList.remove('active');
-    }
+    //function closeEditPopup() {
+    //    // Zamknięcie popupa
+    //    document.getElementById('editPopup').classList.remove('active');
+    //}
 
-    function saveEditedData() {
-        // Pobranie wartości z pól formularza
-        var editedField1 = document.getElementById('editedField1').value;
-        var editedField2 = document.getElementById('editedField2').value;
-        var editedField3 = document.getElementById('editedField3').value;
-        var editedField4 = document.getElementById('editedField4').value;
-        var editedField5 = document.getElementById('editedField5').value;
-        var editedField6 = document.getElementById('editedField6').value;
+    //function saveEditedData() {
+    //    // Pobranie wartości z pól formularza
+    //    var editedField1 = document.getElementById('editedField1').value;
+    //    var editedField2 = document.getElementById('editedField2').value;
+    //    var editedField3 = document.getElementById('editedField3').value;
+    //    var editedField4 = document.getElementById('editedField4').value;
+    //    var editedField5 = document.getElementById('editedField5').value;
+    //    var editedField6 = document.getElementById('editedField6').value;
 
-        // Wykonanie odpowiednich operacji zapisu zmienionych danych w bazie danych
-        // ...
+    //    // Wykonanie odpowiednich operacji zapisu zmienionych danych w bazie danych
+    //    // ...
 
-        // Zamknięcie popupa
-        closeEditPopup();
-    }
+    //    // Zamknięcie popupa
+    //    closeEditPopup();
+    //}
 
 
 
