@@ -14,7 +14,6 @@ from flask_bcrypt import Bcrypt
 
 
 #wewnątrz aplikacji 
-#with app.app_context():
 #sprawdzenie czy baza danych istnieje
 #with app.app_context():
 ##sprawdzenie czy baza danych istnieje
@@ -111,17 +110,16 @@ def dokumenty_hist():
 def dokumenty():
     form = dok_historyczne()
     form2 = DodajDokumentForm()
-    result = Kontrahenci.query.all()
+    query = text("SELECT * FROM Dokumenty WHERE numer_dokumentu = '' ;")
+    result = db.session.execute(query)
     query3 = text("INSERT INTO Kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer) SELECT '1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A' FROM dual WHERE NOT EXISTS (SELECT * FROM Kontrahenci WHERE NIP = '1234567890');")
     db.session.execute(query3)
-    db.session.commit()
-
-    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru) SELECT '12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11' FROM dual WHERE NOT EXISTS (SELECT * FROM Dokumenty WHERE numer_dokumentu = '12345');")
+    query2 = text("INSERT INTO Dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status) SELECT '12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11', 'Aktywna' FROM dual WHERE NOT EXISTS (SELECT * FROM Dokumenty WHERE numer_dokumentu = '12345');")
     db.session.execute(query2, {'user_id': current_user.id})
     db.session.commit()
 
     if form.validate_on_submit():
-            query = 'SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP '
+            query = 'SELECT d.*, k.nazwa_firmy FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Aktywna"'
             params = {}
             if form.numer_dok.data:
                 query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
@@ -143,7 +141,7 @@ def dokumenty():
                 params['data_wykonania'] = form.data_wyk.data
             query = text(query)
             result = db.session.execute(query, params)
-
+            db.session.commit()
     return render_template(
         "dokumenty.html",
         title = "SimpleData",
@@ -155,19 +153,56 @@ def dokumenty():
     
 @app.route('/dodaj_dokument_<dokument_type>', methods=['GET', 'POST'])
 def dodaj_dokument(dokument_type):
+    
     if dokument_type == 'PZ':
         form = DodajDokumentForm(rodzaj2='PZ')
     elif dokument_type == 'WZ':
         form = DodajDokumentForm(rodzaj2='WZ')
-    else:
-        return "Nieprawidłowy typ dokumentu"
+    query = text("SELECT * FROM Dokumenty WHERE status = 'Edycja' ;")
+    result = db.session.execute(query)
+    if request.method == 'POST' and form.validate_on_submit():
+        rodzaj = dokument_type
+        numer = request.form['numer_dok2']
+        wys = request.form['data_wys2']
+        nip = request.form['nip2']
+        kontrahent = request.form['kontrahent2']
+        data_wyk = request.form['data_wyk2']
+        data_waz = request.form['data_waz2']
+        status = 'Edycja'
+        #dokument = Dokumenty(
+        #    numer_dokumentu=numer,
+        #    data_wystawienia=wys,
+        #    id_uzytkownika=current_user.id,  
+        #    NIP_kontrahenta=nip,
+        #    typ_dokumentu=rodzaj,
+        #    data_wykonania=data_wyk,
+        #    data_waznosci_towaru=data_waz
+        #)
+        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :data_wyk, :data_waz, :status)')
+        params = {
+            'numer': numer,
+            'wys': wys,
+            'id_uzytkownika': current_user.id,
+            'nip': nip,
+            'rodzaj': rodzaj,
+            'data_wyk': data_wyk,
+            'data_waz': data_waz,
+            'status': status
+        }
+    
+        db.session.execute(query, params)
+        #db.session.add(dokument)
+        db.session.commit()
 
+        flash(f'Dokument został dodany')
+    form=DodajDokumentForm()   
     return render_template(
         "dod_dok.html",
         title="SimpleData",
         #user=current_user.imie,
         form2=form,
-        typ=dokument_type
+        typ=dokument_type,
+        values=result
     )
 
         #query = text('SELECT Dokumenty.*, Kontrahenci.nazwa_firmy FROM Dokumenty JOIN Kontrahenci ON Dokumenty.NIP_kontrahenta = Kontrahenci.NIP WHERE Dokumenty.NIP_kontrahenta = :nip')

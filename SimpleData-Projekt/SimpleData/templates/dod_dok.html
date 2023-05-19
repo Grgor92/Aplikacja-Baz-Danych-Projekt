@@ -3,61 +3,181 @@
 <div class="content-section">
     <form method="POST" action="">
         {{ form2.hidden_tag() }}
-        <div class="form-group">
-            {{ form2.rodzaj2.label(class="control-label") }}
-            {{ form2.rodzaj2(class="form-control", value=typ, readonly=True) }}
-            {% if form2.rodzaj2.errors %}
-            <span class="text-danger">{{ form2.rodzaj2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
+        <div class="1">
+            <div class="form-group">
+                {{ form2.rodzaj2.label(class="control-label") }}
+                {{ form2.rodzaj2(class="form-control", value=typ, readonly=True) }}
+                <input type="hidden" name="rodzaj2" value="{{ typ }}">
 
+                {% if form2.rodzaj2.errors %}
+                <span class="text-danger">{{ form2.rodzaj2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.numer_dok2.label(class="control-label") }}
+                {{ form2.numer_dok2(class="form-control") }}
+                {% if form2.numer_dok2.errors %}
+                <span class="text-danger">{{ form2.numer_dok2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.kontrahent2.label(class="control-label") }}
+                {{ form2.kontrahent2(class="form-control") }}
+                {% if form2.kontrahent2.errors %}
+                <span class="text-danger">{{ form2.kontrahent2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.nip2.label(class="control-label") }}
+                {{ form2.nip2(class="form-control") }}
+                {% if form2.nip2.errors %}
+                <span class="text-danger">{{ form2.nip2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.data_wys2.label(class="control-label") }}
+                {{ form2.data_wys2(class="form-control") }}
+                {% if form2.data_wys2.errors %}
+                <span class="text-danger">{{ form2.data_wys2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="2">
+            <div class="form-group">
+                {{ form2.data_wyk2.label(class="control-label") }}
+                {{ form2.data_wyk2(class="form-control") }}
+                {% if form2.data_wyk2.errors %}
+                <span class="text-danger">{{ form2.data_wyk2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.data_waz2.label(class="control-label") }}
+                {{ form2.data_waz2(class="form-control") }}
+                {% if form2.data_wyk2.errors %}
+                <span class="text-danger">{{ form2.data_waz2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.submit2(class="btn btn-primary") }}
+            </div>
+        </div>
+    </form>
+    <table class="table table-striped align-items-center">
+        <thead>
+            <tr>
+                <th scope="col">Numer Dokumentu</th>
+                <th scope="col">Data Wystawienia</th>
+                <th scope="col">Użytkownik</th>
+                <th scope="col">NIP Dostawcy</th>
+                <th scope="col">Dostawca</th>
+                <th scope="col">Typ</th>
+                <th scope="col">Staus</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in values %}
+            <tr class="table-info">
+            <tr>
+                <td>{{ item.numer_dokumentu }}</td>
+                <td>{{ item.data_wystawienia }}</td>
+                <td>{{ item.id_uzytkownika }}</td>
+                <td>{{ item.NIP_kontrahenta }}</td>
+                <td>{{ item.nazwa_firmy }}</td>
+                <td>{{ item.typ_dokumentu }}</td>
+                <td>{{ item.status }}</td>
+                <!--<td>
+                    {% if current_user.is_authenticated and current_user.typ == 'Kierownik' %}
+                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
+                    {% endif %}
+                </td>-->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%endblock%}
+<!--
 
-        <div class="form-group">
-            {{ form2.numer_dok2.label(class="control-label") }}
-            {{ form2.numer_dok2(class="form-control") }}
-            {% if form2.numer_dok2.errors %}
-            <span class="text-danger">{{ form2.numer_dok2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form2.data_wys2.label(class="control-label") }}
-            {{ form2.data_wys2(class="form-control") }}
-            {% if form2.data_wys2.errors %}
-            <span class="text-danger">{{ form2.data_wys2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form2.kontrahent2.label(class="control-label") }}
-            {{ form2.kontrahent2(class="form-control") }}
-            {% if form2.kontrahent2.errors %}
-            <span class="text-danger">{{ form2.kontrahent2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form2.nip2.label(class="control-label") }}
-            {{ form2.nip2(class="form-control") }}
-            {% if form2.nip2.errors %}
-            <span class="text-danger">{{ form2.nip2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form2.hidden_tag() }}
+        <div class="form-inline">
+            <div class="d-block mr-5">
+                <div class="form-group mr-3 mb-2 d-block text-center">
+                    <div class="d-block">
+                        {{ form2.rodzaj2.label(class="control-label") }}
+                    </div>
+                    {{ form2.rodzaj2(class="form-control") }}
+                    {% if form2.rodzaj2.errors %}
+                    <span class="text-danger">{{ form2.rodzaj2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
 
-        <div class="form-group">
-            {{ form2.data_wyk2.label(class="control-label") }}
-            {{ form2.data_wyk2(class="form-control") }}
-            {% if form2.data_wyk2.errors %}
-            <span class="text-danger">{{ form2.data_wyk2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form2.data_waz2.label(class="control-label") }}
-            {{ form2.data_waz2(class="form-control") }}
-            {% if form2.data_wyk2.errors %}
-            <span class="text-danger">{{ form2.data_waz2.errors|join(', ') }}</span>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form2.submit2(class="btn btn-primary") }}
+                <div class="form-group mr-3 mb-2 d-block text-center">
+                    <div>
+                        {{ form2.numer_dok2.label(class="control-label") }}
+                    </div>
+                    {{ form2.numer_dok2(class="form-control") }}
+                    {% if form2.numer_dok2.errors %}
+                    <span class="text-danger">{{ form2.numer_dok2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mr-3 mb-2 d-block text-center">
+                    <div>
+                        {{ form2.kontrahent2.label(class="control-label") }}
+                    </div>
+                    {{ form2.kontrahent2(class="form-control") }}
+                    {% if form2.kontrahent2.errors %}
+                    <span class="text-danger">{{ form2.kontrahent2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mr-3 mb-2 d-block text-center">
+                    <div>
+                        {{ form2.nip2.label(class="control-label") }}
+                    </div>
+                    {{ form2.nip2(class="form-control") }}
+                    {% if form2.nip2.errors %}
+                    <span class="text-danger">{{ form2.nip2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mr-3 mb-2 d-block text-center">
+                    <div>
+                        {{ form2.data_wys2.label(class="control-label") }}
+                    </div>
+                    {{ form2.data_wys2(class="form-control") }}
+                    {% if form2.data_wys2.errors %}
+                    <span class="text-danger">{{ form2.data_wys2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="d-block mb-2 ml-5  text-center">
+
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div>
+                        {{ form2.data_wyk2.label(class="control-label") }}
+                    </div>
+                    {{ form2.data_wyk2(class="form-control") }}
+                    {% if form2.data_wyk2.errors %}
+                    <span class="text-danger">{{ form2.data_wyk2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block text-center">
+                    <div>
+                        {{ form2.data_waz2.label(class="control-label") }}
+                    </div>
+                    {{ form2.data_waz2(class="form-control") }}
+                    {% if form2.data_waz2.errors %}
+                    <span class="text-danger">{{ form2.data_waz2.errors|join(', ') }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group mr-3 mb-2 text-center">
+                    {{ form2.submit2(class="btn btn-primary") }}
+                </div>
+            </div>
         </div>
     </form>
 </div>
-{%endblock%}
+-->

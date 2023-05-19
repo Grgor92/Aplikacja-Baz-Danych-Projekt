@@ -13,15 +13,12 @@ class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     haslo2 = PasswordField('Potwierdz Haslo', validators=[DataRequired(),EqualTo('haslo'),Length(min=5, max=32)])
     typ_uzytkownika = SelectField('Typ użytkownika', choices=[('', 'Wybierz typ'), ('administrator', 'Administrator'), ('kierownik', 'Kierownik'), ('pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zarejestruj')
-#
-    def validate_username(self, username):
-
-        Uzyt = Uzytkownicy.query.filter_by(username=username.data).first()
+    def validate_Nazwa(self, Nazwa):
+        Uzyt = Uzytkownicy.query.filter_by(imie=Nazwa.data).first()
         if Uzyt:
             raise ValidationError('Ta nazwa użytkownika już istnieje. Wybierz inną nazwę.')
     #
     def validate_email(self, email):
-
         Uzyt = Uzytkownicy.query.filter_by(email=email.data).first()
         if Uzyt:
             raise ValidationError('Ten email już istnieje. Wybierz inną nazwę.')
@@ -106,29 +103,27 @@ class DodajDokumentForm(FlaskForm):
     data_wys2 = DateField('Data wystawienia', default=date.today(), validators=[DataRequired()], render_kw={'readonly': True})
     nip2 = IntegerField('NIP', validators=[DataRequired()])
     kontrahent2 = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
-    rodzaj2 = SelectField('Rodzaj dokumentu', choices=[('', ''), ('WZ', 'WZ'), ('PZ', 'PZ')], validators=[DataRequired()], render_kw={'disabled': True})
-
+    rodzaj2 = SelectField('Rodzaj dokumentu', choices=[('WZ', 'WZ'), ('PZ', 'PZ')], validators=[DataRequired()], render_kw={'disabled': True})
     data_wyk2 = DateField('Data wykonania', validators=[Optional()])
     data_waz2 = DateField('Data Waznosci towaru ', validators=[DataRequired()])
+    status = SelectField('Status dokumentu', choices=[('Edycja', 'Edycja'), ('Aktywna', 'Aktywna')], validators=[Optional()])
     submit2 = SubmitField('Dodaj dokument')
 
-    def validate(self, **kwargs):
-        # Perform general form validation
-        if not FlaskForm.validate(self):
-            return False
+    def validate_numer_dok2(self, numer_dok2):
+        Uzyt = Dokumenty.query.filter_by(numer_dokumentu=numer_dok2.data).first()
+        if Uzyt:
+            raise ValidationError('Dokuemnt o takim numerze już istnieje.')
 
-        # Check if the document number already exists in the database
-        existing_doc = Dokumenty.query.filter_by(numer_dokumentu=self.numer_dok.data).first()
-        if existing_doc:
-            self.numer_dok.errors.append('Numer dokumentu już istnieje.')
-            return False
+    #def validate(self, numer_dok2):
+    #    existing_doc = Dokumenty.query.filter_by(numer_dokumentu=self.numer_dok2.data).first()
+    #    if existing_doc:
+    #        raise ValidationError('Ta nazwa użytkownika już istnieje. Wybierz inną nazwę.')
 
-        # Check if either id_klienta or nip is provided
-        if not self.id_klienta.data and not self.nip.data:
-            self.id_klienta.errors.append('Podaj numer klienta lub NIP.')
-            self.nip.errors.append('Podaj numer klienta lub NIP.')
-            return False
+    #    if not self.id_klienta.data and not self.nip.data:
+    #        self.id_klienta.errors.append('Podaj numer klienta lub NIP.')
+    #        self.nip.errors.append('Podaj numer klienta lub NIP.')
+    #        return False
 
-        return True
+    #    return True
 
 
