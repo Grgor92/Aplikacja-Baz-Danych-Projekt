@@ -37,9 +37,6 @@
     <Compile Include="SimpleData\Dokumenty\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleData\forms.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SimpleData\Kontrahenci\forms.py" />
     <Compile Include="SimpleData\Kontrahenci\views.py" />
     <Compile Include="SimpleData\Kontrahenci\__init__.py">
@@ -61,9 +58,6 @@
     <Compile Include="SimpleData\Uzytkownicy\forms.py" />
     <Compile Include="SimpleData\Uzytkownicy\views.py" />
     <Compile Include="SimpleData\Uzytkownicy\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SimpleData\views.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleData\__init__.py">

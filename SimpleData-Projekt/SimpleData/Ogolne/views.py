@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, render_template, url_for, redirect
 from datetime import datetime
 ogolne = Blueprint('ogolne', __name__)
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, logout_user
 from SimpleData import  db
 from SimpleData.Ogolne.forms import przeszukiwanie_d, dok_historyczne, magazyn_towar
 from sqlalchemy import inspect, text
