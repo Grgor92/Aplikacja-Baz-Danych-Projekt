@@ -1,0 +1,28 @@
+{% extends "layout.html" %} <!-- pobiearamy szkielet strony  -->
+{% block content %}
+
+<div class="col-md-6" style="margin:auto">
+    <div class="text-center">
+        <h2>SimpleData</h2>
+        <p>
+           Dodaj dany towar do dostawcy. {{user}}
+        </p>
+
+        <form method="POST" action="">
+
+            NIP<br />
+            <input type="text" name="NIP"><br />
+            Typ wody<br />
+            <input type="text" name="typ wody"><br />
+            Rodzaj butelki<br />
+            <input type="text" name="typ butelki"><br />
+            Nazwa wody wraz z pojemnoscią <br />
+            <input type="text" name="nazwa wody"><br /><br />
+            <a href="rejestr.html">
+            <input type="button" value="dodaj produkt do wybranego dostawcy"></a><br />
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
+
