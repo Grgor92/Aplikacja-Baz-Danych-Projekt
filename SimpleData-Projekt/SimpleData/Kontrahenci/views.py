@@ -11,7 +11,8 @@ kon = Blueprint('kon', __name__)
 @login_required
 def kontrahenci_t():
     form = kontrahenci_F()
-    values=Kontrahenci.query.all()
+    values = Kontrahenci.query.all()
+
     if request.method == 'POST':
         nip = request.form.get('nip')
         nazwa_firmy = request.form.get('nazwa_firmy')
@@ -26,10 +27,31 @@ def kontrahenci_t():
             kontrahenci = Kontrahenci.query.all()
 
         return render_template('kontrahenci.html', kontrahenci=kontrahenci)
-    return render_template('kontrahenci.html', kontrahenci=values,
-    title = "SimpleData",
-    user = current_user.imie,
-    form=form)
+
+    if request.method == 'GET' and 'editedField1' in request.args:
+        nip = request.args.get('editedField1')
+        nazwa_firmy = request.args.get('editedField2')
+        miasto = request.args.get('editedField3')
+        nr_telefonu = request.args.get('editedField4')
+        ulica = request.args.get('editedField5')
+        numer = request.args.get('editedField6')
+
+        kontrahent = Kontrahenci.query.filter_by(NIP=nip).first()
+        if kontrahent:
+            kontrahent.nazwa_firmy = nazwa_firmy
+            kontrahent.miasto = miasto
+            kontrahent.telefon = nr_telefonu
+            kontrahent.ulica = ulica
+            kontrahent.numer = numer
+            db.session.commit()
+            flash('Kontrahent został zaktualizowany.', 'success')
+        else:
+            flash('Kontrahent nie został znaleziony.', 'error')
+
+        return redirect(url_for('kon.kontrahenci_t'))
+
+    return render_template('kontrahenci.html', kontrahenci=values, title="SimpleData", user=current_user.imie, form=form)
+
 
 @kon.route('/dodaj_rekord', methods=['POST'])
 def dodaj_rekord():
