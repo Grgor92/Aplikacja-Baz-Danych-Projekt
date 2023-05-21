@@ -40,6 +40,50 @@ def towary():
         form=form
     )
 
+@tow.route('/edytuj_towar/<towar_id>', methods=['GET', 'POST'])
+@login_required
+def edytuj_towar(towar_id):
+    form = FiltrujDaneTowaryDostawcy()
+    towar_id=towar_id
+    #query = 'Select * from Towary WHERE id_towaru= :ide '
+    #result = db.session.execute(text(query), {"ide": towar_id})
+    rekord = Towary.query.filter_by(id_towaru=towar_id).first()
+     # Przypisz wartości pól formularza na podstawie danych z bazy danych
+
+
+    if form.validate_on_submit():
+        if form.NIP.data != rekord.NIP:
+            rekord.NIP = form.NIP.data
+
+        if form.Typ.data != rekord.typ:
+            rekord.typ = form.Typ.data
+
+        if form.Rodzaj.data != rekord.rodzaj:
+            rekord.rodzaj = form.Rodzaj.data
+
+        if form.Nazwa.data != rekord.nazwa:
+            rekord.nazwa = form.Nazwa.data
+
+        if db.session.dirty:
+            db.session.commit()
+            flash('Dane zostały zaktualizowane.', 'success')
+            return redirect(url_for('tow.wypis_towary'))
+        else:
+            flash('Nie zmieniono danych, nie zaktualizowano rekordu.', 'warning')
+
+    form.NIP.data = rekord.NIP
+    form.Typ.data = rekord.typ
+    form.Rodzaj.data = rekord.rodzaj
+    form.Nazwa.data = rekord.nazwa
+    return render_template( 
+        "edytuj_towar.html",
+        title = "SimpleData",
+        user = current_user.imie, #current_user - dane użytkownika, imie - krotka do której chcemy dostęp
+        #
+        form=form,
+    )
+
+
 @tow.route('/wypis-towary', methods=['GET', 'POST'])
 @login_required
 def wypis_towary():

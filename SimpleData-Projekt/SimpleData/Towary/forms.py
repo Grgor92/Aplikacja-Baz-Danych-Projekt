@@ -28,6 +28,7 @@ class FiltrujDaneTowaryDostawcy(FlaskForm):
     Rodzaj=StringField('Rodzaj', validators=[Optional()])
     Nazwa=StringField('Nazwa', validators=[Optional()])
     submit = SubmitField('Wyszukaj')
+    submit2 = SubmitField('Edytuj')
 
 class DodajDaneTowaryDostawcy(FlaskForm):
     
