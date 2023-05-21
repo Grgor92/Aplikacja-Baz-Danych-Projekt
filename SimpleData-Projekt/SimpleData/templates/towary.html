@@ -5,12 +5,12 @@
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <div class="form-inline">
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.NIP.id }}" class="form-control-label">{{ form.NIP.label }}</label>
-                    </div>
-                    {{ form.NIP(class="form-control ml-2") }}
+                
+                <div class="d-block text-center">
+                    <label for="{{ form.Firma.id }}" class="form-control-label">{{ form.Firma.label }}</label>
                 </div>
+                {{ form.Firma(class="form-control ml-2") }}
+           
                 {% for field, errors in form.errors.items() %}
                 <div class="alert alert-danger">
                     {% for error in errors %}
@@ -43,41 +43,9 @@
 
         <div class="form-group text-center">
             {{ form.submit(class="btn btn-outline-info") }}
-            <a href="{{ url_for('tow.towary') }}" class="btn btn-primary">Dodaj towar do dostawcy</a>
-
+           
         </div>
     </form>
-
-    <table class="table table-striped align-items-center">
-        <thead>
-            <tr>
-                
-                <th scope="col">NIP</th>
-                <th scope="col">Typ wody</th>
-                <th scope="col">Rodzaj butelki</th>
-                <th scope="col">Nazwa wody wraz z pojemnością</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-                {% for item in values %}
-            <tr class="table-info">
-            <tr>
-                
-                <td>{{ item.NIP }}</td>
-                <td>{{ item.typ }}</td>
-                <td>{{ item.rodzaj }}</td>
-                <td>{{ item.nazwa }}</td>
-                
-                <!--<td>
-                    {% if current_user.is_authenticated and current_user.typ == 'Kierownik' %}
-                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
-                    {% endif %}
-                </td>-->
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
 </div>
     {%endblock%}

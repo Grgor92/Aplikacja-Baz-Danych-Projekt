@@ -91,7 +91,7 @@
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="SimpleData\templates\towar.html">
+    <Content Include="SimpleData\templates\towary.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\ustawienia_kont.html" />
