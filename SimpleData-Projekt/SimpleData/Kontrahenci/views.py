@@ -66,6 +66,23 @@ def dodaj_rekord():
     db.session.add(kontrahent)
     flash('Nowy kontrahent został utworzony.', 'success')
     db.session.commit()
+    return redirect(url_for('kon.kontrahenci_t'))
 
+@kon.route('/kontrahenci/edytuj', methods=['POST'])
+def edytuj_kontrahenta():
+    edited_nip = request.form['editedField1']
+    edited_nazwa_firmy = request.form['editedField2']
+    edited_miasto = request.form['editedField3']
+    edited_telefon = request.form['editedField4']
+    edited_ulica = request.form['editedField5']
+    edited_numer = request.form['editedField6']
 
+    # Przeprowadź aktualizację rekordu kontrahenta w bazie danych na podstawie pobranych danych
+
+    # Przykładowe zapytanie SQL do aktualizacji rekordu kontrahenta
+    query = text("UPDATE Kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer WHERE NIP=:nip")
+    db.session.execute(query, {'nazwa_firmy': edited_nazwa_firmy, 'miasto': edited_miasto, 'telefon': edited_telefon, 'ulica': edited_ulica, 'numer': edited_numer, 'nip': edited_nip})
+    db.session.commit()
+
+    flash('Dane kontrahenta zostały zaktualizowane')
     return redirect(url_for('kon.kontrahenci_t'))

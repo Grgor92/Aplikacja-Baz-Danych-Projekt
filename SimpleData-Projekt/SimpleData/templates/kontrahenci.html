@@ -86,7 +86,7 @@
     <div class="content">
         <span class="close" onclick="closeEditPopup()">&times;</span>
         <h2>Edytuj kontrahenta</h2>
-        <form id="editForm">
+        <form  id="editForm" action="{{ url_for('kon.edytuj_kontrahenta') }}" method="POST">
             <label for="editedField1">NIP :</label>
             <input type="text" id="editedField1" name="editedField1">
 
@@ -105,7 +105,7 @@
             <label for="editedField6">Numer:</label>
             <input type="text" id="editedField6" name="editedField6">
 
-            <button type="button" onclick="saveEditedData()">Zapisz</button>
+            <button type="submit">Zapisz</button>
         </form>
     </div>
 </div>
