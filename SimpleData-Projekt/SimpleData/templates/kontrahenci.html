@@ -45,10 +45,17 @@
             <label for="numer">Numer:</label>
             <input type="text" id="numer" name="numer" required>
 
+            <label for="rodzaj">Rodzaj:</label>
+            <select id="rodzaj" name="rodzaj" required>
+                <option value="Dostawca">Dostawca</option>
+                <option value="Odbiorca">Odbiorca</option>
+            </select>
+
             <button type="submit">Dodaj</button>
         </form>
     </div>
 </div>
+
 
 <div class="table-container">
     <table class="table">
@@ -60,6 +67,7 @@
                 <th class="header-cell">Numer telefonu</th>
                 <th class="header-cell">Ulica</th>
                 <th class="header-cell">Numer</th>
+                <th class="header-cell">Rodzaj</th>
                 <th class="header-cell">Akcje</th>
             </tr>
         </thead>
@@ -72,6 +80,7 @@
                 <td>{{ kontrahent.telefon }}</td>
                 <td>{{ kontrahent.ulica }}</td>
                 <td>{{ kontrahent.numer }}</td>
+                <td>{{ kontrahent.rodzaj }}</td>
                 <td>
                     <button onclick="handleEditButtonClick(this.parentNode.parentNode)">Edytuj</button>
                 </td>
@@ -86,7 +95,7 @@
     <div class="content">
         <span class="close" onclick="closeEditPopup()">&times;</span>
         <h2>Edytuj kontrahenta</h2>
-        <form  id="editForm" action="{{ url_for('kon.edytuj_kontrahenta') }}" method="POST">
+        <form id="editForm" action="{{ url_for('kon.edytuj_kontrahenta') }}" method="POST">
             <label for="editedField1">NIP :</label>
             <input type="text" id="editedField1" name="editedField1">
 
@@ -104,6 +113,12 @@
 
             <label for="editedField6">Numer:</label>
             <input type="text" id="editedField6" name="editedField6">
+
+            <label for="editedField7">Rodzaj:</label>
+            <select id="editedField7" name="editedField7">
+                <option value="Dostawca">Dostawca</option>
+                <option value="Odbiorca">Odbiorca</option>
+            </select>
 
             <button type="submit">Zapisz</button>
         </form>
@@ -124,12 +139,14 @@
         var nr_telefonu = $(this).data('nr_telefonu');
         var ulica = $(this).data('ulica');
         var numer = $(this).data('numer');
+        var rodzaj = $(this).data('rodzaj');
         $("#nip-input").val(nip);
         $("#nazwa_firmy-input").val(nazwa_firmy);
         $("#miasto-input").val(miasto);
         $("#nr_telefonu-input").val(nr_telefonu);
         $("#ulica-input").val(ulica);
         $("#numer-input").val(numer);
+        $("#rodzaj-input").val(rodzaj);
     });
 
 
@@ -148,6 +165,7 @@
         var nr_telefonu = row.cells[3].innerText;
         var ulica = row.cells[4].innerText;
         var numer = row.cells[5].innerText;
+        var rodzaj = row.cells[6].innerText;
 
         document.getElementById('editedField1').value = nip;
         document.getElementById('editedField2').value = nazwa_firmy;
@@ -155,6 +173,7 @@
         document.getElementById('editedField4').value = nr_telefonu;
         document.getElementById('editedField5').value = ulica;
         document.getElementById('editedField6').value = numer;
+        document.getElementById('editedField7').value = rodzaj;
 
         openEditPopup();
     }
@@ -178,6 +197,7 @@
         var nr_telefonu = document.getElementById('editedField4').value;
         var ulica = document.getElementById('editedField5').value;
         var numer = document.getElementById('editedField6').value;
+        var rodzaj = document.getElementById('editedField7').value;
 
         // Wywołaj endpoint do aktualizacji danych na serwerze
         fetch('/kontrahenci', {
@@ -191,7 +211,8 @@
                 editedField3: miasto,
                 editedField4: nr_telefonu,
                 editedField5: ulica,
-                editedField6: numer
+                editedField6: numer,
+                editedField7: rodzaj
             })
         })
             .then(response => response.json())
@@ -236,6 +257,7 @@
                 '<td>' + record.telefon + '</td>' +
                 '<td>' + record.ulica + '</td>' +
                 '<td>' + record.numer + '</td>' +
+                '<td>' + record.rodzaj + '</td>' +
                 '<td><button onclick="openEditPopup()">Edytuj</button></td>';
 
             tableBody.appendChild(row);

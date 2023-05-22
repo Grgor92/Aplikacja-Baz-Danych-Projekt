@@ -23,7 +23,7 @@ class Kontrahenci(db.Model):
     telefon = db.Column(db.String(20), nullable=False)
     ulica = db.Column(db.String(32), nullable=False)
     numer = db.Column(db.String(32), nullable=False)
-    #Typ_dostawcy = db.Column(db.String(32), nullable=False) !!!!!
+    rodzaj = db.Column(db.String(32), nullable=False)
     #NIP - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli Dokumenty przez Kontrahenta. Krotke NIP.
     dokumenty = db.relationship('Dokumenty', backref='kontrahent')
 

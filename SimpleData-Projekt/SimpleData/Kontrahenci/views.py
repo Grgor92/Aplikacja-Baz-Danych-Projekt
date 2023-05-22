@@ -35,6 +35,7 @@ def kontrahenci_t():
         nr_telefonu = request.args.get('editedField4')
         ulica = request.args.get('editedField5')
         numer = request.args.get('editedField6')
+        rodzaj = request.args.get('editedField7')
 
         kontrahent = Kontrahenci.query.filter_by(NIP=nip).first()
         if kontrahent:
@@ -43,6 +44,7 @@ def kontrahenci_t():
             kontrahent.telefon = nr_telefonu
             kontrahent.ulica = ulica
             kontrahent.numer = numer
+            kontrahent.rodzaj = rodzaj
             db.session.commit()
             flash('Kontrahent został zaktualizowany.', 'success')
         else:
@@ -61,8 +63,9 @@ def dodaj_rekord():
     nr_telefonu = request.form.get('nr_telefonu')
     ulica = request.form.get('ulica')
     numer = request.form.get('numer')
+    rodzaj = request.form.get('rodzaj')
 
-    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer)
+    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, rodzaj=rodzaj)
     db.session.add(kontrahent)
     flash('Nowy kontrahent został utworzony.', 'success')
     db.session.commit()
@@ -76,12 +79,13 @@ def edytuj_kontrahenta():
     edited_telefon = request.form['editedField4']
     edited_ulica = request.form['editedField5']
     edited_numer = request.form['editedField6']
+    edited_rodzaj = request.form['editedField7']
 
     # Przeprowadź aktualizację rekordu kontrahenta w bazie danych na podstawie pobranych danych
 
     # Przykładowe zapytanie SQL do aktualizacji rekordu kontrahenta
-    query = text("UPDATE Kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer WHERE NIP=:nip")
-    db.session.execute(query, {'nazwa_firmy': edited_nazwa_firmy, 'miasto': edited_miasto, 'telefon': edited_telefon, 'ulica': edited_ulica, 'numer': edited_numer, 'nip': edited_nip})
+    query = text("UPDATE Kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer, rodzaj=:rodzaj WHERE NIP=:nip")
+    db.session.execute(query, {'nazwa_firmy': edited_nazwa_firmy, 'miasto': edited_miasto, 'telefon': edited_telefon, 'ulica': edited_ulica, 'numer': edited_numer, 'rodzaj': edited_rodzaj, 'nip': edited_nip})
     db.session.commit()
 
     flash('Dane kontrahenta zostały zaktualizowane')
