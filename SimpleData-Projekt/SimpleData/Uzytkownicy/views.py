@@ -101,6 +101,23 @@ def edit_user():
         flash('Nie zmieniono danych, nie zakutaliwano użytkownika')
         return redirect(url_for('users.uzytkownicy_t'))
 
+@users.route('/usun_user', methods=['GET', 'POST'])
+def usun_user():
+    id_us = request.form['email']
+    user = Uzytkownicy.query.filter_by(id=str(id_us)).first()  # Pobranie użytkownika na podstawie ID
+
+    if user:
+        db.session.delete(user)  # Usunięcie użytkownika z bazy danych
+        db.session.commit()
+
+        flash(f'Użytkownik {user.nazwa} został usunięty.', 'success')  # Wyświetlenie wiadomości flash
+    else:
+        flash(f'Użytkownik o podanym ID nie istnieje.{id_us}', 'danger')  # Wyświetlenie wiadomości flash o nieistniejącym użytkowniku
+
+    return redirect(url_for('users.uzytkownicy_t'))
+
+
+
 @users.route('/ustawienia', methods=['GET', 'POST'])
 @login_required
 def ustawienia_kont():
