@@ -53,6 +53,20 @@ def uzytkownicy_t():
     values = Uzytkownicy.query.filter_by(typ='').all()
     if form.validate_on_submit():
         values=Uzytkownicy.query.all()
+        query = 'SELECT * FROM Uzytkownicy WHERE 1=1 '
+        params = {}
+        if form.imie.data:
+            query += 'AND imie = :imie '
+            params['imie'] = form.imie.data
+        if form.email.data:
+            query += 'AND email = :email '
+            params['email'] = form.email.data
+        if form.typ.data:
+            query += 'AND typ = :typ '
+            params['typ'] = form.typ.data
+        query = text(query)
+        values = db.session.execute(query, params)
+        db.session.commit()    
     #if form2.validate_on_submit():
     #    user = Uzytkownicy.query.get(form2.id.data)
     #    if user:

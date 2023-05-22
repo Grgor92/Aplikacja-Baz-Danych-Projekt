@@ -22,28 +22,28 @@ def dokumenty():
     db.session.commit()
 
     if form.validate_on_submit():
-            query = 'SELECT d.*, k.nazwa_firmy FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Aktywna"'
+            querye = 'SELECT d.*, k.nazwa_firmy FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Aktywna"'
             params = {}
             if form.numer_dok.data:
-                query += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
+                querye += 'AND Dokumenty.numer_dokumentu = :numer_dokumentu '
                 params['numer_dokumentu'] = form.numer_dok.data
             if form.data_wys.data:
-                query += 'AND Dokumenty.data_wystawienia = :data_wystawienia '
+                querye += 'AND Dokumenty.data_wystawienia = :data_wystawienia '
                 params['data_wystawienia'] = form.data_wys.data
             if form.id_klienta.data:
-                query += 'AND Dokumenty.id_uzytkownika = :id_uzytkownika '
+                querye += 'AND Dokumenty.id_uzytkownika = :id_uzytkownika '
                 params['id_uzytkownika'] = form.id_klienta.data
             if form.nip.data:
-                query += 'AND Dokumenty.NIP_kontrahenta = :nip '
+                querye += 'AND Dokumenty.NIP_kontrahenta = :nip '
                 params['nip'] = form.nip.data
             if form.rodzaj.data:
-                query += 'AND Dokumenty.typ_dokumentu = :typ_dokumentu '
+                querye += 'AND Dokumenty.typ_dokumentu = :typ_dokumentu '
                 params['typ_dokumentu'] = form.rodzaj.data
             if form.data_wyk.data:
-                query += 'AND Dokumenty.data_wykonania = :data_wykonania '
+                querye += 'AND Dokumenty.data_wykonania = :data_wykonania '
                 params['data_wykonania'] = form.data_wyk.data
-            query = text(query)
-            result = db.session.execute(query, params)
+            querye = text(querye)
+            result = db.session.execute(querye, params)
             db.session.commit()
     return render_template(
         "dokumenty.html",
@@ -54,23 +54,22 @@ def dokumenty():
         values = result,
     )
     
-@dok.route('/dodaj_dokument_<dokument_type>', methods=['GET', 'POST'])
+@dok.route('/dokumenty/dodaj_dokument_<dokument_type>', methods=['GET', 'POST'])
 def dodaj_dokument(dokument_type):
-    
     if dokument_type == 'PZ':
         form = DodajDokumentForm(rodzaj2='PZ')
     elif dokument_type == 'WZ':
         form = DodajDokumentForm(rodzaj2='WZ')
-    query = text("SELECT * FROM Dokumenty WHERE status = 'Edycja' ;")
+    query = text('SELECT d.*, k.nazwa_firmy FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Edycja"')
     result = db.session.execute(query)
-    if form.validate_on_submit():
+    if form.validate_on_submit() and request.method == 'POST':
         rodzaj = dokument_type
-        numer = request.form['numer_dok2']
-        wys = request.form['data_wys2']
-        nip = request.form['nip2']
-        kontrahent = request.form['kontrahent2']
-        data_wyk = request.form['data_wyk2']
-        data_waz = request.form['data_waz2']
+        numer = form.numer_dok2.data
+        wys = form.data_wys2.data
+        nip = form.nip2.data
+        kontrahent = form.kontrahent2.data
+        data_wyk = form.data_wyk2.data
+        data_waz = form.data_waz2.data
         status = 'Edycja'
         #dokument = Dokumenty(
         #    numer_dokumentu=numer,
@@ -85,7 +84,7 @@ def dodaj_dokument(dokument_type):
         params = {
             'numer': numer,
             'wys': wys,
-            'id_uzytkownika': current_user.id,
+            'id_uzytkownika': current_user.imie,
             'nip': nip,
             'rodzaj': rodzaj,
             'data_wyk': data_wyk,
@@ -96,9 +95,11 @@ def dodaj_dokument(dokument_type):
         db.session.execute(query, params)
         #db.session.add(dokument)
         db.session.commit()
+        flash(f'Dokument został dodany') 
+        return redirect(url_for('dok.dodaj_dokument', dokument_type=form.rodzaj2.data))
+        
+    
 
-        flash(f'Dokument został dodany')
-    form=DodajDokumentForm()   
     return render_template(
         "dod_dok.html",
         title="SimpleData",
@@ -138,3 +139,12 @@ def dodaj_dokument(dokument_type):
 #from sqlalchemy import inspect, text
 #from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 #from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
+@dok.route('/dokumenty/towar_dokument<numer_dokumentu>', methods=['GET', 'POST'])
+def dodaj_dokument(numer_dokumentu):
+    return render_template(
+        "dok_tow.html",
+        title="SimpleData",
+        #user=current_user.imie,
+        form=form,
+        values=result
+    )
