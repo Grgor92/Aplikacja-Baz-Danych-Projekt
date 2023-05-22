@@ -1,10 +1,10 @@
 import os
 from SimpleData import app 
 
-if __name__ == '__main__':#ustawiamy pod jak¹ nazw¹ mo¿e funkcjonowaæ nasza aplikacja w projekcie
+if __name__ == '__main__':#ustawiamy pod jakï¿½ nazwï¿½ moï¿½e funkcjonowaï¿½ nasza aplikacja w projekcie
     HOST = os.environ.get('SERVER_HOST', 'localhost')#ustawienia serverna na loklanyhost
 
-    app.debug = True#linia któr¹ trzeba dodaæ aby zmiany w aplikacji odœiwrza³y siê po prze³adowaniu strony bez koniecznoœci prze³adowwywania serwera
+    app.debug = True#linia ktï¿½rï¿½ trzeba dodaï¿½ aby zmiany w aplikacji odï¿½iwrzaï¿½y siï¿½ po przeï¿½adowaniu strony bez koniecznoï¿½ci przeï¿½adowwywania serwera
     
     try:
         PORT = int(os.environ.get('SERVER_PORT', '5555'))

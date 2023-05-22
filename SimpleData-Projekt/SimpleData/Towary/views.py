@@ -2,7 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, session,
 from SimpleData import app, db 
 from SimpleData.Towary.forms import DodajDokumentForm, FiltrujDaneTowaryDostawcy, DodajDaneTowaryDostawcy  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty, Towary
-from sqlalchemy import inspect, text
+from sqlalchemy import inspect, text, delete
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
 from flask_login import login_required, current_user, fresh_login_required
 
 tow = Blueprint('tow', __name__)
@@ -80,6 +82,38 @@ def edytuj_towar(towar_id):
         title = "SimpleData",
         user = current_user.imie, #current_user - dane użytkownika, imie - krotka do której chcemy dostęp
         #
+        form=form,
+    )
+
+#usun towar z wiersza wybranego
+
+@tow.route('/usun_towar/<towar_id>', methods=['GET', 'POST'])
+@login_required
+def usun_towar(towar_id):
+    form = FiltrujDaneTowaryDostawcy()
+    
+    try:
+        Session = sessionmaker(bind=db.engine)
+        # Usuwanie rekordu po towar_id
+        rekord = Towary.query.filter_by(id_towaru=towar_id).first()
+        #rekord = session.query(Towary).filter_by(id_towaru=towar_id).first()
+
+        if rekord:
+            db.session.delete(rekord)
+            db.session.commit()
+            flash('Rekord został usunięty.', 'success')
+            return redirect(url_for('tow.wypis_towary'))
+        else:
+            flash('Nie znaleziono rekordu o podanym towar_id.', 'warning')
+    
+    except SQLAlchemyError as e:
+        flash('Wystąpił błąd podczas usuwania rekordu.', 'error')
+        session.rollback()
+    
+    return render_template(
+        "usun_towar.html",
+        title="SimpleData",
+        user=current_user.imie,
         form=form,
     )
 

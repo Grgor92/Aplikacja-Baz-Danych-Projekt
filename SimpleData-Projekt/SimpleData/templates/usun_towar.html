@@ -42,49 +42,10 @@
         </fieldset>
 
         <div class="form-group text-center">
-            {{ form.submit(class="btn btn-outline-info") }}
-            <a href="{{ url_for('tow.towary') }}" class="btn btn-primary">Dodaj towar do dostawcy</a>
+            {{ form.submit3(class="btn btn-outline-info") }}
 
         </div>
     </form>
-
-    <table class="table table-striped align-items-center">
-        <thead>
-            <tr>
-                
-                <th scope="col">NIP</th>
-                <th scope="col">Typ wody</th>
-                <th scope="col">Rodzaj butelki</th>
-                <th scope="col">Nazwa wody wraz z pojemnością</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-                {% for item in values %}
-            <tr class="table-info">
-            <tr>
-                
-                <td>{{ item.NIP }}</td>
-                <td>{{ item.typ }}</td>
-                <td>{{ item.rodzaj }}</td>
-                <td>{{ item.nazwa }}</td>
-
-                <td>
-                    <a href="{{url_for("tow.edytuj_towar", towar_id=item.id_towaru)}}" class="btn btn-grey ">Edytuj</a>
-                </td>
-
-                <td>
-                    <a href="{{url_for("tow.usun_towar", towar_id=item.id_towaru)}}" class="btn btn-grey ">Usuń</a>
-                </td>
-                <!--<td>
-                    {% if current_user.is_authenticated and current_user.typ == 'Kierownik' %}
-                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
-                    {% endif %}
-                </td>-->
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
 </div>
     {%endblock%}
