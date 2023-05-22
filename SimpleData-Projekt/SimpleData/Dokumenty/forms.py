@@ -50,8 +50,12 @@ class dok_historyczne(FlaskForm):
     #        raise ValidationError('Ten adres email jest już w użyciu.')
 
 
-
-
+class DodajTowarDokument(FlaskForm):
+    id_towaru=IntegerField('')
+    #id_towaru = db.Column(db.Integer, primary_key=True)
+    #typ = db.Column(db.String(32), nullable=False)
+    #rodzaj = db.Column(db.String(32), nullable=False)
+    #nazwa = db.Column(db.String(32), nullable=False)
 #class Dodaj_dok(FlaskForm):
 #    numer_dok = IntegerField('Numer dokumentu', validators = [Optional()])
 #    data_wys = DateField('Data wystawienia', validators = [Optional()])

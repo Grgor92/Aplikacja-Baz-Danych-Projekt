@@ -11,7 +11,7 @@ class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     email = StringField('Email', validators=[DataRequired(), Email()])
     haslo = PasswordField('Haslo', validators=[DataRequired(),Length(min=5, max=32)])
     haslo2 = PasswordField('Potwierdz Haslo', validators=[DataRequired(),EqualTo('haslo'),Length(min=5, max=32)])
-    typ_uzytkownika = SelectField('Typ użytkownika', choices=[('', 'Wybierz typ'), ('administrator', 'Administrator'), ('kierownik', 'Kierownik'), ('pracownik', 'Pracownik')], validators=[DataRequired()])
+    typ_uzytkownika = SelectField('Typ użytkownika', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zarejestruj')
     def validate_Nazwa(self, Nazwa):
         Uzyt = Uzytkownicy.query.filter_by(imie=Nazwa.data).first()
