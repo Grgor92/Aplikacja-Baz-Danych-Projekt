@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from SimpleData.Kontrahenci.forms import kontrahenci_F  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
 from SimpleData.tabele import Kontrahenci
@@ -90,3 +90,16 @@ def edytuj_kontrahenta():
 
     flash('Dane kontrahenta zostały zaktualizowane')
     return redirect(url_for('kon.kontrahenci_t'))
+
+@kon.route('/kontrahenci/<string:nip>', methods=['DELETE'])
+@login_required
+def delete_kontrahent(nip):
+    kontrahent = Kontrahenci.query.filter_by(NIP=nip).first()
+
+    if kontrahent:
+        db.session.delete(kontrahent)
+        db.session.commit()
+        return jsonify({'message': 'Kontrahent został usunięty.'}), 200
+    else:
+        return jsonify({'message': 'Kontrahent o podanym NIP nie został znaleziony.'}), 404
+
