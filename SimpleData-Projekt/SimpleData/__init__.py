@@ -38,7 +38,7 @@ def init_session():
     session.permanent = True
 
 #Łączenie z bazą danych
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///DB'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)

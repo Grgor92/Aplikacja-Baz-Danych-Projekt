@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
+from SimpleData import db
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
 from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty
 from datetime import date
 
@@ -22,6 +24,24 @@ class DodajDokumentForm(FlaskForm):
         if Uzyt:
             raise ValidationError('Dokuemnt o takim numerze już istnieje.')
 
+    #def validate_nip2(self, nip2):
+    #    kontrahent = self.kontrahent2.data
+    #    uzytkownik = Kontrahenci.query.filter_by(NIP=nip2.data).first()
+    #    if not uzytkownik:
+    #        raise ValidationError('Podany NIP i kontrahent nie pasują do siebie.')
+    
+    def validate_kontrahent2(self, nip2):
+        kontrahent = self.kontrahent2.data
+        query=text("SELECT * FROM Kontrahenci WHERE nazwa_firmy = :wartość_kontrahenta AND NIP = :wartość_NIP;")
+        result=db.session.execute(query, {"wartość_NIP":nip2.data, "wartość_kontrahenta":kontrahent})
+        if not db.session.execute(query, {"wartość_NIP":nip2.data, "wartość_kontrahenta":kontrahent}):
+            raise ValidationError('Podany NIP i kontrahent nie pasują do siebie.')
+    def validate_kontrahent2(self, kontrahent2):
+        nip = self.nip2.data
+        query=text("SELECT * FROM Kontrahenci WHERE nazwa_firmy = :wartość_kontrahenta AND NIP = :wartość_NIP;")
+        result=db.session.execute(query, {"wartość_NIP":nip, "wartość_kontrahenta":kontrahent2.data})
+        if not db.session.execute(query, {"wartość_NIP":nip, "wartość_kontrahenta":kontrahent2.data}):
+            raise ValidationError('Podany NIP i kontrahent nie pasują do siebie.')
     #def validate(self, numer_dok2):
     #    existing_doc = Dokumenty.query.filter_by(numer_dokumentu=self.numer_dok2.data).first()
     #    if existing_doc:
@@ -33,6 +53,19 @@ class DodajDokumentForm(FlaskForm):
     #        return False
 
     #    return True
+    #def validate_nip2(self, nip2):
+    #    kontrahent = self.kontrahent2.data
+    #    uzytkownik = Kontrahenci.query.filter_by(NIP=nip2.data).first()
+    #    if uzytkownik: 
+    #        if uzytkownik.nazwa_firmy != kontrahent:
+    #            raise ValidationError('Podany NIP i kontrahent nie pasują do siebie.')
+    
+    #def validate_kontrahent2(self, kontrahent2):
+    #    nip = self.nip2.data
+    #    uzytkownik = Kontrahenci.query.filter_by(nazwa_firmy=str(kontrahent2.data)).first()
+    #    if uzytkownik: 
+    #        if uzytkownik.NIP != nip:
+    #            raise ValidationError('Podany NIP i kontrahent nie pasują do siebie.')
 class dok_historyczne(FlaskForm):
     numer_dok = IntegerField('Numer dokumentu', validators = [Optional()])
     data_wys = DateField('Data wystawienia', validators = [Optional()])
@@ -51,7 +84,12 @@ class dok_historyczne(FlaskForm):
 
 
 class DodajTowarDokument(FlaskForm):
-    id_towaru=IntegerField('')
+    id_towaru = IntegerField('Numer towaru', validators = [DataRequired()])
+    typ = StringField('Data wystawienia', validators = [DataRequired()])
+    rodzaj= StringField('Rodzaj Wody', validators = [DataRequired()])
+    nazwa= StringField('Nazwa Wody', validators = [DataRequired()])
+    il= IntegerField('Ilosc', validators = [DataRequired(), NumberRange(min=0)])
+    submit = SubmitField('Dodaj Towar')
     #id_towaru = db.Column(db.Integer, primary_key=True)
     #typ = db.Column(db.String(32), nullable=False)
     #rodzaj = db.Column(db.String(32), nullable=False)
@@ -65,3 +103,4 @@ class DodajTowarDokument(FlaskForm):
 #    data_wyk = DateField('Data wykonania', validators = [Optional()])
 #    nazwa_kon = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
 #    submit = SubmitField('Wyszukaj')
+

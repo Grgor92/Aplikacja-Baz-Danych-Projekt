@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Flask, Blueprint, render_template, redirect, url_for, flash, request
 from SimpleData import app, db
-from SimpleData.Dokumenty.forms import  dok_historyczne, DodajDokumentForm  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty
+from SimpleData.Dokumenty.forms import  dok_historyczne, DodajDokumentForm, DodajTowarDokument  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty, TowaryDokument
 from sqlalchemy import text
 from flask_login import login_required, current_user, fresh_login_required
+from datetime import date
 
 dok = Blueprint('dok', __name__)
 
@@ -80,25 +81,31 @@ def dodaj_dokument(dokument_type):
         #    data_wykonania=data_wyk,
         #    data_waznosci_towaru=data_waz
         #)
-        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :data_wyk, :data_waz, :status)')
+        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status, imie_uzytkownika) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :data_wyk, :data_waz, :status, :imie_uzy)')
         params = {
             'numer': numer,
             'wys': wys,
-            'id_uzytkownika': current_user.imie,
+            'id_uzytkownika': current_user.id,
             'nip': nip,
             'rodzaj': rodzaj,
             'data_wyk': data_wyk,
             'data_waz': data_waz,
-            'status': status
+            'status': status,
+            'imie_uzy': current_user.imie
         }
-    
+
         db.session.execute(query, params)
-        #db.session.add(dokument)
         db.session.commit()
-        flash(f'Dokument został dodany') 
+        flash('Dokument został dodany') 
         return redirect(url_for('dok.dodaj_dokument', dokument_type=form.rodzaj2.data))
-        
+
     
+        #db.session.execute(query, params)
+        ##db.session.add(dokument)
+        #db.session.commit()
+        #flash(f'Dokument został dodany') 
+        #return redirect(url_for('dok.dodaj_dokument', dokument_type=form.rodzaj2.data))
+        
 
     return render_template(
         "dod_dok.html",
@@ -140,11 +147,42 @@ def dodaj_dokument(dokument_type):
 #from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 #from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>', methods=['GET', 'POST'])
-def dodaj_dokument(numer_dokumentu):
+def dodajtowar_dok(numer_dokumentu):
+    form = DodajTowarDokument()
+    #query = text("SELECT d.*, k.nazwa_firmy FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.numer_dokumentu = :numer_dokumentu;")
+    query = text("SELECT d.*, k.* FROM Dokumenty d JOIN Kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.numer_dokumentu = :numer_dokumentu;;")
+    query2 = "SELECT * FROM Towary WHERE NIP = :nip"
+    query3 = "SELECT * FROM `towary_dokument` WHERE id_dokumentu = :numer_dokumentu"
+    values = db.session.execute(query, {'numer_dokumentu': numer_dokumentu}).fetchall()
+    nip= values[0].NIP
+    values2 = db.session.execute(text(query3), {"numer_dokumentu": numer_dokumentu}).fetchall()
+    values3 = db.session.execute(text(query2), {"nip": nip}).fetchall()
+    if form.validate_on_submit():
+        towary_dokument = TowaryDokument(
+            id_dokumentu=numer_dokumentu,
+            id_towaru=form.id_towaru.data,
+            typ=form.typ.data,
+            rodzaj=form.rodzaj.data,
+            nazwa=form.nazwa.data,
+            ilosc=form.il.data,
+            data_waznosci=date.today()  # Pominąłem pole data_waznosci, dodaj odpowiednią wartość
+        )
+
+        db.session.add(towary_dokument)
+        db.session.commit()
+        return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
     return render_template(
-        "dok_tow.html",
+        "dok.html",
         title="SimpleData",
         #user=current_user.imie,
         form=form,
-        values=result
+        values=values,
+        values2=values2,
+        values3=values3,
+        numer = numer_dokumentu
+        
     )
+@dok.route('/dokumenty/towar_dokument/dodaj<numer_dokumentu><tow><ilosc>', methods=['GET', 'POST'])
+def dodaj(numer_dokumentu, tow, ilosc):
+    flash("dziala")
+    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
