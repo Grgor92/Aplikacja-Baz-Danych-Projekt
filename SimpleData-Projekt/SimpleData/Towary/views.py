@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session, request, Flask
 from SimpleData import app, db 
 from SimpleData.Towary.forms import DodajDokumentForm  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty
+from SimpleData.tabele import uzytkownicy, kontrahenci, dokumenty
 from sqlalchemy import inspect, text
 from flask_login import login_required, current_user, fresh_login_required
 

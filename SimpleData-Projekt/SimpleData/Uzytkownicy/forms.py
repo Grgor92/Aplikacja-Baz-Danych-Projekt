@@ -1,10 +1,7 @@
 from flask_wtf import FlaskForm
-from flask_sqlalchemy import SQLAlchemy
-from wtforms_sqlalchemy.fields import QuerySelectField
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
-from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty
-from datetime import date
+from wtforms import StringField, PasswordField, SubmitField, SelectField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from SimpleData.tabele import uzytkownicy
 
 class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     Nazwa = StringField('Nazwa', validators=[DataRequired(), Length(min=5, max=20)])    #tworzymy pola i definjujemy typ zmiennej, oraz dodajemy poprawności jakie ma zawierać pole
@@ -14,12 +11,12 @@ class RegistrationForm(FlaskForm):  #tworzymy klasę o odppowiedniej nazwie
     typ_uzytkownika = SelectField('Typ użytkownika', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zarejestruj')
     def validate_Nazwa(self, Nazwa):
-        Uzyt = Uzytkownicy.query.filter_by(imie=Nazwa.data).first()
+        Uzyt = uzytkownicy.query.filter_by(imie=Nazwa.data).first()
         if Uzyt:
             raise ValidationError('Ta nazwa użytkownika już istnieje. Wybierz inną nazwę.')
     #
     def validate_email(self, email):
-        Uzyt = Uzytkownicy.query.filter_by(email=email.data).first()
+        Uzyt = uzytkownicy.query.filter_by(email=email.data).first()
         if Uzyt:
             raise ValidationError('Ten email już istnieje. Wybierz inną nazwę.')
 
@@ -37,7 +34,7 @@ class moje_ustawienia(FlaskForm):
     confirm_password = PasswordField('Powtórz hasło', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Zapisz')
 
-class uzytkownicy(FlaskForm):
+class Uzytkownicy(FlaskForm):
     imie = StringField('Imie')
     email = StringField('Email')
     haslo = StringField('Hasło')
@@ -48,6 +45,6 @@ class uzytkownicy(FlaskForm):
 class Users_zmiana(FlaskForm):
     imie = StringField('Imie', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    haslo = PasswordField('Hasło', validators=[DataRequired()])
+    haslo = PasswordField('Hasło', validators=[Length(min=5, max=32)])
     uprawnienia = SelectField('Typ', choices=[('', 'Wybierz typ'), ('Administrator', 'Administrator'), ('Kierownik', 'Kierownik'), ('Pracownik', 'Pracownik')], validators=[DataRequired()])
     submit = SubmitField('Zapisz zmiany')

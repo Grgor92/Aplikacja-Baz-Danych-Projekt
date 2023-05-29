@@ -14,9 +14,10 @@ from sqlalchemy import ForeignKey, Integer, inspect
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Uzytkownicy.query.get(int(user_id))
+    return uzytkownicy.query.get(int(user_id))
 
-class Kontrahenci(db.Model):
+class kontrahenci(db.Model):
+    __tablename__ = "kontrahenci"
     NIP = db.Column(db.Integer, primary_key=True)
     nazwa_firmy = db.Column(db.String(20), nullable=False)
     miasto = db.Column(db.String(50), nullable=False)
@@ -24,14 +25,15 @@ class Kontrahenci(db.Model):
     ulica = db.Column(db.String(32), nullable=False)
     numer = db.Column(db.String(32), nullable=False)
     #Typ_dostawcy = db.Column(db.String(32), nullable=False) !!!!!
-    #NIP - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli Dokumenty przez Kontrahenta. Krotke NIP.
-    dokumenty = db.relationship('Dokumenty', backref='kontrahent')
+    #NIP - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli dokumenty przez Kontrahenta. Krotke NIP.
+    dokumenty = db.relationship('dokumenty', backref='kontrahent')
 
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
         return "<nazwa_firmy('%s'), NIP('%s')>" % (self.nazwa_firmy, self.NIP)
  
-class Dokumenty(db.Model):
+class dokumenty(db.Model):
+    __tablename__ = "dokumenty"
     id_dokumentu = db.Column(db.Integer, primary_key=True)
     numer_dokumentu = db.Column(db.String(20), nullable=False, unique=True)
     data_wystawienia = db.Column(db.Date, nullable=False)  # Dodana kolumna data_wystawienia
@@ -42,7 +44,7 @@ class Dokumenty(db.Model):
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    #kont = db.relationship("Kontrahenci", backref='kontrahenci_dokumenty')
+    #kont = db.relationship("kontrahenci", backref='kontrahenci_dokumenty')
     #towaryy = db.relationship("TowaryDokument", backref='towar_W_dokument')
     towaryy = db.relationship("TowaryDokument", backref='towar_W_dokument')
     #uzytkownik_relacja = db.relationship('Uzytkownicy', backref='dokumenty')
@@ -53,33 +55,40 @@ class Dokumenty(db.Model):
     #    return "<Numer_dokumentu('%s'), data_wystawienia(%s)>" % (self.numer_dokumentu, self.data_wystawienia)
 
 
-class Uzytkownicy(db.Model, UserMixin):
-    #id - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli Dokumenty przez Uzytkownicy.
+class uzytkownicy(db.Model, UserMixin):
+    __tablename__ = "uzytkownicy"
+    #id - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli dokumenty przez Uzytkownicy.
     id = db.Column(db.Integer, primary_key=True, unique=True)
     imie = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     haslo = db.Column(db.VARCHAR(100), nullable=False)
     typ = db.Column(db.String(30), nullable=False)  
-    dokumenty_relacja = db.relationship('Dokumenty', backref='uzytkownicy')
+    dokumenty_relacja = db.relationship('dokumenty', backref='uzytkownicy')
 
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
     def __repr__(self):
         return "<email('%s'), typ/stanowisko('%s'), imie('%s')>" % (self.email, self.typ, self.imie)
 
    
-class Dokumenty_Historyczne(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    id_dokumentu = db.Column(db.String(32), nullable=False)
-    numer_dokumentu = db.Column(db.String(20), nullable=False)
-    data_wystawienia = db.Column(db.Date)
-    id_uzytkownika = db.Column(db.String(32), nullable=False)
-    NIP_kontrahenta = db.Column(db.String(32), nullable=False)
+class dokumenty_Historyczne(db.Model):
+    __tablename__ = "dokumenty_historyczne"
+    id_dokumentu = db.Column(db.Integer, primary_key=True)
+    numer_dokumentu = db.Column(db.String(20), nullable=False, unique=True)
+    data_wystawienia = db.Column(db.Date, nullable=False)  # Dodana kolumna data_wystawienia
+    id_uzytkownika = db.Column(db.Integer)
+    imie_uzytkownika = db.Column(db.String(20))
+    NIP_kontrahenta = db.Column(db.Integer)
     typ_dokumentu = db.Column(db.String(32), nullable=False)
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    status = db.Column(db.String(20), nullable=False)
+    #kont = db.relationship("kontrahenci", backref='kontrahenci_dokumenty')
+    #towaryy = db.relationship("TowaryDokument", backref='towar_W_dokument')
+    #towaryy = db.relationship("TowaryDokument", backref='towar_W_dokumentghhis')
+    #uzytkownik_relacja = db.relationship('Uzytkownicy', backref='dokumenty')
     
     def __repr__(self):
-        return f"<Dokumenty_Historyczne id:{self.id}, numer_dokumentu:{self.numer_dokumentu}, data_wystawienia:{self.data_wystawienia}, NIP_kontrahenta:{self.NIP_kontrahenta}>"
+        return f"<dokumenty_Historyczne id:{self.id}, numer_dokumentu:{self.numer_dokumentu}, data_wystawienia:{self.data_wystawienia}, NIP_kontrahenta:{self.NIP_kontrahenta}>"
 
 Towary_magazyn_towar = db.Table('Towary_magazyn_towar',
     db.Column('Towary_id_towaru', db.Integer, db.ForeignKey('towary.id_towaru')),
@@ -87,6 +96,7 @@ Towary_magazyn_towar = db.Table('Towary_magazyn_towar',
 )
 
 class TowaryDokument(db.Model):
+    __tablename__ = "towary_dokument"
     id = db.Column(db.Integer, primary_key=True)
     id_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     id_towaru = db.Column(db.Integer, db.ForeignKey('towary.id_towaru'))
@@ -100,6 +110,7 @@ class TowaryDokument(db.Model):
         return f"<TowaryDokument id:{self.id}, id_dokumentu:{self.id_dokumentu}, id_towaru:{self.id_towaru}, ilosc:{self.ilosc}, data_waznosci:{self.data_waznosci}>"
 
 class Towary(db.Model):
+    __tablename__ = "towary"
     NIP = db.Column(db.Integer, nullable=False)
     id_towaru = db.Column(db.Integer, primary_key=True)
     typ = db.Column(db.String(32), nullable=False)
@@ -111,6 +122,7 @@ class Towary(db.Model):
     magazyny = db.relationship('MagazynTowar', secondary=Towary_magazyn_towar, backref='towary')
 
 class Magazyn(db.Model):
+    __tablename__ = "magazyn"
     #nr_sekcji - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli magazyn_towar przez Magazyn.
     nr_sekcji = db.Column(db.String(32), primary_key=True)
     pojemnosc_sekcji = db.Column(db.Integer, nullable=False)
@@ -121,6 +133,7 @@ class Magazyn(db.Model):
         return "<Magazyn(nr_sekcji='{}', pojemnosc_sekcji={})>".format(self.nr_sekcji, self.pojemnosc_sekcji)
 
 class MagazynTowar(db.Model):
+    __tablename__ = "magazyn_towar"
     id = db.Column(db.Integer, primary_key=True)
     nr_sekcji = db.Column(db.String(32), db.ForeignKey('magazyn.nr_sekcji'))
     rodzaj = db.Column(db.String(32), nullable=False)
@@ -142,6 +155,6 @@ with app.app_context():  #wykonania działania wewnątrz aplikacji
     db.drop_all() # usunięcie wszytsykich danych / resert bazy
     if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
         db.create_all() #tworzenie
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
+    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
     db.session.add(new_product)
     db.session.commit()
