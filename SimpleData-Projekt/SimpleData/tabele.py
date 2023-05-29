@@ -24,6 +24,7 @@ class kontrahenci(db.Model):
     telefon = db.Column(db.String(20), nullable=False)
     ulica = db.Column(db.String(32), nullable=False)
     numer = db.Column(db.String(32), nullable=False)
+    status = db.Column(db.String(32), nullable=False)
     #Typ_dostawcy = db.Column(db.String(32), nullable=False) !!!!!
     #NIP - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli dokumenty przez Kontrahenta. Krotke NIP.
     dokumenty = db.relationship('dokumenty', backref='kontrahent')
@@ -95,6 +96,7 @@ Towary_magazyn_towar = db.Table('Towary_magazyn_towar',
     db.Column('magazyn_towar_id', db.Integer, db.ForeignKey('magazyn_towar.id'))
 )
 
+
 class TowaryDokument(db.Model):
     __tablename__ = "towary_dokument"
     id = db.Column(db.Integer, primary_key=True)
@@ -111,15 +113,22 @@ class TowaryDokument(db.Model):
 
 class Towary(db.Model):
     __tablename__ = "towary"
+
     NIP = db.Column(db.Integer, nullable=False)
     id_towaru = db.Column(db.Integer, primary_key=True)
     typ = db.Column(db.String(32), nullable=False)
     rodzaj = db.Column(db.String(32), nullable=False)
     nazwa = db.Column(db.String(32), nullable=False)
+
     
     #data_waznosci_towaru = db.Column(db.Date, nullable=False)
     dokumenty = db.relationship('TowaryDokument', backref='towar')
     magazyny = db.relationship('MagazynTowar', secondary=Towary_magazyn_towar, backref='towary')
+    
+    #
+    #def __repr__(self):
+        #return f"<Towary id_towaru:{self.id_towaru}, kod_towaru:{self.kod_towaru}, rodzaj:{self.rodzaj}, data_waznosci_towaru:{self.data_waznosci_towaru}>"
+
 
 class Magazyn(db.Model):
     __tablename__ = "magazyn"
@@ -144,9 +153,6 @@ class MagazynTowar(db.Model):
         return "<MagazynTowar(id={}, nr_sekcji='{}', rodzaj='{}', ilosc={}, data_waznosci={})>".format(
             self.id, self.nr_sekcji, self.rodzaj, self.ilosc, self.data_waznosci)
 
-
-
-
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
 with app.app_context():  #wykonania działania wewnątrz aplikacji
@@ -158,3 +164,4 @@ with app.app_context():  #wykonania działania wewnątrz aplikacji
     new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
     db.session.add(new_product)
     db.session.commit()
+

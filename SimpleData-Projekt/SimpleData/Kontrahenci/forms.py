@@ -13,4 +13,5 @@ class kontrahenci_F(FlaskForm):
     nr_telefonu = IntegerField('Telefon')
     ulica = StringField('Ulica')
     numer = IntegerField('Numer')
+    rodzaj = StringField('Rodzaj')
     submit = SubmitField('Wyszukaj')
