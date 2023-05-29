@@ -38,8 +38,15 @@ def init_session():
     session.permanent = True
 
 #Łączenie z bazą danych
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://sql7622214:aFWewSyz9l@sql7.freesqldatabase.com/sql7622214'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# LOGOWANIE DO BAZY NA STRONIE
+#https://www.phpmyadmin.co
+#nazwa serwera: sql7.freesqldatabase.com
+#użytkownik: sql7622214
+#haslo: aFWewSyz9l
+
 db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)
 

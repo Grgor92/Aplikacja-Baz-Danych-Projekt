@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session, request, Flask
-from SimpleData import app, db 
+from SimpleData import app, db
 from SimpleData.Towary.forms import DodajDokumentForm, FiltrujDaneTowaryDostawcy, DodajDaneTowaryDostawcy  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty, Towary
+from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty, Towary
 from sqlalchemy import inspect, text, delete
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
@@ -15,7 +15,7 @@ def towary():
     form=DodajDaneTowaryDostawcy()
     if form.validate_on_submit():
         kontrahent = form.Firma.data
-        query = "INSERT INTO Towary (NIP, typ, rodzaj, nazwa) VALUES (:nip, :typ, :rodzaj, :nazwa)"
+        query = "INSERT INTO towary (NIP, typ, rodzaj, nazwa) VALUES (:nip, :typ, :rodzaj, :nazwa)"
         params = {'nip': kontrahent.NIP, 'typ': form.Typ.data, 'rodzaj': form.Rodzaj.data, 'nazwa': form.Nazwa.data}
         #if form.NIP.data:
         #    query += 'AND NIP = :NIP '
@@ -122,7 +122,7 @@ def usun_towar(towar_id):
 @login_required
 def wypis_towary():
     form = FiltrujDaneTowaryDostawcy()
-    query = 'Select * from Towary WHERE 1=1 '
+    query = 'Select * from towary WHERE 1=1 '
     result = db.session.execute(text(query))
     if form.validate_on_submit():
         

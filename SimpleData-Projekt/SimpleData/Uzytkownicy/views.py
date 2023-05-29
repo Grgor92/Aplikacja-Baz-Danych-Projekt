@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, redirect, url_for, flash, session, request, Flask
 from SimpleData import db, bcrypt
-from SimpleData.Uzytkownicy.forms import RegistrationForm, LoginForm, uzytkownicy, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData.tabele import Uzytkownicy
+from SimpleData.Uzytkownicy.forms import RegistrationForm, LoginForm, Uzytkownicy, Users_zmiana, moje_ustawienia  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
+from SimpleData.tabele import uzytkownicy
 from sqlalchemy import text
 from flask_login import login_user, login_required, current_user, fresh_login_required
 from flask_bcrypt import generate_password_hash, check_password_hash
@@ -15,7 +15,7 @@ def login():
         return redirect(url_for('ogolne.home'))
 
     if form.validate_on_submit():   
-            user = Uzytkownicy.query.filter_by(email=form.email.data).first()
+            user = uzytkownicy.query.filter_by(email=form.email.data).first()
             if user and bcrypt.check_password_hash(user.haslo, form.haslo.data):
                 login_user(user)
                 flash('Udało się zalogować', 'success')
@@ -34,7 +34,7 @@ def rejestr():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.haslo.data).decode('utf-8')
-        modyfikacja = Uzytkownicy(imie=form.Nazwa.data, email=form.email.data, haslo=hashed_password, typ=form.typ_uzytkownika.data) #przypisanie do zmiennej tabele z jej krotkami. Pobieramy dane do zmiany z formularza
+        modyfikacja = uzytkownicy(imie=form.Nazwa.data, email=form.email.data, haslo=hashed_password, typ=form.typ_uzytkownika.data) #przypisanie do zmiennej tabele z jej krotkami. Pobieramy dane do zmiany z formularza
         db.session.add(modyfikacja) #dodanie zmiennej modyfikacja do bazy
         db.session.commit() #wysłanie do bazy oraz zapisanie zmiany w niej
         flash(f'Konto stworzone! Zaloguj się.', 'success')
@@ -48,11 +48,25 @@ def rejestr():
 @users.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
 def uzytkownicy_t():
-    form = uzytkownicy()
+    form = Uzytkownicy()
     form2 = Users_zmiana()
-    values = Uzytkownicy.query.filter_by(typ='').all()
+    values = uzytkownicy.query.filter_by(typ='').all()
     if form.validate_on_submit():
-        values=Uzytkownicy.query.all()
+        values=uzytkownicy.query.all()
+        query = 'SELECT * FROM uzytkownicy WHERE 1=1 '
+        params = {}
+        if form.imie.data:
+            query += 'AND imie = :imie '
+            params['imie'] = form.imie.data
+        if form.email.data:
+            query += 'AND email = :email '
+            params['email'] = form.email.data
+        if form.typ.data:
+            query += 'AND typ = :typ '
+            params['typ'] = form.typ.data
+        query = text(query)
+        values = db.session.execute(query, params)
+        db.session.commit()    
     #if form2.validate_on_submit():
     #    user = Uzytkownicy.query.get(form2.id.data)
     #    if user:
@@ -77,12 +91,12 @@ def uzytkownicy_t():
 @users.route('/edit_user', methods=['GET', 'POST'])
 def edit_user():
     user_id = request.form['id']
-    user = Uzytkownicy.query.filter_by(id=user_id).first()
+    user = uzytkownicy.query.filter_by(id=user_id).first()
 
     if user.imie != request.form['imie']:
         user.imie = request.form['imie']
 
-    if user.haslo != request.form['haslo']:
+    if user.haslo != request.form['haslo'] and request.form['haslo']:
         hashed_password = bcrypt.generate_password_hash(request.form['haslo']).decode('utf-8')
         user.haslo = hashed_password
 
@@ -100,6 +114,23 @@ def edit_user():
     else:
         flash('Nie zmieniono danych, nie zakutaliwano użytkownika')
         return redirect(url_for('users.uzytkownicy_t'))
+
+@users.route('/usun_user', methods=['GET', 'POST'])
+def usun_user():
+    id_us = request.form['email']
+    user = uzytkownicy.query.filter_by(id=str(id_us)).first()  # Pobranie użytkownika na podstawie ID
+
+    if user:
+        db.session.delete(user)  # Usunięcie użytkownika z bazy danych
+        db.session.commit()
+
+        flash(f'Użytkownik {user.nazwa} został usunięty.', 'success')  # Wyświetlenie wiadomości flash
+    else:
+        flash(f'Użytkownik o podanym ID nie istnieje.{id_us}', 'danger')  # Wyświetlenie wiadomości flash o nieistniejącym użytkowniku
+
+    return redirect(url_for('users.uzytkownicy_t'))
+
+
 
 @users.route('/ustawienia', methods=['GET', 'POST'])
 @login_required
