@@ -133,14 +133,3 @@ class Towary_Dokument(db.Model):
     def __repr__(self):
         return f"<Towary_Dokument id:{self.id}, id_dokumentu:{self.id_dokumentu}, id_towaru:{self.id_towaru}, ilosc:{self.ilosc}, data_waznosci:{self.data_waznosci}>"
 
-
-#with app.app_context():  #wykonania działania wewnątrz aplikacji
-##sprawdzenie czy baza danych istnieje
-#    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-#    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-#    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-#        db.create_all() #tworzenie
-#        new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
-#        db.session.add(new_product)
-#        db.session.commit()
-

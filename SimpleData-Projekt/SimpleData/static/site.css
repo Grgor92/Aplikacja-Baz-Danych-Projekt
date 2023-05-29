@@ -148,6 +148,12 @@ input[type="checkbox"].input-validation-error {
     margin-bottom: 10px;
 }
 
+.popup select {
+    width: 200px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
 .popup button {
     padding: 10px 20px;
     margin-top: 10px;
