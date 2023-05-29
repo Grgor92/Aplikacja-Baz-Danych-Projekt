@@ -23,7 +23,8 @@ class Kontrahenci(db.Model):
     telefon = db.Column(db.String(20), nullable=False)
     ulica = db.Column(db.String(32), nullable=False)
     numer = db.Column(db.String(32), nullable=False)
-    rodzaj = db.Column(db.String(32), nullable=False)
+    status = db.Column(db.String(32), nullable=False)
+    #Typ_dostawcy = db.Column(db.String(32), nullable=False) !!!!!
     #NIP - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli Dokumenty przez Kontrahenta. Krotke NIP.
     dokumenty = db.relationship('Dokumenty', backref='kontrahent')
 
@@ -85,16 +86,21 @@ Towary_magazyn_towar = db.Table('Towary_magazyn_towar',
     db.Column('magazyn_towar_id', db.Integer, db.ForeignKey('magazyn_towar.id'))
 )
 
+
 class Towary(db.Model):
+    NIP = db.Column(db.Integer, nullable=False)
     id_towaru = db.Column(db.Integer, primary_key=True)
-    kod_towaru = db.Column(db.Integer, nullable=False)
+    typ = db.Column(db.String(32), nullable=False)
     rodzaj = db.Column(db.String(32), nullable=False)
-    data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    nazwa = db.Column(db.String(32), nullable=False)
+    
+    #data_waznosci_towaru = db.Column(db.Date, nullable=False)
     dokumenty = db.relationship('Towary_Dokument', backref='towar')
     magazyny = db.relationship('MagazynTowar', secondary=Towary_magazyn_towar, backref='towary')
     
-    def __repr__(self):
-        return f"<Towary id_towaru:{self.id_towaru}, kod_towaru:{self.kod_towaru}, rodzaj:{self.rodzaj}, data_waznosci_towaru:{self.data_waznosci_towaru}>"
+    #
+    #def __repr__(self):
+        #return f"<Towary id_towaru:{self.id_towaru}, kod_towaru:{self.kod_towaru}, rodzaj:{self.rodzaj}, data_waznosci_towaru:{self.data_waznosci_towaru}>"
 
 class Magazyn(db.Model):
     #nr_sekcji - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli magazyn_towar przez Magazyn.
@@ -127,15 +133,3 @@ class Towary_Dokument(db.Model):
     def __repr__(self):
         return f"<Towary_Dokument id:{self.id}, id_dokumentu:{self.id_dokumentu}, id_towaru:{self.id_towaru}, ilosc:{self.ilosc}, data_waznosci:{self.data_waznosci}>"
 
-
-#with app.app_context():
-#sprawdzenie czy baza danych istnieje
-with app.app_context():  #wykonania działania wewnątrz aplikacji
-#sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-        db.create_all() #tworzenie
-    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
-    db.session.add(new_product)
-    db.session.commit()
