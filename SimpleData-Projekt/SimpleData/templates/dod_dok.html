@@ -77,7 +77,7 @@
                 <td>{{ item.NIP_kontrahenta }}</td>
                 <td>{{ item.nazwa_firmy }}</td>
                 <td>{{ item.typ_dokumentu }}</td>
-                <td>{{ item.status }}</td>
+                <td>{{ item.statusd }}</td>
                 <td>
                     {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
                     <a href="{{ url_for('dok.dodajtowar_dok', numer_dokumentu=item.numer_dokumentu) }} "class="btn btn-primary">Edytuj</a>

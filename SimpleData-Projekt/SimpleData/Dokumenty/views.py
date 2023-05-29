@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, render_template, redirect, url_for, flash, request
 from SimpleData import app, db
 from SimpleData.Dokumenty.forms import  dok_historyczne, DodajDokumentForm, DodajTowarDokument  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData.tabele import uzytkownicy, kontrahenci, dokumenty, TowaryDokument
+from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty, TowaryDokument
 from sqlalchemy import text
 from flask_login import login_required, current_user, fresh_login_required
 from datetime import date
@@ -18,12 +18,12 @@ def dokumenty():
     result = db.session.execute(query)
     query3 = text("INSERT IGNORE INTO kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer) VALUES ('1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A');")
     db.session.execute(query3)
-    query2 = text("INSERT IGNORE INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status) VALUES ('12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11', 'Aktywna');")
+    query2 = text("INSERT IGNORE INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, statusd) VALUES ('12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11', 'Aktywna');")
     db.session.execute(query2, {'user_id': current_user.id})
     db.session.commit()
 
     if form.validate_on_submit():
-            querye = 'SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Aktywna"'
+            querye = 'SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.statusd = "Aktywna"'
             params = {}
             if form.numer_dok.data:
                 querye += 'AND dokumenty.numer_dokumentu = :numer_dokumentu '
@@ -61,7 +61,7 @@ def dodaj_dokument(dokument_type):
         form = DodajDokumentForm(rodzaj2='PZ')
     elif dokument_type == 'WZ':
         form = DodajDokumentForm(rodzaj2='WZ')
-    query = text('SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.status = "Edycja"')
+    query = text('SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.statusd = "Edycja"')
     result = db.session.execute(query)
     if form.validate_on_submit() and request.method == 'POST':
         rodzaj = dokument_type
@@ -81,7 +81,7 @@ def dodaj_dokument(dokument_type):
         #    data_wykonania=data_wyk,
         #    data_waznosci_towaru=data_waz
         #)
-        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, status, imie_uzytkownika) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :data_wyk, :data_waz, :status, :imie_uzy)')
+        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, statusd, imie_uzytkownika) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :data_wyk, :data_waz, :status, :imie_uzy)')
         params = {
             'numer': numer,
             'wys': wys,
