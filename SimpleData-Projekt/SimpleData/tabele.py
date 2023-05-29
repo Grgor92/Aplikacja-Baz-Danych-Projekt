@@ -16,7 +16,7 @@ from sqlalchemy import ForeignKey, Integer, inspect
 def load_user(user_id):
     return uzytkownicy.query.get(int(user_id))
 
-class kontrahenci(db.Model):
+class Kontrahenci(db.Model):
     __tablename__ = "kontrahenci"
     NIP = db.Column(db.Integer, primary_key=True)
     nazwa_firmy = db.Column(db.String(20), nullable=False)
@@ -44,7 +44,7 @@ class dokumenty(db.Model):
     typ_dokumentu = db.Column(db.String(32), nullable=False)
     data_wykonania = db.Column(db.Date, nullable=False)
     data_waznosci_towaru = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(20), nullable=False)
+    statusd = db.Column(db.String(20), nullable=False)
     #kont = db.relationship("kontrahenci", backref='kontrahenci_dokumenty')
     #towaryy = db.relationship("TowaryDokument", backref='towar_W_dokument')
     towaryy = db.relationship("TowaryDokument", backref='towar_W_dokument')
@@ -155,13 +155,13 @@ class MagazynTowar(db.Model):
 
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
-with app.app_context():  #wykonania działania wewnątrz aplikacji
-#sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-        db.create_all() #tworzenie
-    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
-    db.session.add(new_product)
-    db.session.commit()
+#with app.app_context():  #wykonania działania wewnątrz aplikacji
+##sprawdzenie czy baza danych istnieje
+#    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
+#    db.drop_all() # usunięcie wszytsykich danych / resert bazy
+#    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
+#        db.create_all() #tworzenie
+#    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
+#    db.session.add(new_product)
+#    db.session.commit()
 

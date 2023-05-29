@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from SimpleData.Kontrahenci.forms import kontrahenci_F  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
-from SimpleData.tabele import kontrahenci
+from SimpleData.tabele import Kontrahenci
 from sqlalchemy import text
 from flask_login import login_required, current_user, fresh_login_required
 
@@ -11,19 +11,19 @@ kon = Blueprint('kon', __name__)
 @login_required
 def kontrahenci_t():
     form = kontrahenci_F()
-    values=kontrahenci.query.all()
+    values=Kontrahenci.query.all()
     if request.method == 'POST':
         nip = request.form.get('nip')
         nazwa_firmy = request.form.get('nazwa_firmy')
 
         if nip and nazwa_firmy:
-            kontrahenci = kontrahenci.query.filter_by(NIP=nip, nazwa_firmy=nazwa_firmy).all()
+            kontrahenci = Kontrahenci.query.filter_by(NIP=nip, nazwa_firmy=nazwa_firmy).all()
         elif nip:
-            kontrahenci = kontrahenci.query.filter_by(NIP=nip).all()
+            kontrahenci = Kontrahenci.query.filter_by(NIP=nip).all()
         elif nazwa_firmy:
-            kontrahenci = kontrahenci.query.filter_by(nazwa_firmy=nazwa_firmy).all()
+            kontrahenci = Kontrahenci.query.filter_by(nazwa_firmy=nazwa_firmy).all()
         else:
-            kontrahenci = kontrahenci.query.all()
+            kontrahenci = Kontrahenci.query.all()
 
         return render_template('kontrahenci.html', kontrahenci=kontrahenci)
 
@@ -63,7 +63,7 @@ def dodaj_rekord():
     ulica = request.form.get('ulica')
     numer = request.form.get('numer')
     rodzaj = request.form.get('rodzaj')
-    kontrahent = kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, status=rodzaj)
+    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, status=rodzaj)
 
     db.session.add(kontrahent)
     flash('Nowy kontrahent został utworzony.', 'success')
@@ -83,7 +83,7 @@ def edytuj_kontrahenta():
     # Przeprowadź aktualizację rekordu kontrahenta w bazie danych na podstawie pobranych danych
 
     # Przykładowe zapytanie SQL do aktualizacji rekordu kontrahenta
-    query = text("UPDATE Kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer, rodzaj=:rodzaj WHERE NIP=:nip")
+    query = text("UPDATE kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer, rodzaj=:rodzaj WHERE NIP=:nip")
     db.session.execute(query, {'nazwa_firmy': edited_nazwa_firmy, 'miasto': edited_miasto, 'telefon': edited_telefon, 'ulica': edited_ulica, 'numer': edited_numer, 'rodzaj': edited_rodzaj, 'nip': edited_nip})
     db.session.commit()
 
