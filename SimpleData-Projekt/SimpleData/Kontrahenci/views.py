@@ -11,8 +11,7 @@ kon = Blueprint('kon', __name__)
 @login_required
 def kontrahenci_t():
     form = kontrahenci_F()
-    values = Kontrahenci.query.all()
-
+    values=Kontrahenci.query.all()
     if request.method == 'POST':
         nip = request.form.get('nip')
         nazwa_firmy = request.form.get('nazwa_firmy')
@@ -64,8 +63,8 @@ def dodaj_rekord():
     ulica = request.form.get('ulica')
     numer = request.form.get('numer')
     rodzaj = request.form.get('rodzaj')
+    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, status=rodzaj)
 
-    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, rodzaj=rodzaj)
     db.session.add(kontrahent)
     flash('Nowy kontrahent został utworzony.', 'success')
     db.session.commit()
@@ -84,7 +83,7 @@ def edytuj_kontrahenta():
     # Przeprowadź aktualizację rekordu kontrahenta w bazie danych na podstawie pobranych danych
 
     # Przykładowe zapytanie SQL do aktualizacji rekordu kontrahenta
-    query = text("UPDATE Kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer, rodzaj=:rodzaj WHERE NIP=:nip")
+    query = text("UPDATE kontrahenci SET nazwa_firmy=:nazwa_firmy, miasto=:miasto, telefon=:telefon, ulica=:ulica, numer=:numer, rodzaj=:rodzaj WHERE NIP=:nip")
     db.session.execute(query, {'nazwa_firmy': edited_nazwa_firmy, 'miasto': edited_miasto, 'telefon': edited_telefon, 'ulica': edited_ulica, 'numer': edited_numer, 'rodzaj': edited_rodzaj, 'nip': edited_nip})
     db.session.commit()
 

@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
-from SimpleData.tabele import Uzytkownicy, Kontrahenci, Dokumenty
+from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty
 from datetime import date
 
 class przeszukiwanie_d(FlaskForm):
@@ -21,7 +21,7 @@ class dok_historyczne(FlaskForm):
     nip = IntegerField('NIP', validators = [Optional()])
     rodzaj = SelectField('Dokument', choices=[('', ''),('WZ', 'WZ'), ('PZ', 'PZ')], validators = [Optional()])
     data_wyk = DateField('Data wykonania', validators = [Optional()])
-    nazwa_kon = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
+    nazwa_kon = QuerySelectField('Kontrahent', query_factory=lambda: kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
     submit = SubmitField('Wyszukaj')
 
 class magazyn_towar(FlaskForm):

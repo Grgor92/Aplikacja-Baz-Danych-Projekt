@@ -2,25 +2,13 @@ from flask import Blueprint, jsonify, render_template, url_for, redirect
 from datetime import datetime
 ogolne = Blueprint('ogolne', __name__)
 from flask_login import current_user, login_required, logout_user
-from SimpleData import  db
+from SimpleData import  db, bcrypt, app
 from SimpleData.Ogolne.forms import przeszukiwanie_d, dok_historyczne, magazyn_towar
 from sqlalchemy import inspect, text
+from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
+from SimpleData.tabele import uzytkownicy
 
-#wewnątrz aplikacji 
 
-#with app.app_context():
-#sprawdzenie czy baza danych istnieje
-#with app.app_context():  #wykonania działania wewnątrz aplikacji
-##sprawdzenie czy baza danych istnieje
-#    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-#    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-#    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-#        db.create_all() #tworzenie
-#    new_product = Uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Kierownik')
-#    db.session.add(new_product)
-#    db.session.commit()
-
-ogolne = Blueprint('ogolne', __name__)
 
 @ogolne.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
@@ -43,6 +31,7 @@ def home():
 def logout():
     logout_user()
     return redirect(url_for("ogolne.home"))
+
 @ogolne.route('/przeszukiwanie', methods=['GET', 'POST'])
 @login_required
 def przeszukiwanie():
