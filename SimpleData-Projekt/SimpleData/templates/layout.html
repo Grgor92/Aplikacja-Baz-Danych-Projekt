@@ -38,17 +38,16 @@
 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% if current_user.is_authenticated %}
-                        {% if current_user.is_authenticated and current_user.uprawnienia == 'Kierownik' %}
+                        {% if current_user.is_authenticated and current_user.uprawnienia == 'Administrator' %}
                         <a class="dropdown-item" href="{{ url_for('users.rejestr') }}">Rejestracja</a>
                         {% endif %}
                         <a class="dropdown-item" href="{{url_for('ogolne.przeszukiwanie')}}">Podsumowanie <span class="sr-only">(current)</span></a>
-                        <a class="dropdown-item" href="{{url_for('kon.kontrahenci_t')}}">Kontrahenci <span class="sr-only">(current)</span></a>
+                        <a class="dropdown-item" href="{{url_for('kon.kontrahenci_t')}}">kontrahenci <span class="sr-only">(current)</span></a>
                         <a class="dropdown-item" href="{{url_for('ogolne.magazyn_towar_t')}}">Magazyn <span class="sr-only">(current)</span></a>
                         <a class="dropdown-item" href="{{url_for('users.uzytkownicy_t')}}">Użytkownicy <span class="sr-only">(current)</span></a>
                         <a class="dropdown-item" href="{{url_for('dok.dokumenty')}}">Dokumenty<span class="sr-only">(current)</span></a>
                         <a class="dropdown-item" href="{{url_for('ogolne.dokumenty_hist')}}">Dokumenty Historyczne <span class="sr-only">(current)</span></a>
                         <a class="dropdown-item" href="{{url_for('tow.wypis_towary')}}">Dodaj/zobacz towary kontrahenta <span class="sr-only">(current)</span></a>
-                        
 
                         {% else %}
                         <a class="dropdown-item" href="{{ url_for('users.login') }}">Logowanie</a>

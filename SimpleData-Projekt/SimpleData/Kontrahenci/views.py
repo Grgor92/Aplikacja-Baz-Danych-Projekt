@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from SimpleData.Kontrahenci.forms import kontrahenci_F  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData import db
-from SimpleData.tabele import Kontrahenci
+from SimpleData.tabele import kontrahenci
 from sqlalchemy import text
 from flask_login import login_required, current_user, fresh_login_required
 
@@ -11,20 +11,19 @@ kon = Blueprint('kon', __name__)
 @login_required
 def kontrahenci_t():
     form = kontrahenci_F()
-    values = Kontrahenci.query.all()
-
+    values=kontrahenci.query.all()
     if request.method == 'POST':
         nip = request.form.get('nip')
         nazwa_firmy = request.form.get('nazwa_firmy')
 
         if nip and nazwa_firmy:
-            kontrahenci = Kontrahenci.query.filter_by(NIP=nip, nazwa_firmy=nazwa_firmy).all()
+            kontrahenci = kontrahenci.query.filter_by(NIP=nip, nazwa_firmy=nazwa_firmy).all()
         elif nip:
-            kontrahenci = Kontrahenci.query.filter_by(NIP=nip).all()
+            kontrahenci = kontrahenci.query.filter_by(NIP=nip).all()
         elif nazwa_firmy:
-            kontrahenci = Kontrahenci.query.filter_by(nazwa_firmy=nazwa_firmy).all()
+            kontrahenci = kontrahenci.query.filter_by(nazwa_firmy=nazwa_firmy).all()
         else:
-            kontrahenci = Kontrahenci.query.all()
+            kontrahenci = kontrahenci.query.all()
 
         return render_template('kontrahenci.html', kontrahenci=kontrahenci)
 
@@ -64,8 +63,8 @@ def dodaj_rekord():
     ulica = request.form.get('ulica')
     numer = request.form.get('numer')
     rodzaj = request.form.get('rodzaj')
+    kontrahent = kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, status=rodzaj)
 
-    kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, rodzaj=rodzaj)
     db.session.add(kontrahent)
     flash('Nowy kontrahent został utworzony.', 'success')
     db.session.commit()
