@@ -18,7 +18,8 @@ def load_user(user_id):
 
 class Kontrahenci(db.Model):
     __tablename__ = "kontrahenci"
-    NIP = db.Column(db.Integer, primary_key=True)
+    id_dokumentu = db.Column(db.Integer)
+    NIP = db.Column(db.Integer , primary_key=True)
     nazwa_firmy = db.Column(db.String(20), nullable=False)
     miasto = db.Column(db.String(50), nullable=False)
     telefon = db.Column(db.String(20), nullable=False)
@@ -102,9 +103,7 @@ class TowaryDokument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     id_towaru = db.Column(db.Integer, db.ForeignKey('towary.id_towaru'))
-    typ = db.Column(db.String(32), nullable=False)
-    rodzaj = db.Column(db.String(32), nullable=False)
-    nazwa = db.Column(db.String(32), nullable=False)
+    
     ilosc = db.Column(db.Integer, nullable=False)
     data_waznosci = db.Column(db.Date, nullable=False)
     

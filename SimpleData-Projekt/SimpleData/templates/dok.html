@@ -18,6 +18,7 @@
         <h5>Data wystawienia: {{ item.data_wystawienia }}</h5>
     </div>
 </div>
+
 <table class="table">
     <thead>
         <tr>
@@ -43,44 +44,53 @@
         {% endfor %}
     </tbody>
 </table>
+
 {% if item.statusd=='Edycja' %}
 <h1 class="text-center mt-5">TOWARY</h1>
+<a href="{{ url_for('dok.zakoncz', numer_dokumentu=item.numer_dokumentu, status="Aktywna") }}" class="btn btn-primary">Zakończ Edycje</a>
+<a href="{{ url_for('dok.finalizuj', numer_dokumentu=item.numer_dokumentu, typ="Usun" )}}" class="btn btn-primary" title="Dokument zostanie usunięty z bazy">Anuluj</a>
 <div class="content-section">
-    
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID towaru</th>
-                    <th>Typ</th>
-                    <th>Rodzaj</th>
-                    <th>Nazwa</th>
-                    <th>Ilość</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for towar in values3 %}
-                <tr>
-                    <form method="POST" action="">
-                        {{ form.hidden_tag() }}
-                            <td>{{ form.id_towaru(value=towar.id_towaru, readonly='readonly', id=field_id , class="form-control")}}</td>
-                            <td>{{ form.typ(value=towar.typ, readonly='readonly', class="form-control") }}</td>
-                            <td>{{ form.rodzaj(value=towar.rodzaj, readonly='readonly', class="form-control") }}</td>
-                            <td>{{ form.nazwa(value=towar.nazwa, readonly='readonly', class="form-control") }}</td>
-                            <td>
-                                {{ form.il(class="form-control") }}
-                            </td>
-                            <td>
-                                {{ form.submit(class="btn btn-primary") }}
-                            </td>
-                    </form>
-                </tr>
-                
-                {% endfor %}
-            </tbody>
-        </table>
-        
-    
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID towaru</th>
+                <th>Typ</th>
+                <th>Rodzaj</th>
+                <th>Nazwa</th>
+                <th>Ilość</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for towar in values3 %}
+            <form method="POST" action="">
+            <tr>
+
+                {{ form.hidden_tag() }}
+                <td>{{ form.id_towaru(value=towar.id_towaru, readonly='readonly', id=field_id , class="form-control")}}</td>
+                <td>{{ form.typ(value=towar.typ, readonly='readonly', class="form-control") }}</td>
+                <td>{{ form.rodzaj(value=towar.rodzaj, readonly='readonly', class="form-control") }}</td>
+                <td>{{ form.nazwa(value=towar.nazwa, readonly='readonly', class="form-control") }}</td>
+                <td>
+                    {{ form.il(class="form-control") }}
+                </td>
+                <td>
+                    {{ form.submit(class="btn btn-primary") }}
+                </td>
+
+            </tr>
+            </form>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
 </div>
+
+{% else %}
+<a href="{{ url_for('dok.zakoncz', numer_dokumentu=item.numer_dokumentu, status="Edycja") }}" class="btn btn-primary">Cofnij do edycji</a>
+<a href="{{ url_for('dok.finalizuj', numer_dokumentu=item.numer_dokumentu, typ=item.typ_dokumentu) }}" class="btn btn-primary" title="Towary zostaną dodane do magzynu do wolnych sekcji">Finalizuj Dokument</a>
+
 {% endif %}
 
 

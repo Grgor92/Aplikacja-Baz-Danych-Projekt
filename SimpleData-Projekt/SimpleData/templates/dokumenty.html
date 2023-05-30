@@ -7,9 +7,9 @@
             <div class="form-inline">
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.numer_dok.id }}" class="form-control-label">{{ form.numer_dok.label }}</label>
+                        <label for="{{ form.numer_dokumentu.id }}" class="form-control-label">{{ form.numer_dokumentu.label }}</label>
                     </div>
-                    {{ form.numer_dok(class="form-control ml-2") }}
+                    {{ form.numer_dokumentu(class="form-control ml-2") }}
                 </div>
                 {% for field, errors in form.errors.items() %}
                 <div class="alert alert-danger">
@@ -20,41 +20,43 @@
                 {% endfor %}
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.data_wys.id }}" class="form-control-label">{{ form.data_wys.label }}</label>
+                        <label for="{{ form.data_wystawienia.id }}" class="form-control-label">{{ form.data_wystawienia.label }}</label>
                     </div>
-                    {{ form.data_wys(class="form-control ml-2") }}
+                    {{ form.data_wystawienia(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.id_klienta.id }}" class="form-control-label">{{ form.id_klienta.label }}</label>
+                        <label for="{{ form.id_uzytkownika.id }}" class="form-control-label">{{ form.id_uzytkownika.label }}</label>
                     </div>
-                    {{ form.id_klienta(class="form-control ml-2") }}
+                    {{ form.id_uzytkownika(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.nip.id }}" class="form-control-label">{{ form.nip.label }}</label>
+                        <label for="{{ form.NIP_kontrahenta.id }}" class="form-control-label">{{ form.NIP_kontrahenta.label }}</label>
                     </div>
-                    {{ form.nip(class="form-control ml-2") }}
+                    {{ form.NIP_kontrahenta(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.rodzaj.id }}" class="form-control-label">{{ form.rodzaj.label }}</label>
+                        <label for="{{ form.typ_dokumentu.id }}" class="form-control-label">{{ form.typ_dokumentu.label }}</label>
                     </div>
-                    {{ form.rodzaj(class="form-control ml-2") }}
+                    {{ form.typ_dokumentu(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.data_wyk.id }}" class="form-control-label">{{ form.data_wyk.label }}</label>
+                        <label for="{{ form.data_wykonania.id }}" class="form-control-label">{{ form.data_wykonania.label }}</label>
                     </div>
-                    {{ form.data_wyk(class="form-control ml-2") }}
+                    {{ form.data_wykonania(class="form-control ml-2") }}
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label for="{{ form.nazwa_kon.id }}" class="form-control-label">{{ form.nazwa_kon.label }}</label>
+                        <label for="{{ form.statusd.id }}" class="form-control-label">{{ form.statusd.label }}</label>
                     </div>
-                    {{ form.nazwa_kon(class="form-control ml-2") }}
+                    {{ form.statusd(class="form-control ml-2") }}
                 </div>
             </div>
+
+
         </fieldset>
 
         <div class="form-group text-center">
@@ -78,23 +80,22 @@
         </thead>
         <tbody>
             {% for item in values %}
-            <tr class="table-info">
-            <tr>
+
+            <tr onclick="window.location.href='{{ url_for('dok.dodajtowar_dok', numer_dokumentu=item.numer_dokumentu) }}';" onmouseover="this.classList.add('table-info');" onmouseout="this.classList.remove('table-info');">
                 <td>{{ item.numer_dokumentu }}</td>
                 <td>{{ item.data_wystawienia }}</td>
-                <td>{{ item.id_uzytkownika }}</td>
+                <td>{{ item.imie }}</td>
                 <td>{{ item.NIP_kontrahenta }}</td>
                 <td>{{ item.nazwa_firmy }}</td>
                 <td>{{ item.typ_dokumentu }}</td>
                 <td>{{ item.statusd }}</td>
-                <!--<td>
-        {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
-        <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
-        {% endif %}
-    </td>-->
             </tr>
+
+
+
             {% endfor %}
         </tbody>
+
     </table>
 
 </div>

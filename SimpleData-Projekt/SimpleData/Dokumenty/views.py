@@ -13,45 +13,44 @@ dok = Blueprint('dok', __name__)
 #@login_required
 def dokumenty():
     form = dok_historyczne()
-    form2 = DodajDokumentForm()
     query = text("SELECT * FROM dokumenty WHERE numer_dokumentu = '' ;")
     result = db.session.execute(query)
-    query3 = text("INSERT IGNORE INTO kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer) VALUES ('1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A');")
+    query3 = text("INSERT IGNORE INTO kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer, status) VALUES ('1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A', 'Dostawca');")
     db.session.execute(query3)
     query2 = text("INSERT IGNORE INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_wykonania, data_waznosci_towaru, statusd) VALUES ('12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', '2022-06-11', 'Aktywna');")
     db.session.execute(query2, {'user_id': current_user.id})
     db.session.commit()
 
     if form.validate_on_submit():
-            querye = 'SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.statusd = "Aktywna"'
-            params = {}
-            if form.numer_dok.data:
-                querye += 'AND dokumenty.numer_dokumentu = :numer_dokumentu '
-                params['numer_dokumentu'] = form.numer_dok.data
-            if form.data_wys.data:
-                querye += 'AND dokumenty.data_wystawienia = :data_wystawienia '
-                params['data_wystawienia'] = form.data_wys.data
-            if form.id_klienta.data:
-                querye += 'AND dokumenty.id_uzytkownika = :id_uzytkownika '
-                params['id_uzytkownika'] = form.id_klienta.data
-            if form.nip.data:
-                querye += 'AND dokumenty.NIP_kontrahenta = :nip '
-                params['nip'] = form.nip.data
-            if form.rodzaj.data:
-                querye += 'AND dokumenty.typ_dokumentu = :typ_dokumentu '
-                params['typ_dokumentu'] = form.rodzaj.data
-            if form.data_wyk.data:
-                querye += 'AND dokumenty.data_wykonania = :data_wykonania '
-                params['data_wykonania'] = form.data_wyk.data
-            querye = text(querye)
-            result = db.session.execute(querye, params)
-            db.session.commit()
+        query = 'SELECT d.*, k.nazwa_firmy, u.imie FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP JOIN uzytkownicy u ON d.id_uzytkownika = u.id'
+        filters = {
+            'numer_dokumentu': 'd.numer_dokumentu = :numer_dokumentu',
+            'data_wystawienia': 'd.data_wystawienia = :data_wystawienia',
+            'id_uzytkownika': 'd.id_uzytkownika = :id_uzytkownika',
+            'NIP_kontrahenta': 'd.NIP_kontrahenta = :NIP_kontrahenta',
+            'typ_dokumentu': 'd.typ_dokumentu = :typ_dokumentu',
+            'data_wykonania': 'd.data_wykonania = :data_wykonania',
+            'statusd': 'd.statusd = :statusd'
+        }
+
+        conditions = []
+        params = {}
+
+        for field, condition in filters.items():
+            if getattr(form, field).data:
+                conditions.append(condition)
+                params[field] = getattr(form, field).data
+
+        if conditions:
+            query += ' AND ' + ' AND '.join(conditions)
+
+        result = db.session.execute(text(query), params)
+        db.session.commit()
     return render_template(
         "dokumenty.html",
         title = "SimpleData",
         #user = current_user.imie,
         form=form,
-        form2=form2,
         values = result,
     )
     
@@ -60,7 +59,9 @@ def dodaj_dokument(dokument_type):
     if dokument_type == 'PZ':
         form = DodajDokumentForm(rodzaj2='PZ')
     elif dokument_type == 'WZ':
-        form = DodajDokumentForm(rodzaj2='WZ')
+        kontrahenci = Kontrahenci.query.filter_by(status='Odbiorca').all()  # Pobierz odpowiednich kontrahentów z bazy danych
+        form = DodajDokumentForm(rodzaj2='WZ', kontrahent2=kontrahenci)
+
     query = text('SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.statusd = "Edycja"')
     result = db.session.execute(query)
     if form.validate_on_submit() and request.method == 'POST':
@@ -134,25 +135,12 @@ def dodaj_dokument(dokument_type):
     #    form=form,
     #    values = result
     #)
-#    # -*- coding: utf-8 -*-
-#from multiprocessing.connection import Connection
-#from asyncio.windows_events import NULL
-#from flask import render_template, jsonify, redirect, url_for, flash, session, request, Flask
-#from SimpleData import app, db, bcrypt, LoginManager
-#from datetime import datetime
-#from .forms import RegistrationForm, LoginForm, przeszukiwanie_d, dok_historyczne, kontrahenci_F, uzytkownicy, magazyn_towar, Users_zmiana, moje_ustawienia, DodajDokumentForm  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-#from SimpleData import db, bcrypt
-#from SimpleData.tabele import Uzytkownicy, kontrahenci, dokumenty
-#from sqlalchemy import inspect, text
-#from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
-#from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>', methods=['GET', 'POST'])
 def dodajtowar_dok(numer_dokumentu):
     form = DodajTowarDokument()
-    #query = text("SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.numer_dokumentu = :numer_dokumentu;")
     query = text("SELECT d.*, k.* FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.numer_dokumentu = :numer_dokumentu;;")
     query2 = "SELECT * FROM towary WHERE NIP = :nip"
-    query3 = "SELECT * FROM `towary_dokument` WHERE id_dokumentu = :numer_dokumentu"
+    query3 = "SELECT td.*, t.* FROM `towary_dokument` td JOIN towary t ON td.id_towaru = t.id_towaru WHERE id_dokumentu = :numer_dokumentu "
     values = db.session.execute(query, {'numer_dokumentu': numer_dokumentu}).fetchall()
     nip= values[0].NIP
     values2 = db.session.execute(text(query3), {"numer_dokumentu": numer_dokumentu}).fetchall()
@@ -161,9 +149,6 @@ def dodajtowar_dok(numer_dokumentu):
         towary_dokument = TowaryDokument(
             id_dokumentu=numer_dokumentu,
             id_towaru=form.id_towaru.data,
-            typ=form.typ.data,
-            rodzaj=form.rodzaj.data,
-            nazwa=form.nazwa.data,
             ilosc=form.il.data,
             data_waznosci=date.today()  # Pominąłem pole data_waznosci, dodaj odpowiednią wartość
         )
@@ -186,3 +171,25 @@ def dodajtowar_dok(numer_dokumentu):
 def dodaj(numer_dokumentu, tow, ilosc):
     flash("dziala")
     return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+@dok.route('/dokumenty/towar_dokument<numer_dokumentu>/str<status>', methods=['GET', 'POST'])
+def zakoncz(numer_dokumentu, status):
+    query = text("UPDATE dokumenty SET statusd = :status WHERE numer_dokumentu = :numer_dokumentu")
+    db.session.execute(query, {'numer_dokumentu': numer_dokumentu,'status': status})
+    db.session.commit()
+    flash(f"Status dokumentu został zmieniony na {status}.")
+    return redirect(url_for('dok.dokumenty'))
+
+@dok.route('/dokumenty/towar_dokument<numer_dokumentu>/finalizuj/str:<typ>', methods=['GET', 'POST'])
+def finalizuj(numer_dokumentu, typ):
+    if typ=="WZ":
+        flash(f"Finalizuj WZ.")
+    elif typ=="PZ":
+        flash(f"Finalizuj PZ.")
+    elif typ=="Usun":
+        query = "DELETE FROM towary_dokument WHERE id_dokumentu = :numer_dokumentu"
+        db.session.execute(text(query), {"numer_dokumentu": numer_dokumentu})
+        query = "DELETE FROM dokumenty WHERE numer_dokumentu = :numer_dokumentu"
+        db.session.execute(text(query), {"numer_dokumentu": numer_dokumentu})
+        db.session.commit()
+        flash('Dokument został anulowany')
+    return redirect(url_for('dok.dokumenty'))
