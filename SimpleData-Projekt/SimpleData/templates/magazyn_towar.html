@@ -22,30 +22,63 @@
                 </div>
 
                 <div class="form-group mr-3 mb-2 d-block">
-                <div class="d-block text-center">
-                    <label for="{{ form.data_przyjęcia.id }}" class="form-control-label">{{ form.data_przyjęcia.label }}</label>
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_przyjecia.id }}" class="form-control-label">{{ form.data_przyjecia.label }}</label>
+                    </div>
+                    {{ form.data_przyjecia(class="form-control ml-2") }}
                 </div>
-                {{ form.data_przyjęcia(class="form-control ml-2") }}
-            </div>
 
-            <div class="form-group mr-3 mb-2 d-block">
-                <div class="d-block text-center">
-                    <label for="{{ form.id_towaru.id }}" class="form-control-label">{{ form.id_towaru.label }}</label>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.id_towaru.id }}" class="form-control-label">{{ form.id_towaru.label }}</label>
+                    </div>
+                    {{ form.id_towaru(class="form-control ml-2") }}
                 </div>
-                {{ form.id_towaru(class="form-control ml-2") }}
-            </div>
 
-            <div class="form-group mr-3 mb-2 d-block">
-                <div class="d-block text-center">
-                    <label for="{{ form.numer_dokumentu.id }}" class="form-control-label">{{ form.numer_dokumentu.label }}</label>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.numer_dokumentu.id }}" class="form-control-label">{{ form.numer_dokumentu.label }}</label>
+                    </div>
+                    {{ form.numer_dokumentu(class="form-control ml-2") }}
                 </div>
-                {{ form.numer_dokumentu(class="form-control ml-2") }}
-            </div>
         </fieldset>
 
         <div class="form-group text-center">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
+
+    <table class="table table-striped align-items-center">
+        <thead>
+            <tr>
+
+                <th scope="col">nr_sekcji</th>
+                <th scope="col">data_przyjecia</th>
+                <th scope="col">numer_dokumentu</th>
+                <th scope="col">NIP</th>
+                <th scope="col">typ</th>
+                <th scope="col">rodzaj</th>
+                <th scope="col">nazwa</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in values %}
+            <tr class="table-info">
+            <tr>
+
+                <td>{{ item.nr_sekcji }}</td>
+                <td>{{ item.data_przyjecia }}</td>
+                <td>{{ item.numer_dokumentu }}</td>
+                <td>{{ item.NIP }}</td>
+                <td>{{ item.typ }}</td>
+                <td>{{ item.rodzaj }}</td>
+                <td>{{ item.nazwa }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </div>
 {%endblock%}

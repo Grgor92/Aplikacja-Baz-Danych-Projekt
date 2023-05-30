@@ -146,7 +146,7 @@ class MagazynTowar(db.Model):
     tablename = "magazyn_towar"
     id = db.Column(db.Integer, primary_key=True)
     nr_sekcji = db.Column(db.String(32), db.ForeignKey('sekcja.nr_sekcji'))
-    data_przyjęcia=db.Column(db.Date, nullable=False)
+    data_przyjecia=db.Column(db.Date, nullable=False)
     id_towaru=db.Column(db.Integer, db.ForeignKey('towary.id_towaru'))
     numer_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     # z wz rodzaj = db.Column(db.String(32), nullable=False)

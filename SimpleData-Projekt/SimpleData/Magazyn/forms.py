@@ -10,7 +10,7 @@ from datetime import date
 class magazyn_towar(FlaskForm):
     id = IntegerField('id')
     nr_sekcji = StringField('Numer sekcji')
-    data_przyjęcia = DateField('data przyjęcia')
+    data_przyjecia = DateField('data przyjęcia')
     id_towaru = IntegerField('Id towaru')
     numer_dokumentu = StringField('numer dokumentu')
 
