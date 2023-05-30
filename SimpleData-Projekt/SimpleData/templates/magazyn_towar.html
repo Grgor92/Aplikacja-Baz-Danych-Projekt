@@ -6,18 +6,41 @@
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <div class="form-inline">
+
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.id.id }}" class="form-control-label">{{ form.id.label }}</label>
+                    </div>
+                    {{ form.id(class="form-control ml-2") }}
+                </div>
+
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
                         <label for="{{ form.nr_sekcji.id }}" class="form-control-label">{{ form.nr_sekcji.label }}</label>
                     </div>
                     {{ form.nr_sekcji(class="form-control ml-2") }}
                 </div>
+
                 <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.id_towaru.id }}" class="form-control-label">{{ form.id_towaru.label }}</label>
-                    </div>
-                    {{ form.id_towaru(class="form-control ml-2") }}
+                <div class="d-block text-center">
+                    <label for="{{ form.data_przyjęcia.id }}" class="form-control-label">{{ form.data_przyjęcia.label }}</label>
                 </div>
+                {{ form.data_przyjęcia(class="form-control ml-2") }}
+            </div>
+
+            <div class="form-group mr-3 mb-2 d-block">
+                <div class="d-block text-center">
+                    <label for="{{ form.id_towaru.id }}" class="form-control-label">{{ form.id_towaru.label }}</label>
+                </div>
+                {{ form.id_towaru(class="form-control ml-2") }}
+            </div>
+
+            <div class="form-group mr-3 mb-2 d-block">
+                <div class="d-block text-center">
+                    <label for="{{ form.numer_dokumentu.id }}" class="form-control-label">{{ form.numer_dokumentu.label }}</label>
+                </div>
+                {{ form.numer_dokumentu(class="form-control ml-2") }}
+            </div>
         </fieldset>
 
         <div class="form-group text-center">

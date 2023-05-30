@@ -55,9 +55,11 @@ from SimpleData.Kontrahenci.views import kon
 from SimpleData.Ogolne.views import ogolne
 from SimpleData.Towary.views import tow
 from SimpleData.Uzytkownicy.views import users
+from SimpleData.Magazyn.views import mag
 
 app.register_blueprint(dok)
 app.register_blueprint(kon)
 app.register_blueprint(ogolne)
 app.register_blueprint(tow)
 app.register_blueprint(users)
+app.register_blueprint(mag)
