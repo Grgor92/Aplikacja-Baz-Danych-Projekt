@@ -23,9 +23,3 @@ class dok_historyczne(FlaskForm):
     data_wyk = DateField('Data wykonania', validators = [Optional()])
     nazwa_kon = QuerySelectField('Kontrahent', query_factory=lambda: kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
     submit = SubmitField('Wyszukaj')
-
-class magazyn_towar(FlaskForm):
-    nr_sekcji = StringField('Numer sekcji')
-    id_towaru = IntegerField('Id towaru')
-    submit = SubmitField('Wyszukaj')
-    

@@ -3,7 +3,7 @@ from datetime import datetime
 ogolne = Blueprint('ogolne', __name__)
 from flask_login import current_user, login_required, logout_user
 from SimpleData import  db, bcrypt, app
-from SimpleData.Ogolne.forms import przeszukiwanie_d, dok_historyczne, magazyn_towar
+from SimpleData.Ogolne.forms import przeszukiwanie_d, dok_historyczne
 from sqlalchemy import inspect, text
 from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 from SimpleData.tabele import uzytkownicy
@@ -48,16 +48,6 @@ def dokumenty_hist():
     form = dok_historyczne()
     return render_template(
         "dokumenty_historyczne.html",
-        title = "SimpleData",
-        user = current_user.imie,
-        form=form
-    )
-@ogolne.route('/magazyn_towar', methods=['GET', 'POST'])
-@login_required
-def magazyn_towar_t():
-    form = magazyn_towar()
-    return render_template(
-        "magazyn_towar.html",
         title = "SimpleData",
         user = current_user.imie,
         form=form
