@@ -46,20 +46,7 @@
             </div>
         </div>
         <div class="2">
-            <div class="form-group">
-                {{ form2.data_wyk2.label(class="control-label") }}
-                {{ form2.data_wyk2(class="form-control") }}
-                {% if form2.data_wyk2.errors %}
-                <span class="text-danger">{{ form2.data_wyk2.errors|join(', ') }}</span>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form2.data_waz2.label(class="control-label") }}
-                {{ form2.data_waz2(class="form-control") }}
-                {% if form2.data_wyk2.errors %}
-                <span class="text-danger">{{ form2.data_waz2.errors|join(', ') }}</span>
-                {% endif %}
-            </div>
+            
             <div class="form-group">
                 {{ form2.submit2(class="btn btn-primary") }}
             </div>

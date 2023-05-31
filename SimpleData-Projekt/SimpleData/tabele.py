@@ -42,8 +42,7 @@ class dokumenty(db.Model):
     imie_uzytkownika = db.Column(db.String(20))
     NIP_kontrahenta = db.Column(db.Integer, db.ForeignKey('kontrahenci.NIP'))
     typ_dokumentu = db.Column(db.String(32), nullable=False)
-    data_wykonania = db.Column(db.Date, nullable=False)
-    data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    data_przyjecia = db.Column(db.Date)
     statusd = db.Column(db.String(20), nullable=False)
     towaryy = db.relationship("TowaryDokument", backref='dokument')
     
@@ -150,17 +149,17 @@ class MagazynTowar(db.Model):
 
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
-#with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
-#    #sprawdzenie czy baza danych istnieje
-#    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-#    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-#    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-#        db.create_all() #tworzenie
-#        for i in range(5):
-#            sekcja=Sekcja(nr_sekcji=i+1, pojemnosc_sekcji=200)
-#            db.session.add(sekcja)
-#            db.session.commit()
-#    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
+with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
+    #sprawdzenie czy baza danych istnieje
+    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
+    db.drop_all() # usunięcie wszytsykich danych / resert bazy
+    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
+        db.create_all() #tworzenie
+        for i in range(5):
+            sekcja=Sekcja(nr_sekcji=i+1, pojemnosc_sekcji=200)
+            db.session.add(sekcja)
+            db.session.commit()
+    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
     
-#    db.session.add(new_product)
-#    db.session.commit()
+    db.session.add(new_product)
+    db.session.commit()
