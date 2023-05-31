@@ -16,7 +16,7 @@ def load_user(user_id):
     return uzytkownicy.query.get(int(user_id))
 
 class Kontrahenci(db.Model):
-    tablename = "kontrahenci"
+    _tablename_ = "kontrahenci"
     NIP = db.Column(db.Integer, primary_key=True)
     nazwa_firmy = db.Column(db.String(20), nullable=False)
     miasto = db.Column(db.String(50), nullable=False)
@@ -42,8 +42,7 @@ class dokumenty(db.Model):
     imie_uzytkownika = db.Column(db.String(20))
     NIP_kontrahenta = db.Column(db.Integer, db.ForeignKey('kontrahenci.NIP'))
     typ_dokumentu = db.Column(db.String(32), nullable=False)
-    data_wykonania = db.Column(db.Date, nullable=False)
-    data_waznosci_towaru = db.Column(db.Date, nullable=False)
+    data_przyjecia = db.Column(db.Date)
     statusd = db.Column(db.String(20), nullable=False)
     towaryy = db.relationship("TowaryDokument", backref='dokument')
     
@@ -56,7 +55,7 @@ class dokumenty(db.Model):
 
 
 class uzytkownicy(db.Model, UserMixin):
-    tablename = "uzytkownicy"
+    _tablename_ = "uzytkownicy"
     #id - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli dokumenty przez Uzytkownicy.
     id = db.Column(db.Integer, primary_key=True, unique=True)
     imie = db.Column(db.String(20), nullable=False)
@@ -71,7 +70,7 @@ class uzytkownicy(db.Model, UserMixin):
 
    
 class dokumenty_Historyczne(db.Model):
-    tablename = "dokumenty_historyczne"
+    _tablename_ = "dokumenty_historyczne"
     id_dokumentu = db.Column(db.Integer, primary_key=True)
     numer_dokumentu = db.Column(db.String(20), nullable=False, unique=True)
     data_wystawienia = db.Column(db.Date, nullable=False)  # Dodana kolumna data_wystawienia
@@ -95,23 +94,21 @@ class dokumenty_Historyczne(db.Model):
 #    db.Column('magazyn_towar_id', db.Integer, db.ForeignKey('magazyn_towar.id'))
 #)
 
-
 class TowaryDokument(db.Model):
-    tablename = "towary_dokument"
+    _tablename_ = "towary_dokument"
     id = db.Column(db.Integer, primary_key=True)
     id_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     id_towaru = db.Column(db.Integer, db.ForeignKey('towary.id_towaru'))
-    typ = db.Column(db.String(32), nullable=False)
-    rodzaj = db.Column(db.String(32), nullable=False)
-    nazwa = db.Column(db.String(32), nullable=False)
     ilosc = db.Column(db.Integer, nullable=False)
-    data_waznosci = db.Column(db.Date, nullable=False)
+    data_przyjecia = db.Column(db.Date, nullable=False)
     
+
+
     def __repr__(self):
         return f"<TowaryDokument id:{self.id}, id_dokumentu:{self.id_dokumentu}, id_towaru:{self.id_towaru}, ilosc:{self.ilosc}, data_waznosci:{self.data_waznosci}>"
 
 class Towary(db.Model):
-    tablename = "towary"
+    _tablename_ = "towary"
 
     NIP = db.Column(db.Integer, nullable=False)
     id_towaru = db.Column(db.Integer, primary_key=True)
@@ -120,30 +117,23 @@ class Towary(db.Model):
     rodzaj = db.Column(db.String(32), nullable=False)
     nazwa = db.Column(db.String(32), nullable=False)
     magazyn_towar_rel = db.relationship("MagazynTowar", backref='towar')
-    
 
-    
     #data_waznosci_towaru = db.Column(db.Date, nullable=False)
     #magazyny = db.relationship('MagazynTowar', secondary=Towary_magazyn_towar, backref='towary')
-    
-    #
+
     #def __repr__(self):
         #return f"<Towary id_towaru:{self.id_towaru}, kod_towaru:{self.kod_towaru}, rodzaj:{self.rodzaj}, data_waznosci_towaru:{self.data_waznosci_towaru}>"
-
-
 class Sekcja(db.Model):
-    tablename = "sekcja"
+    _tablename_ = "sekcja"
     #nr_sekcji - relacja jeden do wielu. Nadanie uprawnień do wszystkich atrybutów w tabeli magazyn_towar przez Magazyn.
     nr_sekcji = db.Column(db.String(32), primary_key=True)
     pojemnosc_sekcji = db.Column(db.Integer, nullable=False)
-
-    towary = db.relationship('MagazynTowar', backref='Sekcja')
+    towary = db.relationship('MagazynTowar', backref='sekcja')
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
-    def __repr__(self):
-        return "<Sekcja(nr_sekcji='{}', pojemnosc_sekcji={})>".format(self.nr_sekcji, self.pojemnosc_sekcji)
 
 class MagazynTowar(db.Model):
-    tablename = "magazyn_towar"
+    _tablename_ = "magazyn_towar"
+
     id = db.Column(db.Integer, primary_key=True)
     nr_sekcji = db.Column(db.String(32), db.ForeignKey('sekcja.nr_sekcji'))
     data_przyjecia=db.Column(db.Date, nullable=False)
@@ -151,14 +141,14 @@ class MagazynTowar(db.Model):
     numer_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     # z wz rodzaj = db.Column(db.String(32), nullable=False)
     # ilość z wz będzie ilosc = db.Column(db.Integer, nullable=False)
-    # będzie z wz data_waznosci = db.Column(db.Date, nullable=False, index=True)
-
+    # będzie z wz data_waznosci = db.Column(db.Date, nullable=False, index=True
     ##def __repr__(self):
     ##    return "<MagazynTowar(id={}, nr_sekcji='{}', rodzaj='{}', ilosc={}, data_waznosci={})>".format(
     ##        self.id, self.nr_sekcji, self.rodzaj, self.ilosc, self.data_waznosci)
 
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
+
 #with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
 #    #sprawdzenie czy baza danych istnieje
 #    inspector = inspect(db.engine) # sprawdzenie istnienia bazy

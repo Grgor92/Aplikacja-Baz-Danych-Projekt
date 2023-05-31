@@ -132,7 +132,7 @@ def usun_user():
 
 
 
-@users.route('/ustawienia', methods=['GET', 'POST'])
+@users.route('/uzytkownicy', methods=['GET', 'POST'])
 @login_required
 def ustawienia_kont():
     form = moje_ustawienia()
@@ -159,3 +159,22 @@ def ustawienia_kont():
     form.email.data = current_user.email
 
     return render_template('ustawienia_kont.html', form=form, imie=current_user.imie, email=current_user.email)
+
+@users.route('/uzytkownicy/<int:ide>', methods=['DELETE'])
+@login_required
+def delete_user(ide):
+    if ide == 1:
+        message = {'message': 'Tego użytkownika nie można usunąć.'}
+        status_code = 200
+    else:
+        user = uzytkownicy.query.filter_by(id=ide).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            message = {'message': 'Użytkownik został usunięty.'}
+            status_code = 200
+        else:
+            message = {'message': 'Użytkownik o podanym id nie został znaleziony.'}
+            status_code = 404
+
+    return jsonify(message), status_code
