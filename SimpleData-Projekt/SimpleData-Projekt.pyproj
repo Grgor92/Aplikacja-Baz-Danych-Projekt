@@ -16,7 +16,7 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>SimpleData-Projekt</Name>
     <RootNamespace>SimpleData-Projekt</RootNamespace>
-    <InterpreterId>Global|PythonCore|3.9</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,13 +28,45 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="run.py" />
-    <Compile Include="SimpleData\forms.py">
+    <Compile Include="SimpleData\Dokumenty\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Dokumenty\views.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Dokumenty\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Kontrahenci\forms.py" />
+    <Compile Include="SimpleData\Kontrahenci\views.py" />
+    <Compile Include="SimpleData\Kontrahenci\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Magazyn\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Magazyn\views.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Magazyn\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Ogolne\forms.py" />
+    <Compile Include="SimpleData\Ogolne\views.py" />
+    <Compile Include="SimpleData\Ogolne\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleData\tabele.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleData\views.py">
+    <Compile Include="SimpleData\Towary\forms.py" />
+    <Compile Include="SimpleData\Towary\views.py" />
+    <Compile Include="SimpleData\Towary\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Uzytkownicy\forms.py" />
+    <Compile Include="SimpleData\Uzytkownicy\views.py" />
+    <Compile Include="SimpleData\Uzytkownicy\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SimpleData\__init__.py">
@@ -43,10 +75,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="SimpleData\.env">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\dod_dok.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="SimpleData\templates\dok.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="SimpleData\templates\dokumenty.html" />
     <Content Include="SimpleData\templates\dokumenty_historyczne.html" />
+    <Content Include="SimpleData\templates\edytuj_towar.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\home.html">
       <SubType>Code</SubType>
     </Content>
@@ -64,11 +109,29 @@
     <Content Include="SimpleData\templates\rejestr.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\towary.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\ustawienia_kont.html" />
+    <Content Include="SimpleData\templates\usun_towar.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="SimpleData\templates\usun_wszystko_towar.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\templates\uzytkownicy.html" />
+    <Content Include="SimpleData\templates\wypis_towary.html">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SimpleData\" />
+    <Folder Include="SimpleData\Dokumenty\" />
+    <Folder Include="SimpleData\Kontrahenci\" />
+    <Folder Include="SimpleData\Magazyn\" />
+    <Folder Include="SimpleData\Ogolne\" />
+    <Folder Include="SimpleData\Towary\" />
+    <Folder Include="SimpleData\Uzytkownicy\" />
     <Folder Include="SimpleData\templates\" />
     <Folder Include="SimpleData\static\" />
   </ItemGroup>

@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{%block content%}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form2.hidden_tag() }}
+        <div class="1">
+            <div class="form-group">
+                {{ form2.rodzaj2.label(class="control-label") }}
+                {{ form2.rodzaj2(class="form-control", value=typ, readonly=True) }}
+                <input type="hidden" name="rodzaj2" value="{{ typ }}">
+
+                {% if form2.rodzaj2.errors %}
+                <span class="text-danger">{{ form2.rodzaj2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form2.numer_dok2.label(class="control-label") }}
+                {{ form2.numer_dok2(class="form-control") }}
+                {% if form2.numer_dok2.errors %}
+                <span class="text-danger">{{ form2.numer_dok2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            {% if typ == 'PZ' %}
+            <div class="form-group">
+                {{ form2.kontrahentPZ.label(class="control-label") }}
+                {{ form2.kontrahentPZ(class="form-control") }}
+                {% if form2.kontrahentPZ.errors %}
+                <span class="text-danger">{{ form2.kontrahentPZ.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            {%else%}
+            <div class="form-group">
+                {{ form2.kontrahentWZ.label(class="control-label") }}
+                {{ form2.kontrahentWZ(class="form-control") }}
+                {% if form2.kontrahentWZ.errors %}
+                <span class="text-danger">{{ form2.kontrahentWZ.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="form-group">
+                {{ form2.nip2.label(class="control-label") }}
+                {{ form2.nip2(class="form-control") }}
+                {% if form2.nip2.errors %}
+                <span class="text-danger">{{ form2.nip2.errors|join(', ') }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="2">
+            
+            <div class="form-group">
+                {{ form2.submit2(class="btn btn-primary") }}
+            </div>
+        </div>
+    </form>
+    <table class="table table-striped align-items-center">
+        <thead>
+            <tr>
+                <th scope="col">Numer Dokumentu</th>
+                <th scope="col">Data Wystawienia</th>
+                <th scope="col">Użytkownik</th>
+                <th scope="col">NIP Dostawcy</th>
+                <th scope="col">Dostawca</th>
+                <th scope="col">Typ</th>
+                <th scope="col">Staus</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in values %}
+            <tr>
+                <td>{{ item.numer_dokumentu }}</td>
+                <td>{{ item.data_wystawienia }}</td>
+                <td>{{ item.imie_uzytkownika }}</td>
+                <td>{{ item.NIP_kontrahenta }}</td>
+                <td>{{ item.nazwa_firmy }}</td>
+                <td>{{ item.typ_dokumentu }}</td>
+                <td>{{ item.statusd }}</td>
+                <td>
+                    {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
+                    <a href="{{ url_for('dok.dodajtowar_dok', numer_dokumentu=item.numer_dokumentu) }} "class="btn btn-primary">Edytuj</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+{%endblock%}

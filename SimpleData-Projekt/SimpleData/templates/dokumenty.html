@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{%block content%}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-inline">
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.numer_dokumentu.id }}" class="form-control-label">{{ form.numer_dokumentu.label }}</label>
+                    </div>
+                    {{ form.numer_dokumentu(class="form-control ml-2") }}
+                </div>
+                {% for field, errors in form.errors.items() %}
+                <div class="alert alert-danger">
+                    {% for error in errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_wystawienia.id }}" class="form-control-label">{{ form.data_wystawienia.label }}</label>
+                    </div>
+                    {{ form.data_wystawienia(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.id_uzytkownika.id }}" class="form-control-label">{{ form.id_uzytkownika.label }}</label>
+                    </div>
+                    {{ form.id_uzytkownika(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.NIP_kontrahenta.id }}" class="form-control-label">{{ form.NIP_kontrahenta.label }}</label>
+                    </div>
+                    {{ form.NIP_kontrahenta(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.typ_dokumentu.id }}" class="form-control-label">{{ form.typ_dokumentu.label }}</label>
+                    </div>
+                    {{ form.typ_dokumentu(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.data_przyjecia.id }}" class="form-control-label">{{ form.data_przyjecia.label }}</label>
+                    </div>
+                    {{ form.data_przyjecia(class="form-control ml-2") }}
+                </div>
+                <div class="form-group mr-3 mb-2 d-block">
+                    <div class="d-block text-center">
+                        <label for="{{ form.statusd.id }}" class="form-control-label">{{ form.statusd.label }}</label>
+                    </div>
+                    {{ form.statusd(class="form-control ml-2") }}
+                </div>
+            </div>
+
+
+        </fieldset>
+
+        <div class="form-group text-center">
+            {{ form.submit(class="btn btn-outline-info") }}
+            <a href="{{ url_for('dok.dodaj_dokument', dokument_type='PZ') }}" class="btn btn-primary">Dodaj dokument PZ</a>
+            <a href="{{ url_for('dok.dodaj_dokument', dokument_type='WZ') }}" class="btn btn-primary">Dodaj dokument WZ</a>
+        </div>
+    </form>
+
+    <table class="table table-striped align-items-center">
+        <thead>
+            <tr>
+                <th scope="col">Numer Dokumentu</th>
+                <th scope="col">Data Wystawienia</th>
+                <th scope="col">Data Wykonania</th>
+                <th scope="col">Użytkownik</th>
+                <th scope="col">NIP Dostawcy</th>
+                <th scope="col">Dostawca</th>
+                <th scope="col">Typ</th>
+                <th scope="col">Status</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in values %}
+
+            <tr onclick="window.location.href='{{ url_for('dok.dodajtowar_dok', numer_dokumentu=item.numer_dokumentu) }}';" onmouseover="this.classList.add('table-info');" onmouseout="this.classList.remove('table-info');">
+                <td>{{ item.numer_dokumentu }}</td>
+                <td>{{ item.data_wystawienia }}</td>
+                <td>{{ item.data_przyjecia }}</td>
+                <td>{{ item.imie }}</td>
+                <td>{{ item.NIP_kontrahenta }}</td>
+                <td>{{ item.nazwa_firmy }}</td>
+                <td>{{ item.typ_dokumentu }}</td>
+                <td>{{ item.statusd }}</td>
+            </tr>
+
+
+
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+    {%endblock%}

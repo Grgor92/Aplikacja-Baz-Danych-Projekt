@@ -20,12 +20,6 @@
                 </div>
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
-                        <label class="form-control-label">{{ form.haslo.label }}</label>
-                    </div>
-                    {{ form.haslo(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
                         <label class="form-control-label">{{ form.typ.label}}</label>
                     </div>
                     {{ form.typ(class="form-control ml-2") }}
@@ -47,16 +41,25 @@
         </thead>
         <tbody>
             {% for item in values %}
+            {% if current_user.id == item.id %}
+            <tr class="table-info">
+                {% elif current_user.id != item.id %}
             <tr>
+                {% endif %}
+
                 <td>{{ item.imie }}</td>
                 <td>{{ item.email }}</td>
                 <td>{{ item.typ }}</td>
+                {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
                 <td>
-                    {% if current_user.is_authenticated and current_user.typ == 'Kierownik' %}
-                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
-                    {% endif %}
+                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-identy="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
                 </td>
+                <td>
+                    <button onclick="confirmDelete('{{ item.id}}')" class="btn btn-grey edit-btn">Usuń</button>
+                </td>
+                {% endif %}
             </tr>
+
             {% endfor %}
         </tbody>
     </table>
@@ -64,8 +67,8 @@
     <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form id="edit-form" method="POST" action="{{url_for('edit_user')}}">
-                    
+                <form id="edit-form" method="POST" action="{{url_for('users.edit_user')}}">
+
                     <div class="modal-header">
                         <h5 class="modal-title" id="edit-modal-label">Edycja użytkownika</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -86,12 +89,8 @@
                         <div class="form-group">
                             {{ form2.haslo.label(class="col-form-label") }}
                             <div class="input-group">
-                                {{ form2.haslo(class="form-control", id="haslo-input") }}
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary reveal-btn" type="button">
-                                        <i class="fa fa-eye"></i>Pokaż haslo
-                                    </button>
-                                </div>
+                                {{ form2.haslo(class="form-control") }}
+                                
                             </div>
                         </div>
                         <div class="form-group">
@@ -108,57 +107,115 @@
             </div>
         </div>
     </div>
+
+
+
+    <div class="modal fade" id="delete-Modal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-block">
+                        <h5 class="modal-title" id="deleteModalLabel">Jesteś pewny że chcesz usunąć użytkownika?</h5>
+                        <br />
+                        <h5 class="modal-title" id="deleteModalLabel2">Ta operacja jest nieodwracalna</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <form id="user_id-form" action="{{url_for('users.usun_user')}}" method="POST">
+                        <input id="user_id-input" name="id_us" value="">
+                        <input class="btn btn-danger" type="submit" value="Usuń">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        
         $(document).on("click", ".edit-btn", function () {
-            var id = $(this).data('id');
+            var id = $(this).data('identy');
             var nazwa = $(this).data('nazwa');
             var email = $(this).data('email');
             var haslo = $(this).data('haslo');
             var uprawnienia = $(this).data('uprawnienia');
             $("#id-input").val(id);
             $("#nazwa-input").val(nazwa);
-            $("#haslo-input").val(haslo);
             $("#email-input").val(email);
+            $("#haslo-input").val(haslo);
             $("#uprawnienia-input").val(uprawnienia);
         });
 
-        $(document).on("click", ".reveal-btn", function () {
-            var input = $(this).closest(".input-group").find("input");
-            var icon = $(this).find("i");
-            if (input.attr("type") === "password") {
-                input.attr("type", "text");
-                icon.removeClass("fa-eye");
-                icon.addClass("fa-eye-slash");
-            } else {
-                input.attr("type", "password");
-                icon.removeClass("fa-eye-slash");
-                icon.addClass("fa-eye");
-            }
+        $(document).on("click", ".delete-btn", function () {
+            var id = $(this).data('id');
+            var nazwa = $(this).data('nazwa');
+            var email = $(this).data('email');
+            var uprawnienia = $(this).data('uprawnienia');
+            $("#user_id-input").val(id);
+            // Dodaj kod, który ustawia inne pola w oknie modalnym "delete-Modal"
         });
 
-        //(function ($) {
-        //    $(document).on('submit', '#edit-form', function (e) {
-        //        e.preventDefault();
-        //        var form = $(this);
-        //        var url = form.attr('action');
-        //        var formData = form.serialize();
-        //        $.ajax({
-        //            type: 'POST',
-        //            url: url,
-        //            data: formData,
-        //            success: function (data) {
-        //                console.log(data);
-        //                $('#edit-modal').modal('hide');
-        //                // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
-        //            },
-        //            error: function (error) {
-        //                console.log(error);
-        //                // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
-        //            }
-        //        });
-        //    });
-        //})(jQuery);
+        function confirmDelete(ide) {
+            if (confirm("Czy na pewno chcesz usunąć tego użytkownika?")) {
+                fetch('/uzytkownicy/' + ide, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } 
+                    })
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert(error.message);
+                    });
+            }
+        }
+
+    //$(document).on("click", ".reveal-btn", function () {
+    //    var input = $(this).closest(".input-group").find("input");
+    //    var icon = $(this).find("i");
+    //    if (input.attr("type") === "password") {
+    //        input.attr("type", "text");
+    //        icon.removeClass("fa-eye");
+    //        icon.addClass("fa-eye-slash");
+    //    } else {
+    //        input.attr("type", "password");
+    //        icon.removeClass("fa-eye-slash");
+    //        icon.addClass("fa-eye");
+    //    }
+    //});
+
+    //(function ($) {
+    //    $(document).on('submit', '#edit-form', function (e) {
+    //        e.preventDefault();
+    //        var form = $(this);
+    //        var url = form.attr('action');
+    //        var formData = form.serialize();
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: url,
+    //            data: formData,
+    //            success: function (data) {
+    //                console.log(data);
+    //                $('#edit-modal').modal('hide');
+    //                // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
+    //            },
+    //            error: function (error) {
+    //                console.log(error);
+    //                // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
+    //            }
+    //        });
+    //    });
+    //})(jQuery);
 
 
 

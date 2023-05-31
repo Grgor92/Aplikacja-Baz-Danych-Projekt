@@ -1,148 +1,32 @@
 {% extends "layout.html" %}
 {%block content%}
-<div class="content-section">
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <div class="form-inline">
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.nip.id }}" class="form-control-label">{{ form.nip.label }}</label>
-                    </div>
-                    {{ form.nip(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.nazwa_firmy.id }}" class="form-control-label">{{ form.nazwa_firmy.label }}</label>
-                    </div>
-                    {{ form.nazwa_firmy(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.miasto.id }}" class="form-control-label">{{ form.miasto.label }}</label>
-                    </div>
-                    {{ form.miasto(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.nr_telefonu.id }}" class="form-control-label">{{ form.nr_telefonu.label }}</label>
-                    </div>
-                    {{ form.nr_telefonu(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.ulica.id }}" class="form-control-label">{{ form.ulica.label }}</label>
-                    </div>
-                    {{ form.ulica(class="form-control ml-2") }}
-                </div>
-                <div class="form-group mr-3 mb-2 d-block">
-                    <div class="d-block text-center">
-                        <label for="{{ form.numer.id }}" class="form-control-label">{{ form.numer.label }}</label>
-                    </div>
-                    {{ form.numer(class="form-control ml-2") }}
-                </div>
-            </div>
-        </fieldset>
 
-        <div class="form-group text-center">
-            {{ form.submit(class="btn btn-outline-info") }}
+<div class="search-form" style="text-align: center;">
+    <h2>Panel kontrahentów</h2>
+    <form id="searchForm" action="{{ url_for('kon.kontrahenci_t') }}" method="post" style="display: inline-block;">
+        <div class="search-fields">
+            <div class="input-wrapper">
+                <label for="nip">NIP</label>
+                <input type="text" id="nip" name="nip" optional>
+            </div>
+
+            <div class="input-wrapper">
+                <label for="nazwa_firmy">Nazwa firmy</label>
+                <input type="text" id="nazwa_firmy" name="nazwa_firmy" optional>
+            </div>
         </div>
+        <button id="wyszukajBtn" type="submit" style="display: block; margin-top: 10px;">Wyszukaj</button>
     </form>
 </div>
 
-
-<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="edit-form" method="POST">
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="edit-modal-label">Edycja kontrahenta</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <input type="hidden" id="id-input" name="id" value="">
-                    <div class="form-group">
-                        {{ form.nip.label(class="col-form-label") }}
-                        {{ form.nip(class="form-control", id="nip-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.nazwa_firmy.label(class="col-form-label") }}
-                        {{ form.nazwa_firmy(class="form-control", id="nazwa_firmy-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.miasto.label(class="col-form-label") }}
-                        {{ form.miasto(class="form-control", id="miasto-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.nr_telefonu.label(class="col-form-label") }}
-                        {{ form.nr_telefonu(class="form-control", id="nr_telefonu-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.ulica.label(class="col-form-label") }}
-                        {{ form.ulica(class="form-control", id="ulica-input") }}
-                    </div>
-                    <div class="form-group">
-                        {{ form.numer.label(class="col-form-label") }}
-                        {{ form.numer(class="form-control", id="numer-input") }}
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<button id="add-record-btn" onclick="openDodajPopup()">Dodaj kontrahenta</button>
 
 
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>NIP</th>
-                <th>Nazwa firmy</th>
-                <th>Miasto</th>
-                <th>Numer telefonu</th>
-                <th>Ulica</th>
-                <th>Numer</th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in data %}
-            <tr>
-                <td>{{ item.nip }}</td>
-                <td>{{ item.nazwa_firmy }}</td>
-                <td>{{ item.miasto }}</td>
-                <td>{{ item.nr_telefonu }}</td>
-                <td>{{ item.ulica }}</td>
-                <td>{{ item.numer }}</td>
-                <td>
-                    <button class="btn btn-primary edit-btn" data-id="{{ item.id }}" data-nip="{{ item.nip }}" data-nazwa_firmy="{{ item.nazwa_firmy }}" data-miasto="{{ item.miasto }}" data-nr_telefonu="{{ item.nr_telefonu }}" data-ulica="{{ item.ulica }}" data-numer="{{ item.numer }}">Edytuj</button>
-                    <button class="btn btn-danger delete-btn" data-id="{{ item.id }}">Usuń</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-
-<button id="add-record-btn">Dodaj kontrahenta</button>
-
-
-<div id="popup" class="popup">
+<div id="dodajPopup" class="popup">
     <div class="content">
-        <span class="close">&times;</span>
-        <h2>Dodaj rekord</h2>
-        <form action="NAZWA_SKRYPTU.php" method="post">
+        <span class="close" onclick="closeDodajPopup()">&times;</span>
+        <h2>Dodaj</h2>
+        <form action="{{ url_for('kon.dodaj_rekord') }}" method="POST">
             <label for="nip">NIP:</label>
             <input type="text" id="nip" name="nip" required>
 
@@ -161,7 +45,85 @@
             <label for="numer">Numer:</label>
             <input type="text" id="numer" name="numer" required>
 
+            <label for="rodzaj">Rodzaj:</label>
+            <select id="rodzaj" name="rodzaj" required>
+                <option value="Dostawca">Dostawca</option>
+                <option value="Odbiorca">Odbiorca</option>
+            </select>
+
             <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</div>
+
+
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="header-cell">NIP</th>
+                <th class="header-cell">Nazwa firmy</th>
+                <th class="header-cell">Miasto</th>
+                <th class="header-cell">Numer telefonu</th>
+                <th class="header-cell">Ulica</th>
+                <th class="header-cell">Numer</th>
+                <th class="header-cell">Rodzaj</th>
+                <th class="header-cell">Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kontrahent in kontrahenci %}
+            <tr>
+                <td>{{ kontrahent.NIP }}</td>
+                <td>{{ kontrahent.nazwa_firmy }}</td>
+                <td>{{ kontrahent.miasto }}</td>
+                <td>{{ kontrahent.telefon }}</td>
+                <td>{{ kontrahent.ulica }}</td>
+                <td>{{ kontrahent.numer }}</td>
+                <td>{{ kontrahent.status }}</td>
+                <td>
+                    <button onclick="handleEditButtonClick(this.parentNode.parentNode)">Edytuj</button>
+                    <button onclick="confirmDelete('{{ kontrahent.NIP }}')">Usuń</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<div id="editPopup" class="popup">
+    <div class="content">
+        <span class="close" onclick="closeEditPopup()">&times;</span>
+        <h2>Edytuj kontrahenta</h2>
+        <form id="editForm" action="{{ url_for('kon.edytuj_kontrahenta') }}" method="POST">
+            <label for="editedField1">NIP :</label>
+            <input type="text" id="editedField1" name="editedField1">
+
+            <label for="editedField2">Nazwa firmy:</label>
+            <input type="text" id="editedField2" name="editedField2">
+
+            <label for="editedField3">Miasto:</label>
+            <input type="text" id="editedField3" name="editedField3">
+
+            <label for="editedField4">Numer telefonu:</label>
+            <input type="text" id="editedField4" name="editedField4">
+
+            <label for="editedField5">Ulica:</label>
+            <input type="text" id="editedField5" name="editedField5">
+
+            <label for="editedField6">Numer:</label>
+            <input type="text" id="editedField6" name="editedField6">
+
+            <label for="editedField7">Rodzaj:</label>
+            <select id="editedField7" name="editedField7">
+                <option value="Dostawca">Dostawca</option>
+                <option value="Odbiorca">Odbiorca</option>
+            </select>
+
+            <button type="submit">Zapisz</button>
         </form>
     </div>
 </div>
@@ -177,34 +139,161 @@
         var nr_telefonu = $(this).data('nr_telefonu');
         var ulica = $(this).data('ulica');
         var numer = $(this).data('numer');
+        var rodzaj = $(this).data('rodzaj');
         $("#nip-input").val(nip);
         $("#nazwa_firmy-input").val(nazwa_firmy);
         $("#miasto-input").val(miasto);
         $("#nr_telefonu-input").val(nr_telefonu);
         $("#ulica-input").val(ulica);
         $("#numer-input").val(numer);
+        $("#rodzaj-input").val(rodzaj);
     });
 
-    var addRecordBtn = document.getElementById("add-record-btn");
-    var popup = document.getElementById("popup");
-    var closeBtn = document.getElementsByClassName("close")[0];
 
-    addRecordBtn.onclick = function () {
-        popup.style.display = "block";
+    function openDodajPopup() {
+        document.getElementById('dodajPopup').style.display = 'block';
     }
 
-    closeBtn.onclick = function () {
-        popup.style.display = "none";
+    function closeDodajPopup() {
+        document.getElementById('dodajPopup').style.display = 'none';
     }
 
-    window.onclick = function (event) {
-        if (event.target == popup) {
-            popup.style.display = "none";
+    function handleEditButtonClick(row) {
+        var nip = row.cells[0].innerText;
+        var nazwa_firmy = row.cells[1].innerText;
+        var miasto = row.cells[2].innerText;
+        var nr_telefonu = row.cells[3].innerText;
+        var ulica = row.cells[4].innerText;
+        var numer = row.cells[5].innerText;
+        var rodzaj = row.cells[6].innerText;
+
+        document.getElementById('editedField1').value = nip;
+        document.getElementById('editedField2').value = nazwa_firmy;
+        document.getElementById('editedField3').value = miasto;
+        document.getElementById('editedField4').value = nr_telefonu;
+        document.getElementById('editedField5').value = ulica;
+        document.getElementById('editedField6').value = numer;
+        document.getElementById('editedField7').value = rodzaj;
+
+        openEditPopup();
+    }
+
+    function openEditPopup() {
+        var editPopup = document.getElementById('editPopup');
+        editPopup.style.display = 'block';
+    }
+
+    function closeEditPopup() {
+        var editPopup = document.getElementById('editPopup');
+        editPopup.style.display = 'none';
+    }
+
+    function saveEditedData(event) {
+        event.preventDefault();
+
+        var nip = document.getElementById('editedField1').value;
+        var nazwa_firmy = document.getElementById('editedField2').value;
+        var miasto = document.getElementById('editedField3').value;
+        var nr_telefonu = document.getElementById('editedField4').value;
+        var ulica = document.getElementById('editedField5').value;
+        var numer = document.getElementById('editedField6').value;
+        var rodzaj = document.getElementById('editedField7').value;
+
+        // Wywołaj endpoint do aktualizacji danych na serwerze
+        fetch('/kontrahenci', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                editedField1: nip,
+                editedField2: nazwa_firmy,
+                editedField3: miasto,
+                editedField4: nr_telefonu,
+                editedField5: ulica,
+                editedField6: numer,
+                editedField7: rodzaj
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+
+            })
+            .catch(error => {
+
+            });
+    }
+
+
+
+    function openwyszukajBtn() {
+        event.preventDefault();
+
+        var form = document.getElementById('NIP');
+        var formData = new FormData(form);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                updateTable(responseData);
+            } else {
+                console.error('Wystąpił błąd. Status żądania: ' + xhr.status);
+            }
+        };
+        xhr.send(formData);
+    }
+
+    function updateTable(data) {
+        var tableBody = document.querySelector('.table tbody');
+        tableBody.innerHTML = '';
+
+        data.forEach(function (record) {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td>' + record.NIP + '</td>' +
+                '<td>' + record.nazwa_firmy + '</td>' +
+                '<td>' + record.miasto + '</td>' +
+                '<td>' + record.telefon + '</td>' +
+                '<td>' + record.ulica + '</td>' +
+                '<td>' + record.numer + '</td>' +
+                '<td>' + record.rodzaj + '</td>' +
+                '<td><button onclick="openEditPopup()">Edytuj</button></td>';
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    function confirmDelete(nip) {
+        if (confirm("Czy na pewno chcesz usunąć tego kontrahenta?")) {
+            
+            fetch('/kontrahenci/' + nip, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        
+                        alert("Kontrahent został usunięty.");
+                        location.reload();
+                    } else {
+                        
+                        alert("Wystąpił błąd podczas usuwania kontrahenta.");
+                    }
+                })
+                .catch(error => {
+                    
+                    alert("Wystąpił błąd podczas usuwania kontrahenta.");
+                });
         }
     }
 
+
+
 </script>
 
-</div>
+
 
 {%endblock%}
