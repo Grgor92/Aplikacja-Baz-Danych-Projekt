@@ -8,32 +8,34 @@ from wtforms.validators import DataRequired, ValidationError, Optional, NumberRa
 from SimpleData.tabele import Kontrahenci, dokumenty
 from datetime import date
 
-
 class DodajDokumentForm(FlaskForm):
     numer_dok2 = IntegerField('Numer dokumentu', validators=[DataRequired()])
     data_wys2 = DateField('Data wystawienia', default=date.today(), validators=[DataRequired()], render_kw={'readonly': True})
     nip2 = IntegerField('NIP', validators=[DataRequired()])
     rodzaj2 = SelectField('Rodzaj dokumentu', choices=[('WZ', 'WZ'), ('PZ', 'PZ')], validators=[DataRequired()])
-    kontrahentWZ = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status='Odbiorca').all(), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
-    kontrahentPZ = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status='Dostawca').all(), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
+    kontrahentWZ = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status='Odbiorca').all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
+    kontrahentPZ = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status='Dostawca').all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
     data_wyk2 = DateField('Data wykonania', validators=[Optional()])
     data_waz2 = DateField('Data Waznosci towaru', validators=[DataRequired()])
     status = SelectField('Status dokumentu', choices=[('Edycja', 'Edycja'), ('Aktywna', 'Aktywna')], validators=[Optional()])
     submit2 = SubmitField('Dodaj dokument')
 
-    def validate(self):
-        if not super().validate():
-            return False
+    def validate_kontrahent(self, kontrahent):
         nip = self.nip2.data
-        kontrahent = self.kontrahent2.data.nazwa_firmy
         query = text("SELECT * FROM kontrahenci WHERE NIP = :nip AND nazwa_firmy = :kontrahent")
         result = db.session.execute(query, {'nip': nip, 'kontrahent': kontrahent}).fetchone()
         if not result:
-            self.nip2.errors.append('Podany NIP i kontrahent nie pasują do siebie.')
-            self.kontrahent2.errors.append('Podany NIP i kontrahent nie pasują do siebie.')
-            return False
+            raise ValidationError('Podany NIP i kontrahent nie pasują do siebie.')
 
-        return True
+    def validate_kontrahentWZ(self, kontrahentWZ):
+        if self.kontrahentWZ.data and self.rodzaj2.data == 'WZ':
+            self.validate_kontrahent(kontrahentWZ.data.nazwa_firmy)
+
+    def validate_kontrahentPZ(self, kontrahentPZ):
+        if self.kontrahentPZ.data and self.rodzaj2.data == 'PZ':
+            self.validate_kontrahent(kontrahentPZ.data.nazwa_firmy)
+
+
 
     def validate_numer_dok2(self, numer_dok2):
         dokument = dokumenty.query.filter_by(numer_dokumentu=numer_dok2.data).first()

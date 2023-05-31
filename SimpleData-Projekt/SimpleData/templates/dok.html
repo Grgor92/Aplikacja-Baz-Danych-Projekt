@@ -27,7 +27,6 @@
             <th>Rodzaj</th>
             <th>Nazwa</th>
             <th>Ilość</th>
-            <th>Data ważności</th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +37,6 @@
             <td>{{ towar.rodzaj }}</td>
             <td>{{ towar.nazwa }}</td>
             <td>{{ towar.ilosc }}</td>
-            <td>{{ towar.data_waznosci }}</td>
 
         </tr>
         {% endfor %}
@@ -87,7 +85,7 @@
 
 </div>
 
-{% else %}
+{% elif item.statusd=='Aktywna'%}
 <a href="{{ url_for('dok.zakoncz', numer_dokumentu=item.numer_dokumentu, status="Edycja") }}" class="btn btn-primary">Cofnij do edycji</a>
 <a href="{{ url_for('dok.finalizuj', numer_dokumentu=item.numer_dokumentu, typ=item.typ_dokumentu) }}" class="btn btn-primary" title="Towary zostaną dodane do magzynu do wolnych sekcji">Finalizuj Dokument</a>
 
