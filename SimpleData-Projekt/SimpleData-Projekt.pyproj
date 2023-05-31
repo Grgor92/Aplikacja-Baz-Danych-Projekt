@@ -75,6 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="SimpleData\.env">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
