@@ -3,6 +3,7 @@ from datetime import datetime
 ogolne = Blueprint('ogolne', __name__)
 from flask_login import current_user, login_required, logout_user
 from SimpleData import  db, bcrypt, app
+
 from SimpleData.Ogolne.forms import przeszukiwanie_d, magazyn_towar
 from sqlalchemy import inspect, text
 from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
@@ -52,3 +53,4 @@ def magazyn_towar_t():
         user = current_user.imie,
         form=form
     )
+

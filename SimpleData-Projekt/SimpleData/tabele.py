@@ -33,7 +33,7 @@ class Kontrahenci(db.Model):
         return "<nazwa_firmy('%s'), NIP('%s')>" % (self.nazwa_firmy, self.NIP)
  
 class dokumenty(db.Model):
-    __tablename__ = "dokumenty"
+    _tablename_ = "dokumenty"
     id_dokumentu = db.Column(db.Integer, primary_key=True)
     numer_dokumentu = db.Column(db.String(20), nullable=False, unique=True)
     magazyn_towary = db.relationship("MagazynTowar", backref='dokument')
@@ -120,6 +120,7 @@ class Towary(db.Model):
 
     #data_waznosci_towaru = db.Column(db.Date, nullable=False)
     #magazyny = db.relationship('MagazynTowar', secondary=Towary_magazyn_towar, backref='towary')
+
     #def __repr__(self):
         #return f"<Towary id_towaru:{self.id_towaru}, kod_towaru:{self.kod_towaru}, rodzaj:{self.rodzaj}, data_waznosci_towaru:{self.data_waznosci_towaru}>"
 class Sekcja(db.Model):
@@ -130,9 +131,9 @@ class Sekcja(db.Model):
     towary = db.relationship('MagazynTowar', backref='sekcja')
     #funkcja wypisująca określone elementy. Elementy które są wypisywane pojawiają się po "self"
 
-
 class MagazynTowar(db.Model):
     _tablename_ = "magazyn_towar"
+
     id = db.Column(db.Integer, primary_key=True)
     nr_sekcji = db.Column(db.String(32), db.ForeignKey('sekcja.nr_sekcji'))
     data_przyjecia=db.Column(db.Date, nullable=False)
@@ -140,26 +141,20 @@ class MagazynTowar(db.Model):
     numer_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     # z wz rodzaj = db.Column(db.String(32), nullable=False)
     # ilość z wz będzie ilosc = db.Column(db.Integer, nullable=False)
-    # będzie z wz data_waznosci = db.Column(db.Date, nullable=False, index=True)
-
-
+    # będzie z wz data_waznosci = db.Column(db.Date, nullable=False, index=True
     ##def __repr__(self):
     ##    return "<MagazynTowar(id={}, nr_sekcji='{}', rodzaj='{}', ilosc={}, data_waznosci={})>".format(
     ##        self.id, self.nr_sekcji, self.rodzaj, self.ilosc, self.data_waznosci)
 
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
-with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
-    #sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-        db.create_all() #tworzenie
-        for i in range(5):
-            sekcja=Sekcja(nr_sekcji=i+1, pojemnosc_sekcji=200)
-            db.session.add(sekcja)
-            db.session.commit()
-    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
-    
-    db.session.add(new_product)
-    db.session.commit()
+
+#with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
+#    #sprawdzenie czy baza danych istnieje
+#    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
+#    db.drop_all() # usunięcie wszytsykich danych / resert bazy
+#    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
+#        db.create_all() #tworzenie
+#    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
+#    db.session.add(new_product)
+#    db.session.commit()

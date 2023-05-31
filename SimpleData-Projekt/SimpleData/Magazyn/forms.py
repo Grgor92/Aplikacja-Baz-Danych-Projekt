@@ -6,12 +6,13 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty
 from datetime import date
 
-class przeszukiwanie_d(FlaskForm):
-    rodzaj = SelectField('Dokument', choices=[('WZ', 'WZ'), ('PZ', 'PZ')])
-    numer = IntegerField('Numer')
-    data_od = DateField('Data od')
-    data_do = DateField('Data do')
-    kontrahent = SelectField('Kontarhent: ', choices=[('muszynianka', 'Muszynianka'), ('galicjanka', 'Galicjanka')])
+
+class magazyn_towar(FlaskForm):
+    id = IntegerField('id')
+    nr_sekcji = StringField('Numer sekcji')
+    data_przyjecia = DateField('data przyjęcia')
+    id_towaru = IntegerField('Id towaru')
+    numer_dokumentu = StringField('numer dokumentu')
+
     submit = SubmitField('Wyszukaj')
-
-
+    
