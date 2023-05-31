@@ -4,7 +4,7 @@ ogolne = Blueprint('ogolne', __name__)
 from flask_login import current_user, login_required, logout_user
 from SimpleData import  db, bcrypt, app
 
-from SimpleData.Ogolne.forms import przeszukiwanie_d, magazyn_towar
+from SimpleData.Ogolne.forms import przeszukiwanie_d
 from sqlalchemy import inspect, text
 from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 from SimpleData.tabele import uzytkownicy
@@ -39,16 +39,6 @@ def przeszukiwanie():
     form = przeszukiwanie_d()
     return render_template(
         "przeszukiwanie.html",
-        title = "SimpleData",
-        user = current_user.imie,
-        form=form
-    )
-@ogolne.route('/magazyn_towar', methods=['GET', 'POST'])
-@login_required
-def magazyn_towar_t():
-    form = magazyn_towar()
-    return render_template(
-        "magazyn_towar.html",
         title = "SimpleData",
         user = current_user.imie,
         form=form
