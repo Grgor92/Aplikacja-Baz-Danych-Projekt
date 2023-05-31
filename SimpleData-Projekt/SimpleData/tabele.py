@@ -134,7 +134,7 @@ class Sekcja(db.Model):
 class MagazynTowar(db.Model):
     _tablename_ = "magazyn_towar"
 
-    id = db.Column(db.Integer, primary_key=True)
+    idmag = db.Column(db.Integer, primary_key=True)
     nr_sekcji = db.Column(db.String(32), db.ForeignKey('sekcja.nr_sekcji'))
     data_przyjecia=db.Column(db.Date, nullable=False)
     id_towaru=db.Column(db.Integer, db.ForeignKey('towary.id_towaru'))
@@ -149,12 +149,12 @@ class MagazynTowar(db.Model):
 #with app.app_context():
 #sprawdzenie czy baza danych istnieje
 
-#with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
-#    #sprawdzenie czy baza danych istnieje
-#    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-#    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-#    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-#        db.create_all() #tworzenie
-#    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
-#    db.session.add(new_product)
-#    db.session.commit()
+with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
+    #sprawdzenie czy baza danych istnieje
+    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
+    db.drop_all() # usunięcie wszytsykich danych / resert bazy
+    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
+        db.create_all() #tworzenie
+    new_product = uzytkownicy( imie='admin', email='sd@admin.com', haslo=bcrypt.generate_password_hash('haslo').decode('utf-8'), typ='Administrator')
+    db.session.add(new_product)
+    db.session.commit()
