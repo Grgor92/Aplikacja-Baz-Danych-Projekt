@@ -3,7 +3,7 @@
 from flask_sqlalchemy import SQLAlchemy
 #Bibloteka odpowiedzialna za bezpieczne haszowanie haseł
 from flask_bcrypt import Bcrypt
-
+from dotenv import load_dotenv
 from flask import Flask, session, redirect, url_for, flash
 from datetime import timedelta
 from flask_login import LoginManager
@@ -38,15 +38,9 @@ def init_session():
     session.permanent = True
 
 #Łączenie z bazą danych
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://sql7622214:aFWewSyz9l@sql7.freesqldatabase.com/sql7622214'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# LOGOWANIE DO BAZY NA STRONIE
-#https://www.phpmyadmin.co
-#nazwa serwera: sql7.freesqldatabase.com
-#użytkownik: sql7622214
-#haslo: aFWewSyz9l
-
+#mysql://sql7622214:aFWewSyz9l@sql7.freesqldatabase.com/sql7622214
 db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)
 
@@ -55,9 +49,11 @@ from SimpleData.Kontrahenci.views import kon
 from SimpleData.Ogolne.views import ogolne
 from SimpleData.Towary.views import tow
 from SimpleData.Uzytkownicy.views import users
+from SimpleData.Magazyn.views import mag
 
 app.register_blueprint(dok)
 app.register_blueprint(kon)
 app.register_blueprint(ogolne)
 app.register_blueprint(tow)
 app.register_blueprint(users)
+app.register_blueprint(mag)

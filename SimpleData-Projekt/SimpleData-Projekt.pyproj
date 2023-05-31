@@ -42,6 +42,15 @@
     <Compile Include="SimpleData\Kontrahenci\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SimpleData\Magazyn\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Magazyn\views.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleData\Magazyn\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SimpleData\Ogolne\forms.py" />
     <Compile Include="SimpleData\Ogolne\views.py" />
     <Compile Include="SimpleData\Ogolne\__init__.py">
@@ -66,6 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="SimpleData\.env">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
@@ -116,6 +128,7 @@
     <Folder Include="SimpleData\" />
     <Folder Include="SimpleData\Dokumenty\" />
     <Folder Include="SimpleData\Kontrahenci\" />
+    <Folder Include="SimpleData\Magazyn\" />
     <Folder Include="SimpleData\Ogolne\" />
     <Folder Include="SimpleData\Towary\" />
     <Folder Include="SimpleData\Uzytkownicy\" />

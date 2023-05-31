@@ -55,7 +55,7 @@
                     <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#edit-modal" data-identy="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Edytuj</a>
                 </td>
                 <td>
-                    <a href="#" class="btn btn-grey edit-btn" data-toggle="modal" data-target="#delete-Modal" data-id="{{ item.id }}" data-nazwa="{{ item.imie }}" data-email="{{ item.email }}" data-uprawnienia="{{ item.typ }}" data-haslo="{{ item.haslo|safe }}">Usuń</a>
+                    <button onclick="confirmDelete('{{ item.id}}')" class="btn btn-grey edit-btn">Usuń</button>
                 </td>
                 {% endif %}
             </tr>
@@ -157,6 +157,28 @@
             // Dodaj kod, który ustawia inne pola w oknie modalnym "delete-Modal"
         });
 
+        function confirmDelete(ide) {
+            if (confirm("Czy na pewno chcesz usunąć tego użytkownika?")) {
+                fetch('/uzytkownicy/' + ide, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } 
+                    })
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert(error.message);
+                    });
+            }
+        }
 
     //$(document).on("click", ".reveal-btn", function () {
     //    var input = $(this).closest(".input-group").find("input");
