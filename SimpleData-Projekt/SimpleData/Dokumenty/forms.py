@@ -46,15 +46,17 @@ class Dok(FlaskForm):
     id_uzytkownika = IntegerField('Id użytkownika', validators=[Optional()])
     NIP_kontrahenta = IntegerField('NIP kontrahenta', validators=[Optional()])
     typ_dokumentu = SelectField('Typ dokumentu', choices=[('', ''), ('WZ', 'WZ'), ('PZ', 'PZ')], validators=[Optional()])
-    data_przyjecia = DateField('Data Przyhęcia', validators=[Optional()])
+    data_przyjecia = DateField('Data Przyjęcia', validators=[Optional()])
     statusd = SelectField('Status dokumentu', choices=[('Aktywna', 'Aktywna'),('', '') ,('Edycja', 'Edycja'), ('Zakończona', 'Zakończona')], validators=[Optional()])
     submit = SubmitField('Wyszukaj')
 
 class DodajTowarDokument(FlaskForm):
-    id_towaru = IntegerField('Numer towaru', validators = [DataRequired()])
-    typ = StringField('Data wystawienia', validators = [DataRequired()])
-    rodzaj= StringField('Rodzaj Wody', validators = [DataRequired()])
-    nazwa= StringField('Nazwa Wody', validators = [DataRequired()])
+    id_towaru = IntegerField('Numer towaru', validators = [Optional()])
+    numer_magazynu = IntegerField('Numer Towaru', validators = [Optional()])
+    typ = StringField('Data wystawienia', validators = [Optional()])
+    rodzaj= StringField('Rodzaj Wody', validators = [Optional()])
+    nazwa= StringField('Nazwa Wody', validators = [Optional()])
     il= IntegerField('Ilosc', validators = [DataRequired(), NumberRange(min=0)])
+    il_mag= IntegerField('Ilosc', validators = [Optional(), NumberRange(min=0)])
     submit = SubmitField('Dodaj Towar')
 

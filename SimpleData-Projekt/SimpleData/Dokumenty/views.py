@@ -45,7 +45,7 @@ def dokumenty():
     return render_template(
         "dokumenty.html",
         title = "SimpleData",
-        #user = current_user.imie,
+        user = current_user.imie,
         form=form,
         values = result,
     )
@@ -88,32 +88,62 @@ def dodaj_dokument(dokument_type):
         typ=dokument_type,
         values=result
     )
+@dok.route('/dokumenty/towar_dokument/<numer_dokumentu>/ok<id_w_towa>', methods=['GET', 'POST'])
+def cofnij(numer_dokumentu, id_w_towa):
+    towar_do_usuniecia = TowaryDokument.query.get(id_w_towa)
+    if towar_do_usuniecia:
+        # Usuń rekord z bazy danych
+        db.session.delete(towar_do_usuniecia)
+        db.session.commit()
+    return redirect(url_for('dok.dodajtowar_dok',numer_dokumentu=numer_dokumentu))
+
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>', methods=['GET', 'POST'])
 def dodajtowar_dok(numer_dokumentu):
     form = DodajTowarDokument()
+    #POBIERANIE DANYCH O DOKUMENCIE I KONTRAHENCIE
     query = text("SELECT d.*, k.* FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.numer_dokumentu = :numer_dokumentu;;")
-    query2 = "SELECT td.*, t.* FROM `towary_dokument` td JOIN towary t ON td.id_towaru = t.id_towaru WHERE id_dokumentu = :numer_dokumentu "
     values = db.session.execute(query, {'numer_dokumentu': numer_dokumentu}).fetchall()
     nip= values[0].NIP
+
+    #POBIERANIE DANYCH O TOWARACH W DOKUMENCIE
+    query2 = "SELECT td.*, t.* FROM `towary_dokument` td JOIN towary t ON td.id_towaru = t.id_towaru WHERE id_dokumentu = :numer_dokumentu "
     values2 = db.session.execute(text(query2), {"numer_dokumentu": numer_dokumentu}).fetchall()
+
+    #POBIERANIE DANYCH W ZALEŻNOŚCI ALBO Z TOWARÓW ALBO Z MAGAZYNU
     if values[0].typ_dokumentu=='PZ':
         query3 = "SELECT * FROM towary WHERE NIP = :nip"
         values3 = db.session.execute(text(query3), {"nip": nip}).fetchall()
     elif values[0].typ_dokumentu=='WZ':
-        query3 = "SELECT * FROM towary"
-        values3 = db.session.execute(text(query3), {"nip": nip}).fetchall()
+        query3 = "SELECT DISTINCT mg.id_towaru, mg.idmag, COUNT(*) AS stan, t.* FROM magazyn_towar mg JOIN towary t ON mg.id_towaru = t.id_towaru WHERE mg.stan='Przyjete' GROUP BY mg.id_towaru;;"
+        values3 = db.session.execute(text(query3)).fetchall()
 
     if form.validate_on_submit():
-        towary_dokument = TowaryDokument(
-            id_dokumentu=numer_dokumentu,
-            id_towaru=form.id_towaru.data,
-            ilosc=form.il.data,
-            data_przyjecia=date.today()  # Pominąłem pole data_waznosci, dodaj odpowiednią wartość
-        )
-
-        db.session.add(towary_dokument)
-        db.session.commit()
-        return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+            if values[0].typ_dokumentu=='PZ':
+                towary_dokument = TowaryDokument(
+                    id_dokumentu=numer_dokumentu,
+                    id_towaru=form.id_towaru.data,
+                    ilosc=form.il.data,
+                    data_przyjecia=date.today()
+                    )
+                db.session.add(towary_dokument)
+                db.session.commit()
+                return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+            elif form.il.data > form.il_mag.data:
+                flash("Wprwoadziłeś wiekszą ilość toawrów niż liczba towarów na magazynie")
+                return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+            else:
+                numery=db.session.execute(text('SELECT idmag FROM magazyn_towar WHERE id_towaru = :num ORDER BY data_przyjecia ASC'),{'num':form.id_towaru.data}).fetchall()
+                for i in range(form.il.data):
+                    towary_dokument = TowaryDokument(
+                        id_dokumentu=numer_dokumentu,
+                        id_towaru=form.id_towaru.data,
+                        numer_towaru=numery[i].idmag,
+                        ilosc=1,
+                        data_przyjecia=date.today()
+                        )
+                    db.session.add(towary_dokument)
+                    db.session.commit()
+                return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
     return render_template(
         "dok.html",
         title="SimpleData",
@@ -136,10 +166,16 @@ def zakoncz(numer_dokumentu, status):
 
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>/finalizuj/<typ>', methods=['GET', 'POST'])
 def finalizuj(numer_dokumentu, typ):
+    #FINALIZUJ WZ
     if typ=="WZ":
         flash(f"Finalizuj WZ.")
+
+
+
+
+    #FINALIZUJ PZ
     elif typ=="PZ":
-        query = text("SELECT ilosc, id_towaru, COUNT(ilosc) as liczba FROM towary_dokument WHERE id_dokumentu = :num")
+        query = text("SELECT id_towaru, ilosc, (SELECT SUM(ilosc) from towary_dokument where id_dokumentu= :num) liczba FROM `towary_dokument` where id_dokumentu= :num")
         values = db.session.execute(query, {"num": numer_dokumentu}).fetchall()
         j=1;
         query = text("SELECT COUNT(*) AS suma FROM magazyn_towar WHERE 1")
@@ -147,11 +183,10 @@ def finalizuj(numer_dokumentu, typ):
         query_pojemnosc = text("SELECT SUM(pojemnosc_sekcji), max(nr_sekcji) as nr_sekcji FROM sekcja")
         magazyn = db.session.execute(query_pojemnosc).scalar()
         magazyn=magazyn-suma_towarow
+        k=0
         if values[0].liczba <= magazyn:
             for item in values:
-                ilosc = item.ilosc
-                id_towaru = item.id_towaru
-                for i in range(ilosc):
+                for i in range(int(item.ilosc)):
                     query2 = text("SELECT s.nr_sekcji FROM sekcja s WHERE pojemnosc_sekcji > (SELECT COUNT(*) FROM magazyn_towar WHERE nr_sekcji = :nr) AND nr_sekcji = :nr2")
                     numer=db.session.execute(query2, {'nr':j, 'nr2':j }).fetchone()
                     while numer == None:
@@ -162,16 +197,19 @@ def finalizuj(numer_dokumentu, typ):
                     magazyn_towar = MagazynTowar(
                         nr_sekcji=numer.nr_sekcji,  # Dodaj właściwy numer sekcji
                         data_przyjecia=date.today(),  # Dodaj właściwą datę przyjęcia
-                        id_towaru=id_towaru,
-                        numer_dokumentu=numer_dokumentu
+                        id_towaru=int(item.id_towaru),
+                        numer_dokumentu=numer_dokumentu,
+                        stan="Przyjete"
                     )
                     db.session.add(magazyn_towar)
                     db.session.commit()
+            k=k+1
             query5=text("UPDATE dokumenty SET statusd = 'Zakończona', data_przyjecia=:data WHERE numer_dokumentu = :num")
             db.session.execute(query5, {"num": numer_dokumentu, "data": date.today()})
             db.session.commit()
         else:
             flash("Ilość towarów przekracza dostępną pojemność magazynu.", 'danger')
+    #USUŃ DOKUMENT W TRAKCIE EDYCJI
     elif typ=="Usun":
         query = "DELETE FROM towary_dokument WHERE id_dokumentu = :numer_dokumentu"
         db.session.execute(text(query), {"numer_dokumentu": numer_dokumentu})

@@ -14,7 +14,7 @@ mag = Blueprint('mag', __name__)
 def magazyn_towar_t():
     form = magazyn_towar()
     #Select * from towary, magazyn_towar, sekcja WHERE 1=1 
-    query = 'SELECT * FROM magazyn_towar JOIN towary ON magazyn_towar.id_towaru = towary.id_towaru JOIN towary_dokument ON magazyn_towar.numer_dokumentu = towary_dokument.id_dokumentu;'
+    query = 'SELECT DISTINCT magazyn_towar.*, towary.* FROM magazyn_towar JOIN towary ON magazyn_towar.id_towaru = towary.id_towaru WHERE stan = "Przyjete";'
 
     result = db.session.execute(text(query))
     if form.validate_on_submit():
