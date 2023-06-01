@@ -1,12 +1,10 @@
 {% extends "layout.html" %}
 {%block content%}
-<!--Miejsce na formualrz do przeszukiwania magazyu z towarem-->
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <div class="form-inline">
-
+            <div class="form-group">
                 <div class="form-group mr-3 mb-2 d-block">
                     <div class="d-block text-center">
                         <label for="{{ form.id.id }}" class="form-control-label">{{ form.id.label }}</label>
@@ -41,6 +39,7 @@
                     </div>
                     {{ form.numer_dokumentu(class="form-control ml-2") }}
                 </div>
+            </div>
         </fieldset>
 
         <div class="form-group text-center">
@@ -53,13 +52,13 @@
             <tr>
 
                 <th scope="col">Numer </th>
-                <th scope="col">nr_sekcji</th>
-                <th scope="col">data_przyjecia</th>
-                <th scope="col">numer_dokumentu</th>
+                <th scope="col">Sekcja</th>
+                <th scope="col">Data przyjecia</th>
+                <th scope="col">Numer dokumentu</th>
                 <th scope="col">NIP</th>
-                <th scope="col">typ</th>
-                <th scope="col">rodzaj</th>
-                <th scope="col">nazwa</th>
+                <th scope="col">Typ</th>
+                <th scope="col">Rodzaj</th>
+                <th scope="col">Nazwa</th>
 
             </tr>
         </thead>
