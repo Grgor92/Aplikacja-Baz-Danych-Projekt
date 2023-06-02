@@ -18,9 +18,9 @@
         <button id="wyszukajBtn" type="submit" style="display: block; margin-top: 10px;">Wyszukaj</button>
     </form>
 </div>
-
+{% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
 <button id="add-record-btn" onclick="openDodajPopup()">Dodaj kontrahenta</button>
-
+{% endif %}
 
 <div id="dodajPopup" class="popup">
     <div class="content">
@@ -68,7 +68,9 @@
                 <th class="header-cell">Ulica</th>
                 <th class="header-cell">Numer</th>
                 <th class="header-cell">Rodzaj</th>
+                {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
                 <th class="header-cell">Akcje</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -81,10 +83,12 @@
                 <td>{{ kontrahent.ulica }}</td>
                 <td>{{ kontrahent.numer }}</td>
                 <td>{{ kontrahent.status }}</td>
+                {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
                 <td>
                     <button onclick="handleEditButtonClick(this.parentNode.parentNode)">Edytuj</button>
                     <button onclick="confirmDelete('{{ kontrahent.NIP }}')">Usuń</button>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
@@ -266,7 +270,7 @@
 
     function confirmDelete(nip) {
         if (confirm("Czy na pewno chcesz usunąć tego kontrahenta?")) {
-            
+
             fetch('/kontrahenci/' + nip, {
                 method: 'DELETE',
                 headers: {
@@ -275,16 +279,16 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        
+
                         alert("Kontrahent został usunięty.");
                         location.reload();
                     } else {
-                        
+
                         alert("Wystąpił błąd podczas usuwania kontrahenta.");
                     }
                 })
                 .catch(error => {
-                    
+
                     alert("Wystąpił błąd podczas usuwania kontrahenta.");
                 });
         }

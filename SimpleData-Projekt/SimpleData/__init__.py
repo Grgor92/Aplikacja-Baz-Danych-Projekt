@@ -1,11 +1,12 @@
 ﻿# -*- coding: utf-8 -*-
 #Import biblioteki
+from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
 #Bibloteka odpowiedzialna za bezpieczne haszowanie haseł
 from flask_bcrypt import Bcrypt
-from dotenv import load_dotenv
 from flask import Flask, session, redirect, url_for, flash
-from datetime import timedelta
+from functools import wraps
+from flask_login import current_user
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 import os
@@ -32,17 +33,37 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-#app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=600)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=60)
 @app.before_first_request
 def init_session():
     session.permanent = True
 
 #Łączenie z bazą danych
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/sd_baza'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://sql7622214:aFWewSyz9l@sql7.freesqldatabase.com/sql7622214'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #mysql://sql7622214:aFWewSyz9l@sql7.freesqldatabase.com/sql7622214
 db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)
+
+
+
+def roles_required(*roles):
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(*args, **kwargs):
+            if not current_user.is_authenticated:
+                return login_manager.unauthorized()
+
+            if not any(role == current_user.typ for role in roles):
+                flash('Nie masz uprawnień do tej strony!', 'danger')
+                return redirect(url_for('ogolne.home'))
+
+            return view_func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
 
 from SimpleData.Dokumenty.views import dok
 from SimpleData.Kontrahenci.views import kon

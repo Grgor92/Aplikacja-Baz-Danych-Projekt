@@ -1,13 +1,8 @@
 from flask_wtf import FlaskForm
-from flask_sqlalchemy import SQLAlchemy
-from wtforms_sqlalchemy.fields import QuerySelectField
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
-from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty
-from datetime import date
+from wtforms import StringField, SubmitField, IntegerField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
 
 class kontrahenci_F(FlaskForm):
-    nip = IntegerField('NIP')
+    nip = StringField('NIP')
     nazwa_firmy = StringField('Nazwa firmy')
     miasto = StringField('Miasto')
     nr_telefonu = IntegerField('Telefon')

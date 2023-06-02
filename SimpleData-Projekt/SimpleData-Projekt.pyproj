@@ -78,6 +78,8 @@
     <Content Include="SimpleData\.env">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\Images\logosd.jpg" />
+    <Content Include="SimpleData\Images\logosd.png" />
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
@@ -88,7 +90,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\dokumenty.html" />
-    <Content Include="SimpleData\templates\dokumenty_historyczne.html" />
     <Content Include="SimpleData\templates\edytuj_towar.html">
       <SubType>Code</SubType>
     </Content>
@@ -102,6 +103,7 @@
     <Content Include="SimpleData\templates\login.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\logosd.png" />
     <Content Include="SimpleData\templates\magazyn_towar.html" />
     <Content Include="SimpleData\templates\przeszukiwanie.html">
       <SubType>Code</SubType>
@@ -116,9 +118,6 @@
     <Content Include="SimpleData\templates\usun_towar.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="SimpleData\templates\usun_wszystko_towar.html">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="SimpleData\templates\uzytkownicy.html" />
     <Content Include="SimpleData\templates\wypis_towary.html">
       <SubType>Code</SubType>
@@ -129,6 +128,7 @@
     <Folder Include="SimpleData\Dokumenty\" />
     <Folder Include="SimpleData\Kontrahenci\" />
     <Folder Include="SimpleData\Magazyn\" />
+    <Folder Include="SimpleData\Images\" />
     <Folder Include="SimpleData\Ogolne\" />
     <Folder Include="SimpleData\Towary\" />
     <Folder Include="SimpleData\Uzytkownicy\" />
