@@ -105,7 +105,7 @@ def edit_user():
         return redirect(url_for('users.uzytkownicy_t'))
 
 
-@users.route('/uzytkownicy', methods=['GET', 'POST'])
+@users.route('/uzytkownicy_us', methods=['GET', 'POST'])
 @login_required
 def ustawienia_kont():
     form = moje_ustawienia()

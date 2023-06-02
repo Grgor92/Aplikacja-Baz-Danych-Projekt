@@ -34,30 +34,35 @@ def towary():
 @roles_required('Administrator')
 def edytuj_towar(towar_id):
     form = FiltrujDaneTowaryDostawcy()
-    towar_id = towar_id
     rekord = Towary.query.filter_by(id_towaru=towar_id).first()
+    form.NIP.data=rekord.NIP
+    form.Typ.data=rekord.typ
+    form.Rodzaj.data=rekord.rodzaj
+    form.Nazwa.data=rekord.nazwa
 
-    if rekord:
-        # Stwórz nowy rekord z aktualizowanymi wartościami i stanem "Aktywny"
-        nowy_rekord = Towary(
-            NIP=form.NIP.data,
-            typ=form.Typ.data,
-            rodzaj=form.Rodzaj.data,
-            nazwa=form.Nazwa.data,
-            stan="Aktywny"
-        )
-        db.session.add(nowy_rekord)
-        db.session.commit()
 
-        # Zmień stan istniejącego rekordu na "Nieaktualny"
-        rekord.stan = "Nieaktualny"
-        db.session.commit()
+    if form.validate_on_submit():
+        if rekord:
+            # Stwórz nowy rekord z aktualizowanymi wartościami i stanem "Aktywny"
+            nowy_rekord = Towary(
+                NIP=form.NIP.data,
+                typ=form.Typ.data,
+                rodzaj=form.Rodzaj.data,
+                nazwa=form.Nazwa.data,
+                stan="Aktywny"
+            )
+            db.session.add(nowy_rekord)
+            db.session.commit()
 
-        flash('Dane zostały zaktualizowane.', 'success')
-        return redirect(url_for('tow.wypis_towary'))
-    else:
-        flash('Rekord o podanym ID nie istnieje.', 'danger')
-        return redirect(url_for('tow.wypis_towary'))
+            # Zmień stan istniejącego rekordu na "Nieaktualny"
+            rekord.stan = "Nieaktualny"
+            db.session.commit()
+
+            flash('Dane zostały zaktualizowane.', 'success')
+            return redirect(url_for('tow.wypis_towary'))
+        else:
+            flash('Rekord o podanym ID nie istnieje.', 'danger')
+            return redirect(url_for('tow.wypis_towary'))
     return render_template( 
         "edytuj_towar.html",
         title = "SimpleData",

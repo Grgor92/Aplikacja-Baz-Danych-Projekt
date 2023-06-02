@@ -8,7 +8,7 @@ from datetime import date
 class DodajDokumentForm(FlaskForm):
     numer_dok2 = IntegerField('Numer dokumentu', validators=[DataRequired()])
     data_wys2 = DateField('Data wystawienia', default=date.today(), validators=[DataRequired()], render_kw={'readonly': True})
-    nip2 = IntegerField('NIP', validators=[DataRequired()])
+    nip2 = StringField('NIP', validators=[DataRequired()])
     kontrahent2 = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.all(), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
     rodzaj2 = SelectField('Rodzaj dokumentu', choices=[('WZ', 'WZ'), ('PZ', 'PZ')], validators=[DataRequired()], render_kw={'disabled': True})
     data_wyk2 = DateField('Data wykonania', validators=[Optional()])
@@ -22,7 +22,7 @@ class DodajDokumentForm(FlaskForm):
             raise ValidationError('Dokuemnt o takim numerze już istnieje.')
 
 class FiltrujDaneTowaryDostawcy(FlaskForm):
-    NIP=IntegerField('NIP', validators=[Optional()])
+    NIP=StringField('NIP', validators=[Optional()])
     Typ=StringField('Typ', validators=[Optional()])
     Rodzaj=StringField('Rodzaj', validators=[Optional()])
     Nazwa=StringField('Nazwa', validators=[Optional()])

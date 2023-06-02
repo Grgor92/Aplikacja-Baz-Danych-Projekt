@@ -44,7 +44,7 @@ def dodaj_rekord():
     kontrahent = Kontrahenci(NIP=nip, nazwa_firmy=nazwa_firmy, miasto=miasto, telefon=nr_telefonu, ulica=ulica, numer=numer, status=rodzaj, stan=stan)
 
     db.session.add(kontrahent)
-    flash('Nowy kontrahent został utworzony.', 'success')
+    flash(f'Nowy kontrahent został utworzony.{nip}', 'success')
     db.session.commit()
     return redirect(url_for('kon.kontrahenci_t'))
 

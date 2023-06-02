@@ -124,7 +124,7 @@ def dodajtowar_dok(numer_dokumentu):
         query3 = "SELECT * FROM towary WHERE NIP = :nip AND stan='Aktywna'"
         values3 = db.session.execute(text(query3), {"nip": nip}).fetchall()
     elif values[0].typ_dokumentu=='WZ':
-        query3 = "SELECT DISTINCT mg.id_towaru, mg.idmag, COUNT(*) AS stan, t.* FROM magazyn_towar mg JOIN towary t ON mg.id_towaru = t.id_towaru WHERE mg.stan='Przyjete' GROUP BY mg.id_towaru;"
+        query3 = "SELECT DISTINCT mg.id_towaru, mg.idmag, COUNT(*) AS stan_tow, t.* FROM magazyn_towar mg JOIN towary t ON mg.id_towaru = t.id_towaru WHERE mg.stan='Przyjete' GROUP BY mg.id_towaru;"
         values3 = db.session.execute(text(query3)).fetchall()
 
     if form.validate_on_submit():

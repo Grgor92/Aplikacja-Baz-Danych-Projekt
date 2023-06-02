@@ -10,7 +10,7 @@ from datetime import date
 class DodajDokumentForm(FlaskForm):
     numer_dok2 = IntegerField('Numer dokumentu', validators=[DataRequired()])
     data_wys2 = DateField('Data wystawienia', default=date.today(), validators=[DataRequired()], render_kw={'readonly': True})
-    nip2 = IntegerField('NIP', validators=[DataRequired()])
+    nip2 = StringField('NIP', validators=[DataRequired()])
     rodzaj2 = SelectField('Rodzaj dokumentu', choices=[('WZ', 'WZ'), ('PZ', 'PZ')], validators=[DataRequired()])
 
     # QuerySelectField To pole kóre pozwla na wybranie danych z bazy i wyświetlenie ich w polsu formularza select
@@ -20,6 +20,7 @@ class DodajDokumentForm(FlaskForm):
     status = SelectField('Status dokumentu', choices=[('Edycja', 'Edycja'), ('Aktywna', 'Aktywna')], validators=[Optional()])
     submit2 = SubmitField('Dodaj dokument')
 
+    #Ustawiamy własną walidację na pola formularza
     def validate_kontrahent(self, kontrahent):
         nip = self.nip2.data
         query = text("SELECT * FROM kontrahenci WHERE NIP = :nip AND nazwa_firmy = :kontrahent")
