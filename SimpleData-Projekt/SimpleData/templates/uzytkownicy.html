@@ -1,6 +1,5 @@
 ﻿{% extends "layout.html" %}
 {%block content%}
-<a href="{{ request.referrer }}" class="btn btn-secondary">Powrót</a>
 <div class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
@@ -30,7 +29,12 @@
         <div class="form-group text-center">
             {{ form.submit(class="btn btn-outline-info") }}
         </div>
+        {% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
+        <a href="{{ url_for('users.rejestr') }}" class="btn btn-secondary float-left">Rejestruj Użtkownika</a>
+        {% endif %}
+
     </form>
+    
     <table class="table table-striped align-items-center">
         <thead>
             <tr>
@@ -108,31 +112,6 @@
     </div>
 
 
-
-    <div class="modal fade" id="delete-Modal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="d-block">
-                        <h5 class="modal-title" id="deleteModalLabel">Jesteś pewny że chcesz usunąć użytkownika?</h5>
-                        <br />
-                        <h5 class="modal-title" id="deleteModalLabel2">Ta operacja jest nieodwracalna</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <form id="user_id-form" action="{{url_for('users.usun_user')}}" method="POST">
-                        <input id="user_id-input" name="id_us" value="">
-                        <input class="btn btn-danger" type="submit" value="Usuń">
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         $(document).on("click", ".edit-btn", function () {
             var id = $(this).data('identy');
@@ -147,15 +126,6 @@
             $("#uprawnienia-input").val(uprawnienia);
         });
 
-        $(document).on("click", ".delete-btn", function () {
-            var id = $(this).data('id');
-            var nazwa = $(this).data('nazwa');
-            var email = $(this).data('email');
-            var uprawnienia = $(this).data('uprawnienia');
-            $("#user_id-input").val(id);
-            // Dodaj kod, który ustawia inne pola w oknie modalnym "delete-Modal"
-        });
-
         function confirmDelete(ide) {
             if (confirm("Czy na pewno chcesz usunąć tego użytkownika?")) {
                 fetch('/uzytkownicy/' + ide, {
@@ -167,7 +137,7 @@
                     .then(response => {
                         if (response.ok) {
                             return response.json();
-                        } 
+                        }
                     })
                     .then(data => {
                         alert(data.message);
@@ -178,44 +148,6 @@
                     });
             }
         }
-
-    //$(document).on("click", ".reveal-btn", function () {
-    //    var input = $(this).closest(".input-group").find("input");
-    //    var icon = $(this).find("i");
-    //    if (input.attr("type") === "password") {
-    //        input.attr("type", "text");
-    //        icon.removeClass("fa-eye");
-    //        icon.addClass("fa-eye-slash");
-    //    } else {
-    //        input.attr("type", "password");
-    //        icon.removeClass("fa-eye-slash");
-    //        icon.addClass("fa-eye");
-    //    }
-    //});
-
-    //(function ($) {
-    //    $(document).on('submit', '#edit-form', function (e) {
-    //        e.preventDefault();
-    //        var form = $(this);
-    //        var url = form.attr('action');
-    //        var formData = form.serialize();
-    //        $.ajax({
-    //            type: 'POST',
-    //            url: url,
-    //            data: formData,
-    //            success: function (data) {
-    //                console.log(data);
-    //                $('#edit-modal').modal('hide');
-    //                // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
-    //            },
-    //            error: function (error) {
-    //                console.log(error);
-    //                // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
-    //            }
-    //        });
-    //    });
-    //})(jQuery);
-
 
 
     </script>

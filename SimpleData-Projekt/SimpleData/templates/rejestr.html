@@ -1,5 +1,6 @@
 ﻿{% extends "layout.html" %}
 {% block content %}
+{% if current_user.is_authenticated and current_user.typ == 'Administrator' %}
 <div class="col-md-6" style="margin:auto">
     <div class="content-section">
         <form method="POST" action="" class="text-center">
@@ -83,6 +84,6 @@
         </small>
     </div>
 </div>
-
+{%endif%}
 {% endblock %}
 

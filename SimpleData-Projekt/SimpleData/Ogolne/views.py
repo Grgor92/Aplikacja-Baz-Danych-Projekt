@@ -1,15 +1,9 @@
 from flask import Blueprint, jsonify, render_template, url_for, redirect
 from datetime import datetime
-ogolne = Blueprint('ogolne', __name__)
 from flask_login import current_user, login_required, logout_user
-from SimpleData import  db, bcrypt, app
-
 from SimpleData.Ogolne.forms import przeszukiwanie_d
-from sqlalchemy import inspect, text
-from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
-from SimpleData.tabele import uzytkownicy
 
-
+ogolne = Blueprint('ogolne', __name__)
 
 @ogolne.route('/api/time') # ustawiamy ścieżkę po jakiej będzie można się dostać do danej wartości/strony po wpisaniu w przeglądarkę
 def current_time():
