@@ -1,6 +1,5 @@
-
 from flask import Flask, Blueprint, render_template, redirect, url_for, flash, request
-from SimpleData import app, db
+from SimpleData import app, db, roles_required
 from SimpleData.Dokumenty.forms import  Dok, DodajDokumentForm, DodajTowarDokument  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty, TowaryDokument, MagazynTowar
 from sqlalchemy import text
@@ -10,23 +9,18 @@ from datetime import date
 dok = Blueprint('dok', __name__)
 
 @dok.route('/dokumenty', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def dokumenty():
     form = Dok()
     query = text("SELECT * FROM dokumenty WHERE statusd = '' ;")
     result = db.session.execute(query)
-    query3 = text("INSERT IGNORE INTO kontrahenci (NIP, nazwa_firmy, miasto, telefon, ulica, numer, status) VALUES ('1234567890', 'Galicjanka', 'Galicja', 512512512, 'Galicyjska', '54A', 'Dostawca');")
-    db.session.execute(query3)
-    query2 = text("INSERT IGNORE INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, data_przyjecia,  statusd) VALUES ('12345', '2022-05-11', :user_id, 1234567890, 'PZ', '2022-05-11', 'Aktywna');")
-    db.session.execute(query2, {'user_id': current_user.id})
-    db.session.commit()
     if form.validate_on_submit():
-        query = 'SELECT d.*, k.nazwa_firmy, u.imie FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP JOIN uzytkownicy u ON d.id_uzytkownika = u.id'
+        query = 'SELECT d.*, k.nazwa_firmy, u.imie, k.NIP FROM dokumenty d JOIN kontrahenci k ON d.id_kon = k.id_kon JOIN uzytkownicy u ON d.id_uzytkownika = u.id'
         filters = {
             'numer_dokumentu': 'd.numer_dokumentu = :numer_dokumentu',
             'data_wystawienia': 'd.data_wystawienia = :data_wystawienia',
             'id_uzytkownika': 'd.id_uzytkownika = :id_uzytkownika',
-            'NIP_kontrahenta': 'd.NIP_kontrahenta = :NIP_kontrahenta',
+            'id_kon': 'd.id_kon = :id_kon',
             'typ_dokumentu': 'd.typ_dokumentu = :typ_dokumentu',
             'data_przyjecia': 'd.data_przyjecia = :data_przyjecia',
             'statusd': 'd.statusd = :statusd'
@@ -50,27 +44,29 @@ def dokumenty():
         values = result,
     )
 @dok.route('/dokumenty/dodaj_dokument_<dokument_type>', methods=['GET', 'POST'])
+@roles_required('Administrator','Kierownik')
 def dodaj_dokument(dokument_type):
     if dokument_type == 'PZ':
         form = DodajDokumentForm(rodzaj2='PZ')
     elif dokument_type == 'WZ':
-        kontrahenci = Kontrahenci.query.filter_by(status='Odbiorca').all()  # Pobierz odpowiednich kontrahentów z bazy danych
+        kontrahenci = Kontrahenci.query.filter_by(status='Odbiorca', stan="Aktywny").all()  # Pobierz odpowiednich kontrahentów z bazy danych
         form = DodajDokumentForm(rodzaj2='WZ', kontrahent2=kontrahenci)
 
-    query = text('SELECT d.*, k.nazwa_firmy FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.statusd = "Edycja"')
+    query = text('SELECT d.*, k.nazwa_firmy, k.NIP FROM dokumenty d JOIN kontrahenci k ON d.id_kon = k.id_kon WHERE d.statusd = "Edycja"')
     result = db.session.execute(query)
     if form.validate_on_submit() and request.method == 'POST':
         rodzaj = dokument_type
         numer = form.numer_dok2.data
         wys = form.data_wys2.data
         nip = form.nip2.data
+        kontrahent = Kontrahenci.query.filter_by(NIP=nip, stan="Aktywny").first()  # Sprawdź istnienie kontrahenta
         status = 'Edycja'
-        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, NIP_kontrahenta, typ_dokumentu, statusd, imie_uzytkownika) VALUES (:numer, :wys, :id_uzytkownika, :nip, :rodzaj, :status, :imie_uzy)')
+        query = text('INSERT INTO dokumenty (numer_dokumentu, data_wystawienia, id_uzytkownika, id_kon, typ_dokumentu, statusd, imie_uzytkownika) VALUES (:numer, :wys, :id_uzytkownika, :id_kon, :rodzaj, :status, :imie_uzy)')
         params = {
             'numer': numer,
             'wys': wys,
             'id_uzytkownika': current_user.id,
-            'nip': nip,
+            'id_kon': kontrahent.id_kon,
             'rodzaj': rodzaj,
             'status': status,
             'imie_uzy': current_user.imie
@@ -89,6 +85,7 @@ def dodaj_dokument(dokument_type):
         values=result
     )
 @dok.route('/dokumenty/towar_dokument/<numer_dokumentu>/ok<id_w_towa>', methods=['GET', 'POST'])
+@roles_required('Administrator','Kierownik')
 def cofnij(numer_dokumentu, id_w_towa):
     towar_do_usuniecia = TowaryDokument.query.get(id_w_towa)
     if towar_do_usuniecia:
@@ -98,10 +95,11 @@ def cofnij(numer_dokumentu, id_w_towa):
     return redirect(url_for('dok.dodajtowar_dok',numer_dokumentu=numer_dokumentu))
 
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>', methods=['GET', 'POST'])
+@login_required
 def dodajtowar_dok(numer_dokumentu):
     form = DodajTowarDokument()
     #POBIERANIE DANYCH O DOKUMENCIE I KONTRAHENCIE
-    query = text("SELECT d.*, k.* FROM dokumenty d JOIN kontrahenci k ON d.NIP_kontrahenta = k.NIP WHERE d.numer_dokumentu = :numer_dokumentu;;")
+    query = text("SELECT d.*, k.* FROM dokumenty d JOIN kontrahenci k ON d.id_kon = k.id_kon WHERE d.numer_dokumentu = :numer_dokumentu;;")
     values = db.session.execute(query, {'numer_dokumentu': numer_dokumentu}).fetchall()
     nip= values[0].NIP
 
@@ -111,39 +109,38 @@ def dodajtowar_dok(numer_dokumentu):
 
     #POBIERANIE DANYCH W ZALEŻNOŚCI ALBO Z TOWARÓW ALBO Z MAGAZYNU
     if values[0].typ_dokumentu=='PZ':
-        query3 = "SELECT * FROM towary WHERE NIP = :nip"
+        query3 = "SELECT * FROM towary WHERE NIP = :nip AND stan='Aktywna'"
         values3 = db.session.execute(text(query3), {"nip": nip}).fetchall()
     elif values[0].typ_dokumentu=='WZ':
-        query3 = "SELECT DISTINCT mg.id_towaru, mg.idmag, COUNT(*) AS stan, t.* FROM magazyn_towar mg JOIN towary t ON mg.id_towaru = t.id_towaru WHERE mg.stan='Przyjete' GROUP BY mg.id_towaru;;"
+        query3 = "SELECT DISTINCT mg.id_towaru, mg.idmag, COUNT(*) AS stan, t.* FROM magazyn_towar mg JOIN towary t ON mg.id_towaru = t.id_towaru WHERE mg.stan='Przyjete' GROUP BY mg.id_towaru;"
         values3 = db.session.execute(text(query3)).fetchall()
-
     if form.validate_on_submit():
-            if values[0].typ_dokumentu=='PZ':
-                towary_dokument = TowaryDokument(
-                    id_dokumentu=numer_dokumentu,
-                    id_towaru=form.id_towaru.data,
-                    ilosc=form.il.data,
-                    data_przyjecia=date.today()
-                    )
-                db.session.add(towary_dokument)
-                db.session.commit()
-                return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
-            elif form.il.data > form.il_mag.data:
-                flash("Wprwoadziłeś wiekszą ilość toawrów niż liczba towarów na magazynie")
-                return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
-            else:
-                numery=db.session.execute(text('SELECT idmag FROM magazyn_towar WHERE id_towaru = :num ORDER BY data_przyjecia ASC'),{'num':form.id_towaru.data}).fetchall()
-                for i in range(form.il.data):
+                if values[0].typ_dokumentu=='PZ':
                     towary_dokument = TowaryDokument(
                         id_dokumentu=numer_dokumentu,
                         id_towaru=form.id_towaru.data,
-                        numer_towaru=numery[i].idmag,
-                        ilosc=1,
+                        ilosc=form.il.data,
                         data_przyjecia=date.today()
                         )
                     db.session.add(towary_dokument)
                     db.session.commit()
-                return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+                    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+                elif form.il.data > form.il_mag.data:
+                    flash("Wprwoadziłeś wiekszą ilość toawrów niż liczba towarów na magazynie")
+                    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+                else:
+                    numery=db.session.execute(text('SELECT idmag FROM magazyn_towar WHERE id_towaru = :num ORDER BY data_przyjecia ASC'),{'num':form.id_towaru.data}).fetchall()
+                    for i in range(form.il.data):
+                        towary_dokument = TowaryDokument(
+                            id_dokumentu=numer_dokumentu,
+                            id_towaru=form.id_towaru.data,
+                            numer_towaru=numery[i].idmag,
+                            ilosc=1,
+                            data_przyjecia=date.today()
+                            )
+                        db.session.add(towary_dokument)
+                        db.session.commit()
+                    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
     return render_template(
         "dok.html",
         title="SimpleData",
@@ -157,6 +154,7 @@ def dodajtowar_dok(numer_dokumentu):
     )
 
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>/str<status>', methods=['GET', 'POST'])
+@login_required
 def zakoncz(numer_dokumentu, status):
     query = text("UPDATE dokumenty SET statusd = :status WHERE numer_dokumentu = :numer_dokumentu")
     db.session.execute(query, {'numer_dokumentu': numer_dokumentu,'status': status})
@@ -165,13 +163,16 @@ def zakoncz(numer_dokumentu, status):
     return redirect(url_for('dok.dokumenty'))
 
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>/finalizuj/<typ>', methods=['GET', 'POST'])
+@roles_required('Administrator','Kierownik','Pracownik')
 def finalizuj(numer_dokumentu, typ):
+    query5=text("UPDATE dokumenty SET statusd = 'Zakończona', data_przyjecia=:data WHERE numer_dokumentu = :num")
+
     #FINALIZUJ WZ
     if typ=="WZ":
-        flash(f"Finalizuj WZ.")
-
-
-
+        query=text("UPDATE magazyn_towar SET stan='Wydane' WHERE idmag IN (SELECT numer_towaru from towary_dokument where id_dokumentu=:num);")
+        db.session.execute(query, {'num':numer_dokumentu})
+        db.session.execute(query5, {"num": numer_dokumentu, "data": date.today()})
+        db.session.commit()
 
     #FINALIZUJ PZ
     elif typ=="PZ":
@@ -185,6 +186,7 @@ def finalizuj(numer_dokumentu, typ):
         magazyn=magazyn-suma_towarow
         k=0
         if values[0].liczba <= magazyn:
+            sekcja = db.session.execute(query_pojemnosc).fetchone()
             for item in values:
                 for i in range(int(item.ilosc)):
                     query2 = text("SELECT s.nr_sekcji FROM sekcja s WHERE pojemnosc_sekcji > (SELECT COUNT(*) FROM magazyn_towar WHERE nr_sekcji = :nr) AND nr_sekcji = :nr2")
@@ -192,7 +194,7 @@ def finalizuj(numer_dokumentu, typ):
                     while numer == None:
                         j=j+1
                         numer=db.session.execute(query2, {'nr':j, 'nr2':j }).fetchone()
-                        if j>int(magazyn[0].nr_sekcji):
+                        if j>int(sekcja[1]):
                             break
                     magazyn_towar = MagazynTowar(
                         nr_sekcji=numer.nr_sekcji,  # Dodaj właściwy numer sekcji
@@ -204,7 +206,7 @@ def finalizuj(numer_dokumentu, typ):
                     db.session.add(magazyn_towar)
                     db.session.commit()
             k=k+1
-            query5=text("UPDATE dokumenty SET statusd = 'Zakończona', data_przyjecia=:data WHERE numer_dokumentu = :num")
+
             db.session.execute(query5, {"num": numer_dokumentu, "data": date.today()})
             db.session.commit()
         else:

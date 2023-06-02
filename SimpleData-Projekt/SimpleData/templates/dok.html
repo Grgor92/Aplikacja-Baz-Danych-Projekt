@@ -52,7 +52,7 @@
             <td>{{towar.data_przyjecia}}</td>
             {% endif %}
             <td>{{ towar.ilosc }}</td>
-            {% if item.statusd=='Edycja' %}
+            {% if item.statusd=='Edycja' and (current_user.typ == 'Administrator' or current_user.typ == 'Kierownik')%}
             <td><a href="{{url_for('dok.cofnij',numer_dokumentu=item.numer_dokumentu ,id_w_towa=towar.id)}}" class="delete-link">X</a></td>
             {%endif%}
         </tr>
@@ -60,7 +60,7 @@
     </tbody>
 </table>
 
-{% if item.statusd=='Edycja' %}
+{% if item.statusd=='Edycja' and (current_user.typ == 'Administrator' or current_user.typ == 'Kierownik') %}
 <h1 class="text-center mt-5">TOWARY</h1>
 <a href="{{ url_for('dok.zakoncz', numer_dokumentu=item.numer_dokumentu, status="Aktywna") }}" class="btn btn-primary">Zakończ Edycje</a>
 <a href="{{ url_for('dok.finalizuj', numer_dokumentu=item.numer_dokumentu, typ="Usun" )}}" class="btn btn-primary" title="Dokument zostanie usunięty z bazy">Anuluj</a>
@@ -108,10 +108,11 @@
 
 </div>
 
-{% elif item.statusd=='Aktywna'%}
-<a href="{{ url_for('dok.zakoncz', numer_dokumentu=item.numer_dokumentu, status="Edycja") }}" class="btn btn-primary">Cofnij do edycji</a>
+{% elif item.statusd == 'Aktywna' %}
+    {% if current_user.typ == 'Administrator' or current_user.typ == 'Kierownik' %}
+<a href="{{ url_for('dok.zakoncz', numer_dokumentu=item.numer_dokumentu, status='Edycja') }}" class="btn btn-primary">Cofnij do edycji</a>
+    {% endif %}
 <a href="{{ url_for('dok.finalizuj', numer_dokumentu=item.numer_dokumentu, typ=item.typ_dokumentu) }}" class="btn btn-primary" title="Towary zostaną dodane do magzynu do wolnych sekcji/ Lub zostaną usunięte ze stanu magazynu">Finalizuj Dokument</a>
-
 {% endif %}
 
 

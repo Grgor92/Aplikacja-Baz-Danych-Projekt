@@ -88,7 +88,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\dokumenty.html" />
-    <Content Include="SimpleData\templates\dokumenty_historyczne.html" />
     <Content Include="SimpleData\templates\edytuj_towar.html">
       <SubType>Code</SubType>
     </Content>
@@ -114,9 +113,6 @@
     </Content>
     <Content Include="SimpleData\templates\ustawienia_kont.html" />
     <Content Include="SimpleData\templates\usun_towar.html">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="SimpleData\templates\usun_wszystko_towar.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="SimpleData\templates\uzytkownicy.html" />

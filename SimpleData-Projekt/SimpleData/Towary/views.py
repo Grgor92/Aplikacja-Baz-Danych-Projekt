@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session, request, Flask
-from SimpleData import app, db
+from SimpleData import app, db, roles_required
 from SimpleData.Towary.forms import DodajDokumentForm, FiltrujDaneTowaryDostawcy, DodajDaneTowaryDostawcy  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
 from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty, Towary
 from sqlalchemy import inspect, text, delete
@@ -14,27 +14,15 @@ tow = Blueprint('tow', __name__)
 def towary():
     form=DodajDaneTowaryDostawcy()
     if form.validate_on_submit():
-        kontrahent = form.Firma.data
-        query = "INSERT INTO towary (NIP, typ, rodzaj, nazwa) VALUES (:nip, :typ, :rodzaj, :nazwa)"
-        params = {'nip': kontrahent.NIP, 'typ': form.Typ.data, 'rodzaj': form.Rodzaj.data, 'nazwa': form.Nazwa.data}
-        #if form.NIP.data:
-        #    query += 'AND NIP = :NIP '
-        #    params['NIP'] = form.NIP.data
-        #if form.Typ.data:
-        #    query += 'AND Typ = :Typ '
-        #    params['Typ'] = form.Typ.data
-        #if form.Rodzaj.data:
-        #    query += 'AND Rodzaj = :Rodzaj '
-        #    params['Rodzaj'] = form.Rodzaj.data
-        #if form.Nazwa.data:
-        #    query += 'AND Nazwa = :Nazwa '
-        #    params['Nazwa'] = form.Nazwa.data
-        query = text(query)
-        result = db.session.execute(query, params)
-        db.session.commit()
-        return redirect(url_for('tow.wypis_towary'))
-    # dodaj formularz form = kontrahenci()
-    #wyrenderuj strone ze wzoru
+        if current_user.typ == 'Administrator' or current_user.typ == 'Kierownik':
+            kontrahent = form.Firma.data
+            query = "INSERT INTO towary (NIP, typ, rodzaj, nazwa, stan) VALUES (:nip, :typ, :rodzaj, :nazwa, 'Aktywna')"
+            params = {'nip': kontrahent.NIP, 'typ': form.Typ.data, 'rodzaj': form.Rodzaj.data, 'nazwa': form.Nazwa.data}
+            query = text(query)
+            result = db.session.execute(query, params)
+            db.session.commit()
+            return redirect(url_for('tow.wypis_towary'))
+        #wyrenderuj strone ze wzoru
     return render_template(
         "towary.html",
         title = "SimpleData",
@@ -43,40 +31,33 @@ def towary():
     )
 
 @tow.route('/edytuj_towar/<towar_id>', methods=['GET', 'POST'])
-@login_required
+@roles_required('Administrator')
 def edytuj_towar(towar_id):
     form = FiltrujDaneTowaryDostawcy()
-    towar_id=towar_id
-    #query = 'Select * from Towary WHERE id_towaru= :ide '
-    #result = db.session.execute(text(query), {"ide": towar_id})
+    towar_id = towar_id
     rekord = Towary.query.filter_by(id_towaru=towar_id).first()
-     # Przypisz wartości pól formularza na podstawie danych z bazy danych
 
+    if rekord:
+        # Stwórz nowy rekord z aktualizowanymi wartościami i stanem "Aktywny"
+        nowy_rekord = Towary(
+            NIP=form.NIP.data,
+            typ=form.Typ.data,
+            rodzaj=form.Rodzaj.data,
+            nazwa=form.Nazwa.data,
+            stan="Aktywny"
+        )
+        db.session.add(nowy_rekord)
+        db.session.commit()
 
-    if form.validate_on_submit():
-        if form.NIP.data != rekord.NIP:
-            rekord.NIP = form.NIP.data
+        # Zmień stan istniejącego rekordu na "Nieaktualny"
+        rekord.stan = "Nieaktualny"
+        db.session.commit()
 
-        if form.Typ.data != rekord.typ:
-            rekord.typ = form.Typ.data
-
-        if form.Rodzaj.data != rekord.rodzaj:
-            rekord.rodzaj = form.Rodzaj.data
-
-        if form.Nazwa.data != rekord.nazwa:
-            rekord.nazwa = form.Nazwa.data
-
-        if db.session.dirty:
-            db.session.commit()
-            flash('Dane zostały zaktualizowane.', 'success')
-            return redirect(url_for('tow.wypis_towary'))
-        else:
-            flash('Nie zmieniono danych, nie zaktualizowano rekordu.', 'warning')
-
-    form.NIP.data = rekord.NIP
-    form.Typ.data = rekord.typ
-    form.Rodzaj.data = rekord.rodzaj
-    form.Nazwa.data = rekord.nazwa
+        flash('Dane zostały zaktualizowane.', 'success')
+        return redirect(url_for('tow.wypis_towary'))
+    else:
+        flash('Rekord o podanym ID nie istnieje.', 'danger')
+        return redirect(url_for('tow.wypis_towary'))
     return render_template( 
         "edytuj_towar.html",
         title = "SimpleData",
@@ -88,27 +69,27 @@ def edytuj_towar(towar_id):
 #usun towar z wiersza wybranego
 
 @tow.route('/usun_towar/<towar_id>', methods=['GET', 'POST'])
+@roles_required('Administrator')
 @login_required
 def usun_towar(towar_id):
     form = FiltrujDaneTowaryDostawcy()
-    
+
     try:
-        Session = sessionmaker(bind=db.engine)
-        # Usuwanie rekordu po towar_id
+        # Znajdź rekord towaru na podstawie towar_id
         rekord = Towary.query.filter_by(id_towaru=towar_id).first()
-        #rekord = session.query(Towary).filter_by(id_towaru=towar_id).first()
 
         if rekord:
-            db.session.delete(rekord)
+            # Zmień stan rekordu na "Nieaktualny"
+            rekord.stan = "Nieaktualny"
             db.session.commit()
-            flash('Rekord został usunięty.', 'success')
+            flash('Stan rekordu został zmieniony na "Nieaktualny".', 'success')
             return redirect(url_for('tow.wypis_towary'))
         else:
             flash('Nie znaleziono rekordu o podanym towar_id.', 'warning')
-    
+
     except SQLAlchemyError as e:
-        flash('Wystąpił błąd podczas usuwania rekordu.', 'error')
-        session.rollback()
+        flash('Wystąpił błąd podczas zmiany stanu rekordu.', 'error')
+        db.session.rollback()
     
     return render_template(
         "usun_towar.html",
@@ -122,22 +103,22 @@ def usun_towar(towar_id):
 @login_required
 def wypis_towary():
     form = FiltrujDaneTowaryDostawcy()
-    query = 'Select * from towary WHERE 1=1 '
+    query = 'Select * from towary WHERE stan="Aktywna" '
     result = db.session.execute(text(query))
     if form.validate_on_submit():
         
         params = {}
         if form.NIP.data:
-            query += 'AND NIP = :NIP '
+            query += 'AND NIP LIKE :NIP '
             params['NIP'] = form.NIP.data
         if form.Typ.data:
-            query += 'AND Typ = :Typ '
+            query += 'AND Typ LIKE :Typ '
             params['Typ'] = form.Typ.data
         if form.Rodzaj.data:
-            query += 'AND Rodzaj = :Rodzaj '
+            query += 'AND Rodzaj LIKE :Rodzaj '
             params['Rodzaj'] = form.Rodzaj.data
         if form.Nazwa.data:
-            query += 'AND Nazwa = :Nazwa '
+            query += 'AND Nazwa LIKE :Nazwa '
             params['Nazwa'] = form.Nazwa.data
         query = text(query)
         result = db.session.execute(query, params)

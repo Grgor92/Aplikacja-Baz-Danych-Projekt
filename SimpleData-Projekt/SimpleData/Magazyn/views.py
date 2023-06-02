@@ -1,11 +1,8 @@
-from flask import Blueprint, jsonify, render_template, url_for, redirect
-from datetime import datetime
-from flask_login import current_user, login_required, logout_user
-from SimpleData import  db, bcrypt, app
+from flask import Blueprint, render_template
+from flask_login import current_user, login_required
+from SimpleData import  db
 from SimpleData.Magazyn.forms import magazyn_towar
-from sqlalchemy import inspect, text, values
-from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
-from SimpleData.tabele import uzytkownicy
+from sqlalchemy import text
 
 mag = Blueprint('mag', __name__)
 
@@ -13,14 +10,12 @@ mag = Blueprint('mag', __name__)
 @login_required
 def magazyn_towar_t():
     form = magazyn_towar()
-    #Select * from towary, magazyn_towar, sekcja WHERE 1=1 
-    query = 'SELECT DISTINCT magazyn_towar.*, towary.* FROM magazyn_towar JOIN towary ON magazyn_towar.id_towaru = towary.id_towaru WHERE stan = "Przyjete";'
+    query = 'SELECT DISTINCT magazyn_towar.*, towary.* FROM magazyn_towar JOIN towary ON magazyn_towar.id_towaru = towary.id_towaru WHERE magazyn_towar.stan = "Przyjete";'
 
     result = db.session.execute(text(query))
     if form.validate_on_submit():
         
         params = {}
-        
         if form.nr_sekcji.data:
             query += 'AND nr_sekcji = :nr_sekcji '
             params['nr_sekcji'] = form.nr_sekcji.data
@@ -36,8 +31,6 @@ def magazyn_towar_t():
         if form.NIP.data:
             query += 'AND NIP = :NIP '
             params['NIP'] = form.NIP.data
-
-       
         if form.typ.data:
             query += 'AND typ = :typ '
             params['typ'] = form.typ.data

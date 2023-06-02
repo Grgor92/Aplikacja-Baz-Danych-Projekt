@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from flask_sqlalchemy import SQLAlchemy
 from wtforms_sqlalchemy.fields import QuerySelectField
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
-from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty
+from wtforms import StringField, SubmitField, SelectField, IntegerField, DateField #importujemy odpowiednie elemnety aby móc sprawdzić poprawność formularza
+from wtforms.validators import DataRequired, ValidationError, Optional
+from SimpleData.tabele import Kontrahenci, dokumenty
 from datetime import date
 
 class DodajDokumentForm(FlaskForm):
@@ -33,7 +32,7 @@ class FiltrujDaneTowaryDostawcy(FlaskForm):
 
 class DodajDaneTowaryDostawcy(FlaskForm):
     
-    Firma = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status="Dostawca"), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
+    Firma = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status="Dostawca", stan="Aktywny"), get_label='nazwa_firmy', allow_blank=True, validators=[DataRequired()])
     Typ=SelectField('Typ', choices=[('Szkło', 'Szkło'), ('Plastik', 'Plastik')], validators=[DataRequired()])
     Rodzaj=SelectField('Rodzaj', choices=[('0.3 L', '0.3 L'), ('0.5 L', '0.5 L'), ('0.6 L', '0.6 L'), ('0.7 L', '0.7 L'), ('1 L', '1 L'), ('1.5 L', '1.5 L'), ('2 L', '2 L'), ('5 L', '5 L')], validators=[DataRequired()])
     Nazwa=StringField('Nazwa', validators=[DataRequired()])
