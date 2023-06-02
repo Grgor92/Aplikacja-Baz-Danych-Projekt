@@ -1,5 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 #Import biblioteki
+from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
 #Bibloteka odpowiedzialna za bezpieczne haszowanie haseł
 from flask_bcrypt import Bcrypt
@@ -32,7 +33,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-#app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=600)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=60)
 @app.before_first_request
 def init_session():
     session.permanent = True

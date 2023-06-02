@@ -1,3 +1,4 @@
+from flask import flash
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 from SimpleData import  db
@@ -10,12 +11,11 @@ mag = Blueprint('mag', __name__)
 @login_required
 def magazyn_towar_t():
     form = magazyn_towar()
-    query = 'SELECT DISTINCT magazyn_towar.*, towary.* FROM magazyn_towar JOIN towary ON magazyn_towar.id_towaru = towary.id_towaru WHERE magazyn_towar.stan = "Przyjete";'
+    query = 'SELECT DISTINCT magazyn_towar.*, towary.* FROM magazyn_towar JOIN towary ON magazyn_towar.id_towaru = towary.id_towaru WHERE magazyn_towar.stan = "Przyjete" '
 
     result = db.session.execute(text(query))
     if form.validate_on_submit():
         params = {}
-
         # Sprawdzenie, czy formularz zosta³ wype³niony i dodanie warunków do zapytania SQL
         if form.nr_sekcji.data:
             query += 'AND nr_sekcji = :nr_sekcji '
@@ -29,25 +29,16 @@ def magazyn_towar_t():
             query += 'AND numer_dokumentu = :numer_dokumentu '
             params['numer_dokumentu'] = form.numer_dokumentu.data
 
-        if form.NIP.data:
-            query += 'AND NIP = :NIP '
-            params['NIP'] = form.NIP.data
+        if form.id_towaru.data:
+            query += 'AND id_towaru = :id_towaru '
+            params['id_towaru'] = form.id_towaru.data
 
-        if form.typ.data:
-            query += 'AND typ = :typ '
-            params['typ'] = form.typ.data
-
-        if form.rodzaj.data:
-            query += 'AND rodzaj = :rodzaj '
-            params['rodzaj'] = form.rodzaj.data
-
-        if form.nazwa.data:
-            query += 'AND nazwa = :nazwa '
-            params['nazwa'] = form.nazwa.data
+        if form.idm.data:
+            query += 'AND idmag = :idmag '
+            params['idmag'] = form.idm.data
 
         query = text(query)
         result = db.session.execute(query, params)
-        db.session.commit()
 
     return render_template(
         "magazyn_towar.html",
