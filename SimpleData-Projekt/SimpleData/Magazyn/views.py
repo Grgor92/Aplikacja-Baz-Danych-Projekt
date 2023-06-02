@@ -14,8 +14,9 @@ def magazyn_towar_t():
 
     result = db.session.execute(text(query))
     if form.validate_on_submit():
-        
         params = {}
+
+        # Sprawdzenie, czy formularz zosta³ wype³niony i dodanie warunków do zapytania SQL
         if form.nr_sekcji.data:
             query += 'AND nr_sekcji = :nr_sekcji '
             params['nr_sekcji'] = form.nr_sekcji.data
@@ -31,6 +32,7 @@ def magazyn_towar_t():
         if form.NIP.data:
             query += 'AND NIP = :NIP '
             params['NIP'] = form.NIP.data
+
         if form.typ.data:
             query += 'AND typ = :typ '
             params['typ'] = form.typ.data
@@ -43,14 +45,15 @@ def magazyn_towar_t():
             query += 'AND nazwa = :nazwa '
             params['nazwa'] = form.nazwa.data
 
-
         query = text(query)
         result = db.session.execute(query, params)
         db.session.commit()
+
     return render_template(
         "magazyn_towar.html",
-        title = "SimpleData",
-        user = current_user.imie,
+        title="SimpleData",
+        user=current_user.imie,
         form=form,
         values=result
     )
+

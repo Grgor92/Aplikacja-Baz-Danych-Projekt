@@ -12,8 +12,11 @@ class DodajDokumentForm(FlaskForm):
     data_wys2 = DateField('Data wystawienia', default=date.today(), validators=[DataRequired()], render_kw={'readonly': True})
     nip2 = IntegerField('NIP', validators=[DataRequired()])
     rodzaj2 = SelectField('Rodzaj dokumentu', choices=[('WZ', 'WZ'), ('PZ', 'PZ')], validators=[DataRequired()])
+
+    # QuerySelectField To pole kóre pozwla na wybranie danych z bazy i wyświetlenie ich w polsu formularza select
     kontrahentWZ = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status='Odbiorca', stan="Aktywny").all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
     kontrahentPZ = QuerySelectField('Kontrahent', query_factory=lambda: Kontrahenci.query.filter_by(status='Dostawca', stan="Aktywny").all(), get_label='nazwa_firmy', allow_blank=True, validators=[Optional()])
+
     status = SelectField('Status dokumentu', choices=[('Edycja', 'Edycja'), ('Aktywna', 'Aktywna')], validators=[Optional()])
     submit2 = SubmitField('Dodaj dokument')
 

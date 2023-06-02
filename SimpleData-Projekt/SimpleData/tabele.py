@@ -113,19 +113,3 @@ class MagazynTowar(db.Model):
     numer_dokumentu = db.Column(db.String(20), db.ForeignKey('dokumenty.numer_dokumentu'))
     stan = db.Column(db.String(20))
 
-with app.app_context():  #wykonania działania wewnątrz aplikacji/pzeładowanie bazy
-    #sprawdzenie czy baza danych istnieje
-    inspector = inspect(db.engine) # sprawdzenie istnienia bazy
-    db.drop_all() # usunięcie wszytsykich danych / resert bazy
-    if not inspector.has_table('Uzytkownicy'): #jeśli nie ma tabeli użytkowników to tworzymy wszytkie tabele zawarte w tabele.py
-        db.create_all() #tworzenie
-    new_product = uzytkownicy( imie='Administarto', email='admin@sd.com', haslo=bcrypt.generate_password_hash('bezpieczne_haslo').decode('utf-8'), typ='Administrator', stan="Aktywny")
-    for i in range(1, 11):
-        pojemnosc_sekcji = 100
-
-        sekcja = Sekcja(nr_sekcji=i, pojemnosc_sekcji=pojemnosc_sekcji)
-        db.session.add(sekcja)
-    
-    db.session.commit()
-    db.session.add(new_product)
-    db.session.commit()

@@ -51,6 +51,7 @@ def dodaj_rekord():
 @kon.route('/kontrahenci/edytuj', methods=['POST'])
 @roles_required('Administrator')
 def edytuj_kontrahenta():
+    #Pobieranie danych z formularza
     edited_nip = request.form['editedField1']
     edited_nazwa_firmy = request.form['editedField2']
     edited_miasto = request.form['editedField3']
@@ -77,6 +78,7 @@ def edytuj_kontrahenta():
 @kon.route('/kontrahenci/<string:nip>', methods=['DELETE'])
 @roles_required('Administrator')
 def delete_kontrahent(nip):
+    #Ustawianie obenego kontrahenta na stan nieakutalny
     kontrahent = Kontrahenci.query.filter_by(NIP=nip, stan="Aktywny").first()
 
     if kontrahent:

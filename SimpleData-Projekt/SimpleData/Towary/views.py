@@ -129,7 +129,6 @@ def wypis_towary():
         "wypis_towary.html",
         title = "SimpleData",
         user = current_user.imie, #current_user - dane użytkownika, imie - krotka do której chcemy dostęp
-        #
         form=form,
         values = result,
     )

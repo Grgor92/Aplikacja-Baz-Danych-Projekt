@@ -1,21 +1,25 @@
-from flask import Flask, Blueprint, render_template, redirect, url_for, flash, request
-from SimpleData import app, db, roles_required
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from SimpleData import db, roles_required
 from SimpleData.Dokumenty.forms import  Dok, DodajDokumentForm, DodajTowarDokument  # import z innego pliku w tym samym miejscu musi zawierać . przed nazwą
-from SimpleData.tabele import uzytkownicy, Kontrahenci, dokumenty, TowaryDokument, MagazynTowar
+from SimpleData.tabele import Kontrahenci, TowaryDokument, MagazynTowar
 from sqlalchemy import text
-from flask_login import login_required, current_user, fresh_login_required
+from flask_login import login_required, current_user
 from datetime import date
 
 dok = Blueprint('dok', __name__)
-
+#Tworzymy ścierzkę dostępu którą bedzie można wpisać w wierszu przeglądaraki oraz metody jakie będzie mogła strona wysłać do serwera
 @dok.route('/dokumenty', methods=['GET', 'POST'])
 @login_required
 def dokumenty():
     form = Dok()
     query = text("SELECT * FROM dokumenty WHERE statusd = '' ;")
     result = db.session.execute(query)
+    #Po naciśnięciu przysku formularza na stronie nastąpi sprawdzenie poprawności pól oraz wykonanie poniższego kodu jeśli pola są poprawnie wypełnione
     if form.validate_on_submit():
+        # Tworzenie zapytania SQL
         query = 'SELECT d.*, k.nazwa_firmy, u.imie, k.NIP FROM dokumenty d JOIN kontrahenci k ON d.id_kon = k.id_kon JOIN uzytkownicy u ON d.id_uzytkownika = u.id'
+    
+        # Filtry do zastosowania w zapytaniu
         filters = {
             'numer_dokumentu': 'd.numer_dokumentu = :numer_dokumentu',
             'data_wystawienia': 'd.data_wystawienia = :data_wystawienia',
@@ -25,15 +29,21 @@ def dokumenty():
             'data_przyjecia': 'd.data_przyjecia = :data_przyjecia',
             'statusd': 'd.statusd = :statusd'
         }
-        conditions = []
-        params = {}
+    
+        conditions = []  # Lista warunków do zastosowania w zapytaniu
+        params = {}  # Słownik przechowujący wartości parametrów
 
+        # Iteracja przez pola formularza i tworzenie warunków oraz parametrów
         for field, condition in filters.items():
             if getattr(form, field).data:
                 conditions.append(condition)
                 params[field] = getattr(form, field).data
+    
         if conditions:
+            # Dodanie warunków do zapytania
             query += ' AND ' + ' AND '.join(conditions)
+    
+        # Wykonanie zapytania z uwzględnieniem parametrów
         result = db.session.execute(text(query), params)
         db.session.commit()
     return render_template(
@@ -44,8 +54,10 @@ def dokumenty():
         values = result,
     )
 @dok.route('/dokumenty/dodaj_dokument_<dokument_type>', methods=['GET', 'POST'])
+#Niestandardowe sprawdzenie dosepu do strony, wymaganie to użykownik musi być zalogowany oraz posiadać odpowiednie uprawnienia
 @roles_required('Administrator','Kierownik')
 def dodaj_dokument(dokument_type):
+    #Dopisanie do pola formularza jego odpowiedni typ
     if dokument_type == 'PZ':
         form = DodajDokumentForm(rodzaj2='PZ')
     elif dokument_type == 'WZ':
@@ -79,7 +91,7 @@ def dodaj_dokument(dokument_type):
     return render_template(
         "dod_dok.html",
         title="SimpleData",
-        #user=current_user.imie,
+        user=current_user.imie,
         form2=form,
         typ=dokument_type,
         values=result
@@ -114,43 +126,50 @@ def dodajtowar_dok(numer_dokumentu):
     elif values[0].typ_dokumentu=='WZ':
         query3 = "SELECT DISTINCT mg.id_towaru, mg.idmag, COUNT(*) AS stan, t.* FROM magazyn_towar mg JOIN towary t ON mg.id_towaru = t.id_towaru WHERE mg.stan='Przyjete' GROUP BY mg.id_towaru;"
         values3 = db.session.execute(text(query3)).fetchall()
+
     if form.validate_on_submit():
-                if values[0].typ_dokumentu=='PZ':
-                    towary_dokument = TowaryDokument(
-                        id_dokumentu=numer_dokumentu,
-                        id_towaru=form.id_towaru.data,
-                        ilosc=form.il.data,
-                        data_przyjecia=date.today()
-                        )
-                    db.session.add(towary_dokument)
-                    db.session.commit()
-                    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
-                elif form.il.data > form.il_mag.data:
-                    flash("Wprwoadziłeś wiekszą ilość toawrów niż liczba towarów na magazynie")
-                    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
-                else:
-                    numery=db.session.execute(text('SELECT idmag FROM magazyn_towar WHERE id_towaru = :num ORDER BY data_przyjecia ASC'),{'num':form.id_towaru.data}).fetchall()
-                    for i in range(form.il.data):
-                        towary_dokument = TowaryDokument(
-                            id_dokumentu=numer_dokumentu,
-                            id_towaru=form.id_towaru.data,
-                            numer_towaru=numery[i].idmag,
-                            ilosc=1,
-                            data_przyjecia=date.today()
-                            )
-                        db.session.add(towary_dokument)
-                        db.session.commit()
-                    return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+        if values[0].typ_dokumentu == 'PZ':
+            # Dodawanie towaru do dokumentu typu PZ
+            towary_dokument = TowaryDokument(
+                id_dokumentu=numer_dokumentu,
+                id_towaru=form.id_towaru.data,
+                ilosc=form.il.data,
+                data_przyjecia=date.today()
+            )
+            db.session.add(towary_dokument)
+            db.session.commit()
+            return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+        elif form.il.data > form.il_mag.data:
+            # Walidacja, czy wprowadzona ilość towarów nie przekracza dostępnej ilości na magazynie
+            flash("Wprowadziłeś większą ilość towarów niż liczba towarów na magazynie")
+            return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+        else:
+            # Dodawanie towarów do dokumentu innego typu niż PZ
+            numery = db.session.execute(
+                text('SELECT idmag FROM magazyn_towar WHERE id_towaru = :num ORDER BY data_przyjecia ASC'),
+                {'num': form.id_towaru.data}
+            ).fetchall()
+            for i in range(form.il.data):
+                towary_dokument = TowaryDokument(
+                    id_dokumentu=numer_dokumentu,
+                    id_towaru=form.id_towaru.data,
+                    numer_towaru=numery[i].idmag,
+                    ilosc=1,
+                    data_przyjecia=date.today()
+                )
+                db.session.add(towary_dokument)
+                db.session.commit()
+            return redirect(url_for('dok.dodajtowar_dok', numer_dokumentu=numer_dokumentu))
+
     return render_template(
         "dok.html",
         title="SimpleData",
-        #user=current_user.imie,
+        user=current_user.imie,
         form=form,
         values=values,
         values2=values2,
         values3=values3,
         numer = numer_dokumentu
-        
     )
 
 @dok.route('/dokumenty/towar_dokument<numer_dokumentu>/str<status>', methods=['GET', 'POST'])
@@ -175,26 +194,29 @@ def finalizuj(numer_dokumentu, typ):
         db.session.commit()
 
     #FINALIZUJ PZ
-    elif typ=="PZ":
-        query = text("SELECT id_towaru, ilosc, (SELECT SUM(ilosc) from towary_dokument where id_dokumentu= :num) liczba FROM `towary_dokument` where id_dokumentu= :num")
+    elif typ == "PZ":
+        # Pobranie informacji o ilości towarów w dokumencie
+        query = text("SELECT id_towaru, ilosc, (SELECT SUM(ilosc) FROM towary_dokument WHERE id_dokumentu= :num) liczba FROM `towary_dokument` WHERE id_dokumentu= :num")
         values = db.session.execute(query, {"num": numer_dokumentu}).fetchall()
-        j=1;
+        j = 1
+        # Pobranie informacji o dostępnej pojemności magazynu
         query = text("SELECT COUNT(*) AS suma FROM magazyn_towar WHERE 1")
         suma_towarow = db.session.execute(query).scalar()
         query_pojemnosc = text("SELECT SUM(pojemnosc_sekcji), max(nr_sekcji) as nr_sekcji FROM sekcja")
         magazyn = db.session.execute(query_pojemnosc).scalar()
-        magazyn=magazyn-suma_towarow
-        k=0
+        magazyn = magazyn - suma_towarow
+        k = 0
         if values[0].liczba <= magazyn:
             sekcja = db.session.execute(query_pojemnosc).fetchone()
             for item in values:
                 for i in range(int(item.ilosc)):
+                    # Pobranie numeru sekcji, która ma wystarczającą pojemność
                     query2 = text("SELECT s.nr_sekcji FROM sekcja s WHERE pojemnosc_sekcji > (SELECT COUNT(*) FROM magazyn_towar WHERE nr_sekcji = :nr) AND nr_sekcji = :nr2")
-                    numer=db.session.execute(query2, {'nr':j, 'nr2':j }).fetchone()
-                    while numer == None:
-                        j=j+1
-                        numer=db.session.execute(query2, {'nr':j, 'nr2':j }).fetchone()
-                        if j>int(sekcja[1]):
+                    numer = db.session.execute(query2, {'nr': j, 'nr2': j}).fetchone()
+                    while numer is None:
+                        j += 1
+                        numer = db.session.execute(query2, {'nr': j, 'nr2': j}).fetchone()
+                        if j > int(sekcja[1]):
                             break
                     magazyn_towar = MagazynTowar(
                         nr_sekcji=numer.nr_sekcji,  # Dodaj właściwy numer sekcji
@@ -205,12 +227,13 @@ def finalizuj(numer_dokumentu, typ):
                     )
                     db.session.add(magazyn_towar)
                     db.session.commit()
-            k=k+1
+            k += 1
 
             db.session.execute(query5, {"num": numer_dokumentu, "data": date.today()})
             db.session.commit()
         else:
             flash("Ilość towarów przekracza dostępną pojemność magazynu.", 'danger')
+
     #USUŃ DOKUMENT W TRAKCIE EDYCJI
     elif typ=="Usun":
         query = "DELETE FROM towary_dokument WHERE id_dokumentu = :numer_dokumentu"
