@@ -84,25 +84,24 @@
                         <input type="hidden" id="id-input" name="id" value="">
                         <div class="form-group">
                             {{ form2.imie.label(class="col-form-label") }}
-                            {{ form2.imie(class="form-control", id="nazwa-input") }}
+                            {{ form2.imie(class="form-control mx-auto", id="nazwa-input") }}
                         </div>
                         <div class="form-group">
                             {{ form2.email.label(class="col-form-label") }}
-                            {{ form2.email(class="form-control", id="email-input") }}
+                            {{ form2.email(class="form-control mx-auto", id="email-input") }}
                         </div>
                         <div class="form-group">
                             {{ form2.haslo.label(class="col-form-label") }}
-                            <div class="input-group">
+                            <div class="input-group d-flex justify-content-center">
                                 {{ form2.haslo(class="form-control") }}
-
                             </div>
                         </div>
                         <div class="form-group">
                             {{ form2.uprawnienia.label(class="col-form-label") }}
-                            {{ form2.uprawnienia(class="form-control", id="uprawnienia-input") }}
+                            {{ form2.uprawnienia(class="form-control mx-auto", id="uprawnienia-input") }}
                         </div>
-
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
                         <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
@@ -149,44 +148,6 @@
                     });
             }
         }
-
-        //$(document).on("click", ".reveal-btn", function () {
-        //    var input = $(this).closest(".input-group").find("input");
-        //    var icon = $(this).find("i");
-        //    if (input.attr("type") === "password") {
-        //        input.attr("type", "text");
-        //        icon.removeClass("fa-eye");
-        //        icon.addClass("fa-eye-slash");
-        //    } else {
-        //        input.attr("type", "password");
-        //        icon.removeClass("fa-eye-slash");
-        //        icon.addClass("fa-eye");
-        //    }
-        //});
-
-        //(function ($) {
-        //    $(document).on('submit', '#edit-form', function (e) {
-        //        e.preventDefault();
-        //        var form = $(this);
-        //        var url = form.attr('action');
-        //        var formData = form.serialize();
-        //        $.ajax({
-        //            type: 'POST',
-        //            url: url,
-        //            data: formData,
-        //            success: function (data) {
-        //                console.log(data);
-        //                $('#edit-modal').modal('hide');
-        //                // przeładowanie strony lub aktualizacja tabeli przy użyciu Ajax
-        //            },
-        //            error: function (error) {
-        //                console.log(error);
-        //                // wyświetlenie komunikatu o błędzie lub wyświetlenie go w formularzu
-        //            }
-        //        });
-        //    });
-        //})(jQuery);
-
 
 
     </script>

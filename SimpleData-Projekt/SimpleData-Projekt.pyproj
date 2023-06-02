@@ -16,7 +16,7 @@
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>SimpleData-Projekt</Name>
     <RootNamespace>SimpleData-Projekt</RootNamespace>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>Global|PythonCore|3.9</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,6 +78,8 @@
     <Content Include="SimpleData\.env">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\Images\logosd.jpg" />
+    <Content Include="SimpleData\Images\logosd.png" />
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
     </Content>
@@ -101,6 +103,7 @@
     <Content Include="SimpleData\templates\login.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="SimpleData\templates\logosd.png" />
     <Content Include="SimpleData\templates\magazyn_towar.html" />
     <Content Include="SimpleData\templates\przeszukiwanie.html">
       <SubType>Code</SubType>
@@ -125,6 +128,7 @@
     <Folder Include="SimpleData\Dokumenty\" />
     <Folder Include="SimpleData\Kontrahenci\" />
     <Folder Include="SimpleData\Magazyn\" />
+    <Folder Include="SimpleData\Images\" />
     <Folder Include="SimpleData\Ogolne\" />
     <Folder Include="SimpleData\Towary\" />
     <Folder Include="SimpleData\Uzytkownicy\" />
