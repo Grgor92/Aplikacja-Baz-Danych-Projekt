@@ -42,6 +42,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="readme.txt">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="requirements.txt" />
     <Content Include="SimpleData\static\site.css">
       <SubType>Code</SubType>
@@ -68,9 +71,13 @@
     <Content Include="SimpleData\templates\uzytkownicy.html" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Instalacja\" />
     <Folder Include="SimpleData\" />
     <Folder Include="SimpleData\templates\" />
     <Folder Include="SimpleData\static\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.9" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -82,9 +89,6 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
-  </ItemGroup>
-  <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.9" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
